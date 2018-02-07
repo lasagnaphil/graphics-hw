@@ -7,10 +7,11 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 find_package(SDL2 REQUIRED)
 find_package(GLM REQUIRED)
+find_package(Assimp REQUIRED)
 
-file(GLOB PROJECT_HEADERS src/*.h)
-file(GLOB PROJECT_SOURCES glad/glad.c src/*.cpp)
-file(GLOB PROJECT_SHADERS
+file(GLOB_RECURSE PROJECT_HEADERS src/*.h)
+file(GLOB_RECURSE PROJECT_SOURCES glad/glad.c src/*.cpp)
+file(GLOB_RECURSE PROJECT_SHADERS
         src/shaders/*.comp
         src/shaders/*.frag
         src/shaders/*.geom
@@ -23,9 +24,10 @@ add_executable(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         ${SDL2_INCLUDE_DIR}
-        ${GLM_INCLUDE_DIRS})
+        ${GLM_INCLUDE_DIRS}
+        ${ASSIMP_INCLUDE_DIR})
 
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY})
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY} ${ASSIMP_LIBRARY})
 
 # GLAD
 set(GLAD_DIR "deps/glad")
@@ -35,8 +37,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE "${GLAD_DIR}/include")
 target_link_libraries(${PROJECT_NAME} "glad" "${CMAKE_DL_LIBS}")
 
 # Tweeny
-set(TWEENY_BUILD_EXAMPLES FALSE)
-set(TWEENY_BUILD_DOCUMENTATION FALSE)
+set(TWEENY_BUILD_EXAMPLES OFF)
+set(TWEENY_BUILD_DOCUMENTATION OFF)
 add_subdirectory("deps/tweeny")
 target_link_libraries(${PROJECT_NAME} tweeny)
 

@@ -89,7 +89,7 @@ void App::start() {
     Image faceImage("resources/awesomeface.png");
 
     containerTex = std::make_unique<Texture>(
-            containerImage, 0, GL_RGB, containerImage.getWidth(), containerImage.getHeight(),
+            containerImage.getData(), 0, GL_RGB, containerImage.getWidth(), containerImage.getHeight(),
             0, GL_RGB, GL_UNSIGNED_BYTE
     );
     containerTex->setParameteri(GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -99,7 +99,7 @@ void App::start() {
     std::cout << containerTex->getID() << std::endl;
 
     faceTex = std::make_unique<Texture>(
-            faceImage, 0, GL_RGBA, faceImage.getWidth(), faceImage.getHeight(),
+            faceImage.getData(), 0, GL_RGBA, faceImage.getWidth(), faceImage.getHeight(),
             0, GL_RGBA, GL_UNSIGNED_BYTE
     );
     faceTex->setParameteri(GL_TEXTURE_WRAP_S, GL_REPEAT);
