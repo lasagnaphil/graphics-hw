@@ -34,7 +34,6 @@ void Camera::update(float dt) {
     auto mouseOffset = glm::vec2((float)mouseOffsetI.x, (float)mouseOffsetI.y);
 
     mouseOffset *= mouseSensitivity;
-    printf("%f %f\n", mouseOffset.x, mouseOffset.y);
 
     rotation.x += mouseOffset.y;
     if (rotation.x > glm::radians(89.0f)) rotation.x = glm::radians(89.0f);

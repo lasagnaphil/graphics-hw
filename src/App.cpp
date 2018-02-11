@@ -11,6 +11,7 @@
 #include "AppSettings.h"
 #include "InputManager.h"
 #include "nodes/Camera.h"
+#include "Model.h"
 
 static void sdl_die(const char * message) {
     fprintf(stderr, "%s: %s\n", message, SDL_GetError());
@@ -158,6 +159,7 @@ void App::start() {
     camera->attachShader(defaultShader);
     rootNode->addChild(camera);
 
+    /*
     // Cubes
     glm::vec3 cubePositions[] = {
             glm::vec3( 0.0f,  0.0f,  0.0f),
@@ -176,6 +178,10 @@ void App::start() {
         cubeNode->setPosition(pos);
         rootNode->addChild(cubeNode);
     }
+     */
+
+    // Nanosuit Model
+    Model nanosuitModel("resources/nanosuit/nanosuit.obj");
 
     // Program loop
     Uint32 frameTime;
