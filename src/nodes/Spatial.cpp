@@ -15,9 +15,9 @@ void Spatial::setDirtyFlag(bool dirtyFlag) {
 
 void Spatial::updateTransform() {
     if (dirtyFlag) {
-        localTransform = glm::translate(glm::mat4(1.0f), position)
-                * glm::scale(glm::mat4(1.0f), scale)
-                * rotation;
+        localTransform *= glm::translate(glm::mat4(1.0f), position);
+        localTransform *= glm::scale(localTransform, scale);
+        localTransform *= glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z);
         dirtyFlag = false;
     }
 }

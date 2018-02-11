@@ -10,6 +10,9 @@
 
 #include <vector>
 #include <algorithm>
+#include <SDL2/SDL_events.h>
+
+class Scene;
 
 class Spatial;
 
@@ -29,15 +32,18 @@ public:
 
     virtual void update(float dt) {}
     virtual void render() {}
+    virtual void processInput(SDL_Event& event) {}
 
 protected:
+
+    Scene* scene;
 
     std::vector<Node*> children;
     Node* parent;
     Spatial* spatialRepNode;
 
 private:
-    Node* findSpatial(Node* node) const;
+    Node* findSpatial(Node* node);
 };
 
 #endif

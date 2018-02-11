@@ -7,7 +7,6 @@
 
 Node::Node(const std::vector<Node*> children)
         : children(children) {
-    spatialRepNode = reinterpret_cast<Spatial*>(findSpatial(this));
 }
 
 Node::~Node() {
@@ -19,6 +18,15 @@ Node::~Node() {
 void Node::addChild(Node* child) {
     children.push_back(child);
     child->parent = this;
+    child->scene = scene;
+    Spatial* spatialChild = dynamic_cast<Spatial*>(child);
+    if (spatialChild) {
+        spatialRepNode->addSpatialChild(spatialChild);
+        spatialChild->setSpatialParent(spatialRepNode);
+    }
+    else {
+        child->spatialRepNode = spatialRepNode;
+    }
 }
 
 void Node::removeChild(Node* child) {
@@ -26,8 +34,8 @@ void Node::removeChild(Node* child) {
     delete child;
 }
 
-Node* Node::findSpatial(Node* node) const {
-    Spatial* spatial = dynamic_cast<Spatial*>(this->parent);
-    if (spatial) return spatial;
-    else return findSpatial(spatial);
+Node* Node::findSpatial(Node* node) {
+    Spatial* spatial = dynamic_cast<Spatial*>(node);
+    if (spatial) return this;
+    else return findSpatial(this->parent);
 }

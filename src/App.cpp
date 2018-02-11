@@ -6,13 +6,61 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-
-static const int SCREEN_WIDTH  = 800;
-static const int SCREEN_HEIGHT = 600;
+#include "Mesh.h"
+#include "nodes/MeshNode.h"
+#include "AppSettings.h"
+#include "InputManager.h"
 
 static void sdl_die(const char * message) {
     fprintf(stderr, "%s: %s\n", message, SDL_GetError());
     exit(2);
+}
+
+void APIENTRY glDebugOutput(GLenum source,
+                            GLenum type,
+                            GLuint id,
+                            GLenum severity,
+                            GLsizei length,
+                            const GLchar *message,
+                            const void *userParam)
+{
+    // ignore non-significant error/warning codes
+    if(id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+
+    std::cout << "---------------" << std::endl;
+    std::cout << "Debug message (" << id << "): " <<  message << std::endl;
+
+    switch (source)
+    {
+        case GL_DEBUG_SOURCE_API:             std::cout << "Source: API"; break;
+        case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cout << "Source: Window System"; break;
+        case GL_DEBUG_SOURCE_SHADER_COMPILER: std::cout << "Source: Shader Compiler"; break;
+        case GL_DEBUG_SOURCE_THIRD_PARTY:     std::cout << "Source: Third Party"; break;
+        case GL_DEBUG_SOURCE_APPLICATION:     std::cout << "Source: Application"; break;
+        case GL_DEBUG_SOURCE_OTHER:           std::cout << "Source: Other"; break;
+    } std::cout << std::endl;
+
+    switch (type)
+    {
+        case GL_DEBUG_TYPE_ERROR:               std::cout << "Type: Error"; break;
+        case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::cout << "Type: Deprecated Behaviour"; break;
+        case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  std::cout << "Type: Undefined Behaviour"; break;
+        case GL_DEBUG_TYPE_PORTABILITY:         std::cout << "Type: Portability"; break;
+        case GL_DEBUG_TYPE_PERFORMANCE:         std::cout << "Type: Performance"; break;
+        case GL_DEBUG_TYPE_MARKER:              std::cout << "Type: Marker"; break;
+        case GL_DEBUG_TYPE_PUSH_GROUP:          std::cout << "Type: Push Group"; break;
+        case GL_DEBUG_TYPE_POP_GROUP:           std::cout << "Type: Pop Group"; break;
+        case GL_DEBUG_TYPE_OTHER:               std::cout << "Type: Other"; break;
+    } std::cout << std::endl;
+
+    switch (severity)
+    {
+        case GL_DEBUG_SEVERITY_HIGH:         std::cout << "Severity: high"; break;
+        case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "Severity: medium"; break;
+        case GL_DEBUG_SEVERITY_LOW:          std::cout << "Severity: low"; break;
+        case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "Severity: notification"; break;
+    } std::cout << std::endl;
+    std::cout << std::endl;
 }
 
 void App::start() {
@@ -22,18 +70,21 @@ void App::start() {
     atexit (SDL_Quit);
     SDL_GL_LoadLibrary(NULL); // Default OpenGL is fine.
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    // Use OpenGL Version 4.3
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
     // Create the window
     window = SDL_CreateWindow(
             "OpenGL Test",
             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-            SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL
+            AppSettings::ScreenWidth, AppSettings::ScreenHeight, SDL_WINDOW_OPENGL
     );
 
     if (window == NULL) sdl_die("Couldn't set video mode");
 
+    // Create OpenGL Context
     mainContext = SDL_GL_CreateContext(window);
     if (mainContext == NULL)
         sdl_die("Failed to create OpenGL context");
@@ -45,73 +96,59 @@ void App::start() {
     printf("Renderer: %s\n", glGetString(GL_RENDERER));
     printf("Version:  %s\n", glGetString(GL_VERSION));
 
+    // Enable the debug callback
+    GLint flags;
+    glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+    if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback(glDebugOutput, nullptr);
+        glDebugMessageControl(
+                GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, true
+        );
+    }
+
     // Use v-sync
     SDL_GL_SetSwapInterval(1);
 
+    // Set OpenGL viewport
     int w,h;
     SDL_GetWindowSize(window, &w, &h);
     glViewport(0, 0, w, h);
-    glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
 
-    // Compile default shaders
-    triangleShader = std::make_unique<Shader>("shaders/triangle.vert", "shaders/multitexture_triangle.frag");
+    // Enable depth testing
+    // glEnable(GL_DEPTH_TEST);
 
-    // Create triangles
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
-
-    glBindVertexArray(vao);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    glBindVertexArray(0);
+    // Clear the screen
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Load textures
     stbi_set_flip_vertically_on_load(true);
 
+    //
+    // Preparation
+    //
+
+    // Shaders
+    Shader defaultShader("shaders/triangle.vert", "shaders/triangle.frag");
+    defaultShader.use();
+
+    // Images
     Image containerImage("resources/container.jpg");
-    Image faceImage("resources/awesomeface.png");
+    //Image faceImage("resources/awesomeface.png");
 
-    containerTex = std::make_unique<Texture>(
-            containerImage.getData(), 0, GL_RGB, containerImage.getWidth(), containerImage.getHeight(),
-            0, GL_RGB, GL_UNSIGNED_BYTE
-    );
-    containerTex->setParameteri(GL_TEXTURE_WRAP_S, GL_REPEAT);
-    containerTex->setParameteri(GL_TEXTURE_WRAP_T, GL_REPEAT);
-    containerTex->setParameteri(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    containerTex->setParameteri(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    std::cout << containerTex->getID() << std::endl;
+    Texture containerTex = Texture::build().setImage(containerImage).create();
+    //Texture faceTex = Texture::build().setImage(faceImage).create();
 
-    faceTex = std::make_unique<Texture>(
-            faceImage.getData(), 0, GL_RGBA, faceImage.getWidth(), faceImage.getHeight(),
-            0, GL_RGBA, GL_UNSIGNED_BYTE
-    );
-    faceTex->setParameteri(GL_TEXTURE_WRAP_S, GL_REPEAT);
-    faceTex->setParameteri(GL_TEXTURE_WRAP_T, GL_REPEAT);
-    faceTex->setParameteri(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    faceTex->setParameteri(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    std::cout << faceTex->getID() << std::endl;
+    // std::shared_ptr<Mesh> planeMesh(Mesh::createPlaneDyn());
+    // planeMesh->textures.push_back(containerTex);
+    std::shared_ptr<Mesh> cubeMesh(Mesh::createCubeDyn());
+    cubeMesh->textures.push_back(containerTex);
 
-    // set texture unit for each sampler
-    triangleShader->use();
-    triangleShader->setInt("texture1", 0);
-    triangleShader->setInt("texture2", 1);
+    scene = std::make_unique<Scene>();
+
+    MeshNode* planeNode = new MeshNode(cubeMesh, defaultShader);
+    scene->getRootNode()->addChild(planeNode);
 
     // Program loop
     Uint32 frameTime;
@@ -124,7 +161,7 @@ void App::start() {
 
         Uint32 dt = frameTime - lastFrameTime;
         lastFrameTime = frameTime;
-        update(dt);
+        update(dt / 1000.f);
 
         render();
 
@@ -148,17 +185,17 @@ void App::processInput() {
         } else if (event.type == SDL_KEYDOWN) {
             switch (event.key.keysym.sym) {
                 case SDLK_ESCAPE:
-                case SDLK_q:
                     quit = true;
                     break;
             }
         }
+        InputManager::getInstance()->handleEvents(event);
+        scene->processInput(event);
     }
 }
 
 void App::update(float dt) {
-
-
+    scene->update(dt);
 }
 
 void App::render() {
@@ -166,17 +203,10 @@ void App::render() {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // bind textures on corresponding texture units
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, containerTex->getID());
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, faceTex->getID());
-
-    // render triangles
-    triangleShader->use();
-    glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    // do stuff
+    scene->render();
 }
 
 App::~App() {
+    SDL_DestroyWindow(window);
 }

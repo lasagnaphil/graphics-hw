@@ -34,6 +34,11 @@ public:
 
     static Mesh createCube();
     static Mesh createSphere();
+    static Mesh createPlane();
+
+    static Mesh* createCubeDyn();
+    static Mesh* createSphereDyn();
+    static Mesh* createPlaneDyn();
 
 private:
     unsigned int vao, vbo, ebo;

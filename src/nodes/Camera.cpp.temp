@@ -1,0 +1,63 @@
+//
+// Created by lasagnaphil on 2/8/18.
+//
+
+#include "Camera.h.temp2"
+#include "../Scene.h"
+#include "../AppSettings.h"
+#include "../InputManager.h"
+
+Camera::Camera() : Spatial(),
+                   shaders(0),
+                   movementSpeed(Settings::Speed),
+                   mouseSensitivity(Settings::Sensitivity),
+                   zoom(Settings::Zoom) {
+    viewport = {.x = 0, .y = 0, .width = AppSettings::ScreenWidth, .height = AppSettings::ScreenHeight};
+}
+
+void Camera::cameraUpdate() {
+    for (auto shader : shaders) {
+        shader.use();
+        glm::mat4 projection = getPerspectiveMatrix();
+        shader.setMat4("projection", projection);
+        glm::mat4 view = getViewMatrix();
+        shader.setMat4("view", view);
+    }
+}
+
+void Camera::update(float dt) {
+    static glm::ivec2 prevMousePos;
+
+    auto inputMgr = InputManager::getInstance();
+
+    /*
+    // Mouse movement
+    auto mousePos = inputMgr->mousePos();
+    glm::ivec2 mouseOffset = mousePos - prevMousePos;
+
+    mouseOffset *= mouseSensitivity;
+    rotation = glm::rotate(rotation, (float)mouseOffset.x, glm::vec3(0.0f, 1.0f, 0.0f));
+    rotation = glm::rotate(rotation, (float)mouseOffset.y, glm::vec3(1.0f, 0.0f, 0.0f));
+
+    prevMousePos = mousePos;
+
+    // Keyboard movement
+    float velocity = movementSpeed * dt;
+    if (inputMgr->keyboardPressed(SDLK_w)) {
+        position += getFrontVec() * velocity;
+    }
+    else if (inputMgr->keyboardPressed(SDLK_s)) {
+        position -= getFrontVec() * velocity;
+    }
+    else if (inputMgr->keyboardPressed(SDLK_a)) {
+        position -= getRightVec() * velocity;
+    }
+    else if (inputMgr->keyboardPressed(SDLK_d)) {
+        position += getRightVec() * velocity;
+    }
+     */
+
+    // Mouse scroll movement
+
+}
+

@@ -38,6 +38,7 @@ void Mesh::draw(Shader shader) {
     }
     glActiveTexture(GL_TEXTURE0);
 
+    shader.use();
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
@@ -72,7 +73,7 @@ void Mesh::setupMesh() {
     glBindVertexArray(0);
 }
 
-static constexpr glm::vec3 cubeVertices[8] = {
+static glm::vec3 cubeVertices[8] = {
         glm::vec3(-1, -1, -1),
         glm::vec3( 1, -1, -1),
         glm::vec3( 1,  1, -1),
@@ -82,13 +83,13 @@ static constexpr glm::vec3 cubeVertices[8] = {
         glm::vec3( 1,  1,  1),
         glm::vec3(-1,  1,  1)
 };
-static constexpr glm::vec2 cubeTexCoords[4] = {
+static glm::vec2 cubeTexCoords[4] = {
         glm::vec2(0, 0),
         glm::vec2(1, 0),
         glm::vec2(1, 1),
         glm::vec2(0, 1)
 };
-static constexpr glm::vec3 cubeNormals[8] = {
+static glm::vec3 cubeNormals[8] = {
         glm::vec3(0, 0, 1),
         glm::vec3(1, 0, 1),
         glm::vec3(0, 0, -1),
@@ -96,7 +97,7 @@ static constexpr glm::vec3 cubeNormals[8] = {
         glm::vec3(0, 1, 0),
         glm::vec3(0, -1, 1),
 };
-static constexpr unsigned int cubeIndices[36] = {
+static unsigned int cubeIndices[36] = {
         0, 1, 3, 3, 1, 2,
         1, 5, 2, 2, 5, 6,
         5, 4, 6, 6, 4, 7,
@@ -104,8 +105,17 @@ static constexpr unsigned int cubeIndices[36] = {
         3, 2, 7, 7, 2, 6,
         4, 5, 0, 0, 5, 1
 };
-static constexpr unsigned int cubeTexIndices[6] = {
+static unsigned int cubeTexIndices[6] = {
         0, 1, 3, 3, 1, 2
+};
+static Vertex planeVertices[4] = {
+        {0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f},
+        {0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f},
+        {-0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f},
+        {-0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f}
+};
+static unsigned int planeIndices[6] = {
+        0, 1, 3, 1, 2, 3
 };
 
 Mesh Mesh::createCube() {
@@ -120,6 +130,31 @@ Mesh Mesh::createCube() {
 }
 
 Mesh Mesh::createSphere() {
-    return Mesh(std::vector<Vertex>(), std::vector<unsigned int>(), std::vector<Texture>());
+    return Mesh({}, {}, {});
+}
+
+Mesh Mesh::createPlane() {
+    return Mesh(std::vector<Vertex>(std::begin(planeVertices), std::end(planeVertices)),
+                std::vector<unsigned int>(std::begin(planeIndices), std::end(planeIndices)), {});
+}
+
+Mesh* Mesh::createCubeDyn() {
+    using std::vector;
+    vector<Vertex> vertices(36);
+    for (unsigned int i = 0; i < 36; ++i) {
+        vertices[i].position = cubeVertices[cubeIndices[i]];
+        vertices[i].normal = cubeNormals[cubeIndices[i / 6]];
+        vertices[i].texCoords = cubeTexCoords[cubeTexIndices[i % 4]];
+    }
+    return new Mesh(vertices, std::vector<unsigned int>(std::begin(cubeIndices), std::end(cubeIndices)), {});
+}
+
+Mesh* Mesh::createSphereDyn() {
+    return new Mesh(std::vector<Vertex>(), std::vector<unsigned int>(), std::vector<Texture>());
+}
+
+Mesh* Mesh::createPlaneDyn() {
+    return new Mesh(std::vector<Vertex>(std::begin(planeVertices), std::end(planeVertices)),
+                std::vector<unsigned int>(std::begin(planeIndices), std::end(planeIndices)), {});
 }
 

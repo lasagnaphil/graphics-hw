@@ -2,6 +2,7 @@
 // Created by lasagnaphil on 2017-03-27.
 //
 
+#include <glm/gtc/type_ptr.hpp>
 #include "Shader.h"
 #include "GLUtils.h"
 
@@ -72,8 +73,12 @@ Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
         std::cout << "Error: shader program linking failed" << infoLog << std::endl;
     }
 
-    glDeleteShader(vertexShaderPtr);
-    glDeleteShader(fragmentShaderPtr);
+    //glDeleteShader(vertexShaderPtr);
+    //glDeleteShader(fragmentShaderPtr);
+}
+
+void Shader::setProgram(GLuint program) {
+    this->program = program;
 }
 
 void Shader::use() {
@@ -84,10 +89,34 @@ void Shader::setBool(const char* name, bool value) const {
     glUniform1i(glGetUniformLocation(program, name), (int)value);
 }
 
+void Shader::setBool(GLint uniID, bool value) const {
+    glUniform1i(uniID, (int)value);
+}
+
 void Shader::setInt(const char* name, int value) const {
     glUniform1i(glGetUniformLocation(program, name), value);
 }
 
+void Shader::setInt(GLint uniID, int value) const {
+    glUniform1i(uniID, value);
+}
+
 void Shader::setFloat(const char* name, float value) const {
     glUniform1f(glGetUniformLocation(program, name), value);
+}
+
+void Shader::setFloat(GLint uniID, float value) const {
+    glUniform1f(uniID, value);
+}
+
+void Shader::setMat4(const char* name, const glm::mat4& value) const {
+    glUniformMatrix4fv(glGetUniformLocation(program, name), 1, GL_FALSE, glm::value_ptr(value));
+}
+
+void Shader::setMat4(GLint uniID, const glm::mat4& value) const {
+    glUniformMatrix4fv(uniID, 1, GL_FALSE, glm::value_ptr(value));
+}
+
+GLint Shader::getUniformLocation(const char* name) {
+    return glGetUniformLocation(program, name);
 }

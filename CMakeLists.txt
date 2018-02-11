@@ -45,3 +45,9 @@ target_link_libraries(${PROJECT_NAME} tweeny)
 # STB
 set(STB_DIR "deps/stb")
 target_include_directories(${PROJECT_NAME} PRIVATE ${STB_DIR})
+
+# set build directory
+set_target_properties(${PROJECT_NAME} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build")
+INSTALL(DIRECTORY "${CMAKE_SOURCE_DIR}/resources/" DESTINATION "build/resources/")
+INSTALL(DIRECTORY "${CMAKE_SOURCE_DIR}/shaders/" DESTINATION "build/shaders/")
