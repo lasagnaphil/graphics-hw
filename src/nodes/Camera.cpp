@@ -35,9 +35,12 @@ void Camera::update(float dt) {
 
     mouseOffset *= mouseSensitivity;
     printf("%f %f\n", mouseOffset.x, mouseOffset.y);
+
     rotation.x += mouseOffset.y;
+    if (rotation.x > glm::radians(89.0f)) rotation.x = glm::radians(89.0f);
+    if (rotation.x < glm::radians(-89.0f)) rotation.x = glm::radians(-89.0f);
+
     rotation.z -= mouseOffset.x;
-    //rotation.y += mouseOffset.y;
 
     // Keyboard movement
     float velocity = movementSpeed * dt;
@@ -47,14 +50,30 @@ void Camera::update(float dt) {
     else if (inputMgr->keyboardPressed(SDLK_s)) {
         position -= getFrontVec() * velocity;
     }
-    else if (inputMgr->keyboardPressed(SDLK_a)) {
+    if (inputMgr->keyboardPressed(SDLK_a)) {
         position += getRightVec() * velocity;
     }
     else if (inputMgr->keyboardPressed(SDLK_d)) {
         position -= getRightVec() * velocity;
     }
+    if (inputMgr->keyboardPressed(SDLK_q)) {
+        position += getUpVec() * velocity;
+    }
+    else if (inputMgr->keyboardPressed(SDLK_e)) {
+        position -= getUpVec() * velocity;
+    }
 
     // Mouse scroll movement
+    int yoffset = inputMgr->relWheelPos().y;
+    if (zoom >= 1.0f && zoom <= 45.0f) {
+        zoom -= yoffset;
+    }
+    if (zoom <= 1.0f) {
+        zoom = 1.0f;
+    }
+    if (zoom >= 45.0f) {
+        zoom = 45.0f;
+    }
 }
 
 void Camera::processInput(SDL_Event& event) {

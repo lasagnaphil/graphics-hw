@@ -28,9 +28,6 @@ public:
             case SDL_KEYUP:
                 keyMap[ev.key.keysym.sym] = false;
                 break;
-            case SDL_MOUSEMOTION:
-                SDL_GetMouseState(&mouseX, &mouseY);
-                break;
             case SDL_MOUSEBUTTONDOWN:
                 mouseMap[ev.button.button] = true;
                 break;
@@ -38,7 +35,7 @@ public:
                 mouseMap[ev.button.button] = false;
                 break;
             case SDL_MOUSEWHEEL:
-                int wheelAmount = ev.wheel.y;
+                wheelAmount += ev.wheel.y;
         }
     }
 
@@ -62,6 +59,12 @@ public:
         return {x, y};
     }
 
+    glm::ivec2 relWheelPos() {
+        glm::ivec2 wheelAmountTemp = wheelAmount;
+        wheelAmount = {0, 0};
+        return wheelAmountTemp;
+    }
+
 private:
     InputManager() {}
 
@@ -69,8 +72,8 @@ private:
     std::unordered_map<SDL_Keycode, bool> keyMap;
     std::unordered_map<Uint8, bool> mouseMap;
 
-    int mouseX, mouseY;
-    int prevMouseX, prevMouseY;
+    glm::ivec2 wheelAmount;
+
 };
 
 

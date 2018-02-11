@@ -28,7 +28,7 @@ class Camera : public Spatial {
 public:
     struct Settings {
         static constexpr float Speed = 2.5f;
-        static constexpr float Sensitivity = 0.003f;
+        static constexpr float Sensitivity = 0.001f;
         static constexpr float Zoom = 45.0f;
     };
     float movementSpeed;
