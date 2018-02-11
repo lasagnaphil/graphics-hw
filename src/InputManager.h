@@ -51,7 +51,15 @@ public:
     }
 
     glm::ivec2 mousePos() {
-        return {mouseX, mouseY};
+        int x, y;
+        SDL_GetMouseState(&x, &y);
+        return {x, y};
+    }
+
+    glm::ivec2 relMousePos() {
+        int x, y;
+        SDL_GetRelativeMouseState(&x, &y);
+        return {x, y};
     }
 
 private:

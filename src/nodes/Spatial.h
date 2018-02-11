@@ -10,7 +10,7 @@
 class Spatial : public Node {
     friend class Scene;
 public:
-    Spatial() : Node(), position(position), spatialChildren(0) {
+    Spatial() : Node(), position({0.0f, 0.0f, 0.0f}), rotation({0.0f, 0.0f, 0.0f}), scale({1.0f, 1.0f, 1.0f}), spatialChildren(0) {
         spatialRepNode = this;
     }
 
@@ -63,16 +63,6 @@ public:
     void setRotation(float x, float y, float z) {
         setScale(glm::vec3(x, y, z));
     }
-
-    /*
-    void setRotation(float angle, glm::vec3 axis) {
-        setRotation(glm::rotate(glm::mat4(1.0f), angle, axis));
-    }
-
-    void setRotation(float angle, float axisX, float axisY, float axisZ) {
-        setRotation(angle, glm::vec3(axisX, axisY, axisZ));
-    }
-     */
 
 protected:
     glm::vec3 position;

@@ -12,7 +12,7 @@
 #include <memory>
 #include "nodes/Node.h"
 #include "nodes/Spatial.h"
-#include "nodes/Camera.h.temp2"
+#include "nodes/Camera.h"
 
 class Scene {
 public:

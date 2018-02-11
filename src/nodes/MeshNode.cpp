@@ -3,7 +3,6 @@
 //
 
 #include "MeshNode.h"
-#include "Camera.h.temp2"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>

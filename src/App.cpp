@@ -10,6 +10,7 @@
 #include "nodes/MeshNode.h"
 #include "AppSettings.h"
 #include "InputManager.h"
+#include "nodes/Camera.h"
 
 static void sdl_die(const char * message) {
     fprintf(stderr, "%s: %s\n", message, SDL_GetError());
@@ -77,12 +78,15 @@ void App::start() {
 
     // Create the window
     window = SDL_CreateWindow(
-            "OpenGL Test",
+            "GEngine [OpenGL]",
             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
             AppSettings::ScreenWidth, AppSettings::ScreenHeight, SDL_WINDOW_OPENGL
     );
 
     if (window == NULL) sdl_die("Couldn't set video mode");
+
+    // SDL Settings
+    SDL_SetRelativeMouseMode(SDL_TRUE);
 
     // Create OpenGL Context
     mainContext = SDL_GL_CreateContext(window);
@@ -117,10 +121,7 @@ void App::start() {
     glViewport(0, 0, w, h);
 
     // Enable depth testing
-    // glEnable(GL_DEPTH_TEST);
-
-    // Clear the screen
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
 
     // Load textures
     stbi_set_flip_vertically_on_load(true);
@@ -130,25 +131,51 @@ void App::start() {
     //
 
     // Shaders
-    Shader defaultShader("shaders/triangle.vert", "shaders/triangle.frag");
+    Shader defaultShader("shaders/default.vert", "shaders/default.frag");
     defaultShader.use();
 
     // Images
     Image containerImage("resources/container.jpg");
     //Image faceImage("resources/awesomeface.png");
 
+    // Textures
     Texture containerTex = Texture::build().setImage(containerImage).create();
     //Texture faceTex = Texture::build().setImage(faceImage).create();
 
-    // std::shared_ptr<Mesh> planeMesh(Mesh::createPlaneDyn());
-    // planeMesh->textures.push_back(containerTex);
+    std::shared_ptr<Mesh> planeMesh(Mesh::createPlaneDyn());
+    planeMesh->textures.push_back(containerTex);
     std::shared_ptr<Mesh> cubeMesh(Mesh::createCubeDyn());
     cubeMesh->textures.push_back(containerTex);
 
+    // Scene
     scene = std::make_unique<Scene>();
 
-    MeshNode* planeNode = new MeshNode(cubeMesh, defaultShader);
-    scene->getRootNode()->addChild(planeNode);
+    // Root Node
+    Node* rootNode = scene->getRootNode();
+
+    // Camera
+    Camera* camera = scene->createNode<Camera>();
+    camera->attachShader(defaultShader);
+    rootNode->addChild(camera);
+
+    // Cubes
+    glm::vec3 cubePositions[] = {
+            glm::vec3( 0.0f,  0.0f,  0.0f),
+            glm::vec3( 2.0f,  5.0f, -15.0f),
+            glm::vec3(-1.5f, -2.2f, -2.5f),
+            glm::vec3(-3.8f, -2.0f, -12.3f),
+            glm::vec3( 2.4f, -0.4f, -3.5f),
+            glm::vec3(-1.7f,  3.0f, -7.5f),
+            glm::vec3( 1.3f, -2.0f, -2.5f),
+            glm::vec3( 1.5f,  2.0f, -2.5f),
+            glm::vec3( 1.5f,  0.2f, -1.5f),
+            glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+    for (auto pos : cubePositions) {
+        MeshNode* cubeNode = scene->createNode<MeshNode>(cubeMesh, defaultShader);
+        cubeNode->setPosition(pos);
+        rootNode->addChild(cubeNode);
+    }
 
     // Program loop
     Uint32 frameTime;
@@ -201,7 +228,7 @@ void App::update(float dt) {
 void App::render() {
     // clear screen
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // do stuff
     scene->render();

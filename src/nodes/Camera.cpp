@@ -2,10 +2,11 @@
 // Created by lasagnaphil on 2/8/18.
 //
 
-#include "Camera.h.temp2"
 #include "../Scene.h"
 #include "../AppSettings.h"
 #include "../InputManager.h"
+
+#include "Camera.h"
 
 Camera::Camera() : Spatial(),
                    shaders(0),
@@ -19,27 +20,24 @@ void Camera::cameraUpdate() {
     for (auto shader : shaders) {
         shader.use();
         glm::mat4 projection = getPerspectiveMatrix();
-        shader.setMat4("projection", projection);
+        shader.setMat4("proj", projection);
         glm::mat4 view = getViewMatrix();
         shader.setMat4("view", view);
     }
 }
 
 void Camera::update(float dt) {
-    static glm::ivec2 prevMousePos;
-
     auto inputMgr = InputManager::getInstance();
 
-    /*
     // Mouse movement
-    auto mousePos = inputMgr->mousePos();
-    glm::ivec2 mouseOffset = mousePos - prevMousePos;
+    auto mouseOffsetI = inputMgr->relMousePos();
+    auto mouseOffset = glm::vec2((float)mouseOffsetI.x, (float)mouseOffsetI.y);
 
     mouseOffset *= mouseSensitivity;
-    rotation = glm::rotate(rotation, (float)mouseOffset.x, glm::vec3(0.0f, 1.0f, 0.0f));
-    rotation = glm::rotate(rotation, (float)mouseOffset.y, glm::vec3(1.0f, 0.0f, 0.0f));
-
-    prevMousePos = mousePos;
+    printf("%f %f\n", mouseOffset.x, mouseOffset.y);
+    rotation.x += mouseOffset.y;
+    rotation.z -= mouseOffset.x;
+    //rotation.y += mouseOffset.y;
 
     // Keyboard movement
     float velocity = movementSpeed * dt;
@@ -50,14 +48,18 @@ void Camera::update(float dt) {
         position -= getFrontVec() * velocity;
     }
     else if (inputMgr->keyboardPressed(SDLK_a)) {
-        position -= getRightVec() * velocity;
-    }
-    else if (inputMgr->keyboardPressed(SDLK_d)) {
         position += getRightVec() * velocity;
     }
-     */
+    else if (inputMgr->keyboardPressed(SDLK_d)) {
+        position -= getRightVec() * velocity;
+    }
 
     // Mouse scroll movement
+}
 
+void Camera::processInput(SDL_Event& event) {
+    if (event.type == SDL_MOUSEWHEEL) {
+        // TODO
+    }
 }
 

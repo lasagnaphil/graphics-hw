@@ -28,10 +28,9 @@ class Camera : public Spatial {
 public:
     struct Settings {
         static constexpr float Speed = 2.5f;
-        static constexpr float Sensitivity = 0.1f;
+        static constexpr float Sensitivity = 0.003f;
         static constexpr float Zoom = 45.0f;
     };
-
     float movementSpeed;
     float mouseSensitivity;
     float zoom;
@@ -44,20 +43,22 @@ public:
 
     virtual void update(float dt) override;
 
+    virtual void processInput(SDL_Event& event) override;
+
     void attachShader(Shader shader) {
         shaders.push_back(shader);
     }
 
     glm::vec3 getFrontVec() {
-        return glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z) * glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+        return glm::orientate4(rotation) * glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
     }
 
     glm::vec3 getUpVec() {
-        return glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z) * glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+        return glm::orientate4(rotation) * glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
     }
 
     glm::vec3 getRightVec() {
-        return glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z) * glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+        return glm::orientate4(rotation) * glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
     }
 
     glm::mat4 getViewMatrix() {
