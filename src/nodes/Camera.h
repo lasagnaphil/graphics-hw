@@ -27,45 +27,38 @@ struct IntRect {
 class Camera : public Spatial {
 public:
     struct Settings {
+        static constexpr float Yaw = -90.0f;
+        static constexpr float Pitch = 0.0f;
         static constexpr float Speed = 2.5f;
-        static constexpr float Sensitivity = 0.001f;
+        static constexpr float Sensitivity = 0.1f;
         static constexpr float Zoom = 45.0f;
     };
-    float movementSpeed;
-    float mouseSensitivity;
-    float zoom;
 
-    IntRect viewport;
-
-    Camera();
-
-    void cameraUpdate();
+    Camera(float yaw = Settings::Yaw, float pitch = Settings::Pitch);
 
     virtual void update(float dt) override;
-
-    virtual void processInput(SDL_Event& event) override;
 
     void attachShader(Shader shader) {
         shaders.push_back(shader);
     }
 
-    glm::vec3 getFrontVec() {
-        return glm::orientate4(rotation) * glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+    inline glm::vec3 getFrontVec() const {
+        return glm::rotate(rotation, glm::vec3(0.0f, 0.0f, 1.0f));
     }
 
-    glm::vec3 getUpVec() {
-        return glm::orientate4(rotation) * glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+    inline glm::vec3 getUpVec() const {
+        return glm::rotate(rotation, glm::vec3(0.0f, 1.0f, 0.0f));
     }
 
-    glm::vec3 getRightVec() {
-        return glm::orientate4(rotation) * glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    inline glm::vec3 getRightVec() const {
+        return glm::rotate(rotation, glm::vec3(1.0f, 0.0f, 0.0f));
     }
 
-    glm::mat4 getViewMatrix() {
+    inline glm::mat4 getViewMatrix() const {
         return glm::lookAt(position, position + getFrontVec(), getUpVec());
     }
 
-    glm::mat4 getPerspectiveMatrix() {
+    inline glm::mat4 getPerspectiveMatrix() const {
         return glm::perspective(
                 glm::radians(zoom),
                 (float)AppSettings::ScreenWidth / (float)AppSettings::ScreenHeight,
@@ -74,7 +67,17 @@ public:
         );
     }
 
+    float pitch;
+    float yaw;
+    float movementSpeed;
+    float mouseSensitivity;
+    float zoom;
+    IntRect viewport;
+    bool constrainPitch;
+
 private:
+
+    void updateCameraVectors();
 
     std::vector<Shader> shaders;
 };

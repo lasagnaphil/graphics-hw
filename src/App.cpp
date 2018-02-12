@@ -159,7 +159,6 @@ void App::start() {
     camera->attachShader(defaultShader);
     rootNode->addChild(camera);
 
-    /*
     // Cubes
     glm::vec3 cubePositions[] = {
             glm::vec3( 0.0f,  0.0f,  0.0f),
@@ -178,7 +177,6 @@ void App::start() {
         cubeNode->setPosition(pos);
         rootNode->addChild(cubeNode);
     }
-     */
 
     // Nanosuit Model
     Model nanosuitModel("resources/nanosuit/nanosuit.obj");

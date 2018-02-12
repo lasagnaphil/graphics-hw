@@ -17,7 +17,7 @@ void Spatial::updateTransform() {
     if (dirtyFlag) {
         localTransform *= glm::translate(glm::mat4(1.0f), position);
         localTransform *= glm::scale(localTransform, scale);
-        localTransform *= glm::orientate4(rotation);
+        localTransform *= glm::mat4_cast(rotation);
         dirtyFlag = false;
     }
 }

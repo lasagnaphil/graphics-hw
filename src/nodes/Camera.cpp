@@ -8,25 +8,23 @@
 
 #include "Camera.h"
 
-Camera::Camera() : Spatial(),
-                   shaders(0),
-                   movementSpeed(Settings::Speed),
-                   mouseSensitivity(Settings::Sensitivity),
-                   zoom(Settings::Zoom) {
+Camera::Camera(float yaw, float pitch) :
+        Spatial(),
+        yaw(yaw), pitch(pitch),
+        movementSpeed(Settings::Speed),
+        mouseSensitivity(Settings::Sensitivity),
+        zoom(Settings::Zoom),
+        constrainPitch(true)
+{
     viewport = {.x = 0, .y = 0, .width = AppSettings::ScreenWidth, .height = AppSettings::ScreenHeight};
-}
-
-void Camera::cameraUpdate() {
-    for (auto shader : shaders) {
-        shader.use();
-        glm::mat4 projection = getPerspectiveMatrix();
-        shader.setMat4("proj", projection);
-        glm::mat4 view = getViewMatrix();
-        shader.setMat4("view", view);
-    }
+    updateCameraVectors();
 }
 
 void Camera::update(float dt) {
+
+    //
+    // Update based on mouse / keyboard input
+    //
     auto inputMgr = InputManager::getInstance();
 
     // Mouse movement
@@ -35,11 +33,25 @@ void Camera::update(float dt) {
 
     mouseOffset *= mouseSensitivity;
 
-    rotation.x += mouseOffset.y;
-    if (rotation.x > glm::radians(89.0f)) rotation.x = glm::radians(89.0f);
-    if (rotation.x < glm::radians(-89.0f)) rotation.x = glm::radians(-89.0f);
+     yaw += mouseOffset.x;
+     pitch += mouseOffset.y;
 
-    rotation.z -= mouseOffset.x;
+    if (constrainPitch) {
+        if (pitch > 89.0f) pitch = 89.0f;
+        if (pitch < -89.0f) pitch = -89.0f;
+    }
+
+    updateCameraVectors();
+
+    // pitch(mouseOffset.y);
+    // rotation = glm::rotate(rotation, mouseOffset.y, {0.0f, 1.0f, 0.0f});
+    // rotation.x += mouseOffset.y;
+    // if (rotation.x > glm::radians(89.0f)) rotation.x = glm::radians(89.0f);
+    // if (rotation.x < glm::radians(-89.0f)) rotation.x = glm::radians(-89.0f);
+
+    // yaw(-mouseOffset.x);
+    // rotation = glm::rotate(rotation, -mouseOffset.x, {0.0f, 0.0f, 1.0f});
+    // rotation.z -= mouseOffset.x;
 
     // Keyboard movement
     float velocity = movementSpeed * dt;
@@ -47,7 +59,7 @@ void Camera::update(float dt) {
         position += getFrontVec() * velocity;
     }
     else if (inputMgr->keyboardPressed(SDLK_s)) {
-        position -= getFrontVec() * velocity;
+        position -= getFrontVec()* velocity;
     }
     if (inputMgr->keyboardPressed(SDLK_a)) {
         position += getRightVec() * velocity;
@@ -73,11 +85,24 @@ void Camera::update(float dt) {
     if (zoom >= 45.0f) {
         zoom = 45.0f;
     }
-}
 
-void Camera::processInput(SDL_Event& event) {
-    if (event.type == SDL_MOUSEWHEEL) {
-        // TODO
+    //
+    // Update shader uniforms
+    //
+    for (auto shader : shaders) {
+        shader.use();
+        glm::mat4 projection = getPerspectiveMatrix();
+        shader.setMat4("proj", projection);
+        glm::mat4 view = getViewMatrix();
+        shader.setMat4("view", view);
     }
 }
+
+void Camera::updateCameraVectors() {
+    glm::quat quatX = glm::angleAxis(-glm::radians(yaw), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::quat quatY = glm::angleAxis(glm::radians(pitch), glm::vec3(1.0f, 0.0f, 0.0f));
+    rotation = quatX * quatY;
+    // rotation = glm::toQuat(glm::orientate3(glm::vec3(0.0f, glm::radians(pitch), -glm::radians(yaw))));
+}
+
 

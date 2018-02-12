@@ -69,11 +69,6 @@ private:
     }
 
     void render(Node* node) {
-        // Update shaders based on camera
-        for (auto camera : cameras) {
-            camera->cameraUpdate();
-        }
-
         // render nodes recursively
         node->render();
         for (Node* child : node->children) {
