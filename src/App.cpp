@@ -12,6 +12,7 @@
 #include "InputManager.h"
 #include "nodes/Camera.h"
 #include "Model.h"
+#include "nodes/LightNode.h"
 
 static void sdl_die(const char * message) {
     fprintf(stderr, "%s: %s\n", message, SDL_GetError());
@@ -132,32 +133,43 @@ void App::start() {
     //
 
     // Shaders
-    Shader defaultShader("shaders/default.vert", "shaders/default.frag");
-    defaultShader.use();
+    // Shader defaultShader("shaders/default.vert", "shaders/default.frag");
+    Shader defaultShader("shaders/lighting.vert", "shaders/lighting.frag");
 
     // Images
     Image containerImage("resources/container.jpg");
-    //Image faceImage("resources/awesomeface.png");
+    Image faceImage("resources/awesomeface.png");
 
     // Textures
     Texture containerTex = Texture::build().setImage(containerImage).create();
-    //Texture faceTex = Texture::build().setImage(faceImage).create();
+    Texture faceTex = Texture::build().setImage(faceImage).create();
 
-    std::shared_ptr<Mesh> planeMesh(Mesh::createPlaneDyn());
-    planeMesh->textures.push_back(containerTex);
     std::shared_ptr<Mesh> cubeMesh(Mesh::createCubeDyn());
     cubeMesh->textures.push_back(containerTex);
+    std::shared_ptr<Mesh> lightIndicatorMesh(Mesh::createCubeDyn());
+    lightIndicatorMesh->textures.push_back(faceTex);
 
     // Scene
     scene = std::make_unique<Scene>();
+    scene->addShader(defaultShader);
 
     // Root Node
     Node* rootNode = scene->getRootNode();
 
     // Camera
     Camera* camera = scene->createNode<Camera>();
-    camera->attachShader(defaultShader);
     rootNode->addChild(camera);
+
+    // Light
+    LightNode* lightNode = scene->createNode<LightNode>();
+    lightNode->setPosition(1.2f, 1.0f, 2.0f);
+    lightNode->setScale(0.2f, 0.2f, 0.2f);
+    lightNode->color = {1.0f, 1.0f, 1.0f};
+    rootNode->addChild(lightNode);
+
+    // Cube to show light location
+    MeshNode* lightIndicator = scene->createNode<MeshNode>(lightIndicatorMesh, defaultShader);
+    lightNode->addChild(lightIndicator);
 
     // Cubes
     glm::vec3 cubePositions[] = {
@@ -179,7 +191,7 @@ void App::start() {
     }
 
     // Nanosuit Model
-    Model nanosuitModel("resources/nanosuit/nanosuit.obj");
+    // Model nanosuitModel("resources/nanosuit/nanosuit.obj");
 
     // Program loop
     Uint32 frameTime;
@@ -229,7 +241,7 @@ void App::update(float dt) {
 
 void App::render() {
     // clear screen
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // do stuff

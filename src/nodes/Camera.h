@@ -38,10 +38,6 @@ public:
 
     virtual void update(float dt) override;
 
-    void attachShader(Shader shader) {
-        shaders.push_back(shader);
-    }
-
     inline glm::vec3 getFrontVec() const {
         return glm::rotate(rotation, glm::vec3(0.0f, 0.0f, 1.0f));
     }
@@ -78,8 +74,6 @@ public:
 private:
 
     void updateCameraVectors();
-
-    std::vector<Shader> shaders;
 };
 
 

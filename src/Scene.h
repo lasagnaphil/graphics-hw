@@ -12,11 +12,11 @@
 #include <memory>
 #include "nodes/Node.h"
 #include "nodes/Spatial.h"
-#include "nodes/Camera.h"
+#include "Shader.h"
 
 class Scene {
 public:
-    Scene() : rootNode(std::make_unique<Spatial>()), cameras(0) {
+    Scene() : rootNode(std::make_unique<Spatial>()) {
         rootNode->scene = this;
     }
 
@@ -35,27 +35,20 @@ public:
         processInput(rootNode.get(), event);
     }
 
+    std::vector<Shader> getShaders() const {
+        return shaders;
+    }
+
+    void addShader(Shader shader) {
+        shaders.push_back(shader);
+    }
+
     template <typename T, typename ... Args>
     T* createNode(Args... args) {
         T* node = new T(args...);
         node->scene = this;
-        Camera* camera = dynamic_cast<Camera*>(node);
-        if (camera) { cameras.push_back(camera); }
         return node;
     }
-
-    template <typename ... Args>
-    Camera* createCamera(Args... args) {
-        Camera* camera = new Camera(args...);
-        camera->scene = this;
-        cameras.push_back(camera);
-        return camera;
-    }
-    /*
-    void setDefaultShaderProgram(GLuint shaderProgram) {
-        setDefaultShaderProgram(&rootNode, shaderProgram);
-    }
-     */
 
 private:
 
@@ -97,7 +90,7 @@ private:
 protected:
     std::unique_ptr<Spatial> rootNode;
 
-    std::vector<Camera*> cameras;
+    std::vector<Shader> shaders;
 
     bool firstTime = true;
 };

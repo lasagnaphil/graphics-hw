@@ -11,6 +11,7 @@
 
 #include <glad/glad.h>
 #include <glm/detail/type_mat.hpp>
+#include <glm/detail/type_vec3.hpp>
 
 class Shader {
 public:
@@ -30,7 +31,8 @@ public:
     void setFloat(GLint uniID, float value) const;
     void setMat4(const char* name, const glm::mat4& value) const;
     void setMat4(GLint uniID, const glm::mat4& value) const;
-
+    void setVec3(const char* name, const glm::vec3& value) const;
+    void setVec3(GLint uniID, const glm::vec3& value) const;
 
     GLint getUniformLocation(const char* name);
 

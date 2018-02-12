@@ -89,12 +89,11 @@ void Camera::update(float dt) {
     //
     // Update shader uniforms
     //
-    for (auto shader : shaders) {
+    for (auto shader : scene->getShaders()) {
         shader.use();
-        glm::mat4 projection = getPerspectiveMatrix();
-        shader.setMat4("proj", projection);
-        glm::mat4 view = getViewMatrix();
-        shader.setMat4("view", view);
+        shader.setMat4("proj", getPerspectiveMatrix());
+        shader.setMat4("view", getViewMatrix());
+        shader.setVec3("viewPos", position);
     }
 }
 
