@@ -66,6 +66,11 @@ public:
 
     void rotate(const glm::quat& rotation) {
         this->rotation *= rotation;
+        setDirtyFlag(true);
+    }
+
+    void pointAt(const glm::vec3& direction) {
+        this->rotation = glm::quat_cast(glm::lookAt({0.0f, 0.0f, 0.0f}, direction, {0.0f, 1.0f, 0.0f}));
     }
 
 protected:
