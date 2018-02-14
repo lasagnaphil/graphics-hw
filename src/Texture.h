@@ -7,8 +7,11 @@
 
 #include "Image.h"
 
-#define SETTER(__Type, __memberName, __FaceName) \
-    Builder& set##__FaceName(__Type value) { \
+#include <glad/glad.h>
+
+#define VAR_WITH_SETTER(__Type, __memberName, __FaceName) \
+    private: __Type __memberName; \
+    public: Builder& set##__FaceName(__Type value) { \
         (__memberName) = value; \
         return *this; \
     }
@@ -47,30 +50,20 @@ class Texture {
             return *this;
         }
 
-        SETTER(unsigned char*, data, Data)
-        SETTER(GLint, level, Level)
-        SETTER(GLint, internalFormat, InternalFormat)
-        SETTER(GLsizei, width, Width)
-        SETTER(GLsizei, height, Height)
-        SETTER(GLint, border, Border)
-        SETTER(GLenum, format, Format)
-        SETTER(GLenum, datatype, Datatype)
+        VAR_WITH_SETTER(unsigned char*, data, Data)
+        VAR_WITH_SETTER(GLint, level, Level)
+        VAR_WITH_SETTER(GLint, internalFormat, InternalFormat)
+        VAR_WITH_SETTER(GLsizei, width, Width)
+        VAR_WITH_SETTER(GLsizei, height, Height)
+        VAR_WITH_SETTER(GLint, border, Border)
+        VAR_WITH_SETTER(GLenum, format, Format)
+        VAR_WITH_SETTER(GLenum, datatype, Datatype)
 
         Texture create() {
             return Texture(data, level, internalFormat,
                            width, height, border,
                            format, datatype);
         }
-
-    private:
-        unsigned char* data;
-        GLint level;
-        GLint internalFormat;
-        GLsizei width;
-        GLsizei height;
-        GLint border;
-        GLenum format;
-        GLenum datatype;
 
     };
 
@@ -99,6 +92,8 @@ public:
 
     static Builder build() { return Builder(); }
 
+    static Texture fromImage(Image& image) { return Texture::build().setImage(image).create(); }
+
     TextureType type = TextureType::Default;
     std::string path;
 
@@ -106,7 +101,6 @@ private:
     unsigned int textureID;
 };
 
-
-
+#undef VAR_WITH_SETTER
 
 #endif //GENGINE_TEXTURE_H

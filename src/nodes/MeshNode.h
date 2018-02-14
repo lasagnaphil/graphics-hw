@@ -4,21 +4,19 @@
 #include <memory>
 #include "Spatial.h"
 #include "../Mesh.h"
+#include "../Material.h"
 
 class MeshNode : public Spatial {
 public:
-    MeshNode(std::shared_ptr<Mesh> mesh, Shader shader);
+    MeshNode(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, Shader shader);
 
     virtual void update(float dt) override;
     virtual void render() override;
 
-    MeshNode& setShader(Shader shader);
-
-protected:
+    void setShader(Shader shader);
 
     std::shared_ptr<Mesh> mesh;
+    std::shared_ptr<Material> material;
     Shader shader;
-
-    GLint uniWorldTransform;
 };
 

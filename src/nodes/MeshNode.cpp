@@ -4,11 +4,10 @@
 
 #include "MeshNode.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <variant>
 
-MeshNode::MeshNode(std::shared_ptr<Mesh> mesh, Shader shader) :
-        mesh(std::move(mesh)), shader(shader) {
+MeshNode::MeshNode(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, Shader shader) :
+        mesh(std::move(mesh)), material(std::move(material)), shader(shader) {
 }
 
 void MeshNode::update(float dt) {
@@ -17,10 +16,16 @@ void MeshNode::update(float dt) {
 void MeshNode::render() {
     shader.use();
     shader.setMat4("model", worldTransform);
+    shader.setFloat("material.shininess", material->shininess);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, material->diffuse.getID());
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, material->specular.getID());
+
     mesh->draw(shader);
 }
 
-MeshNode& MeshNode::setShader(Shader shader) {
+void MeshNode::setShader(Shader shader) {
     this->shader = shader;
-    return *this;
 }

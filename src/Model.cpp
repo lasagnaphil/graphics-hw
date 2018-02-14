@@ -96,7 +96,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
         }
         if (!skip) {
             Image image((directory + "/" + str.C_Str()).c_str());
-            Texture texture = Texture::build().setImage(image).create();
+            Texture texture = Texture::fromImage(image);
             if (type == aiTextureType_DIFFUSE) {
                 texture.type = TextureType::Diffuse;
             } else if (type == aiTextureType_SPECULAR) {

@@ -73,108 +73,49 @@ void Mesh::setupMesh() {
     glBindVertexArray(0);
 }
 
-/*
-static glm::vec3 cubeVertices[8] = {
-        glm::vec3(-1, -1, -1),
-        glm::vec3( 1, -1, -1),
-        glm::vec3( 1,  1, -1),
-        glm::vec3(-1,  1, -1),
-        glm::vec3(-1, -1,  1),
-        glm::vec3( 1, -1,  1),
-        glm::vec3( 1,  1,  1),
-        glm::vec3(-1,  1,  1)
-};
-static glm::vec2 cubeTexCoords[4] = {
-        glm::vec2(0, 0),
-        glm::vec2(1, 0),
-        glm::vec2(1, 1),
-        glm::vec2(0, 1)
-};
-static glm::vec3 cubeNormals[8] = {
-        glm::vec3(0, 0, 1),
-        glm::vec3(1, 0, 1),
-        glm::vec3(0, 0, -1),
-        glm::vec3(-1, 0, 1),
-        glm::vec3(0, 1, 0),
-        glm::vec3(0, -1, 1),
-};
-static unsigned int cubeIndices[36] = {
-        0, 1, 3, 3, 1, 2,
-        1, 5, 2, 2, 5, 6,
-        5, 4, 6, 6, 4, 7,
-        4, 0, 7, 7, 0, 3,
-        3, 2, 7, 7, 2, 6,
-        4, 5, 0, 0, 5, 1
-};
-static unsigned int cubeTexIndices[6] = {
-        0, 1, 3, 3, 1, 2
-};
-        {-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f},
-        { 1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f},
-        { 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.1f, 1.0f},
-        {-1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f},
- */
+static Vertex cubeVertices[36] = {
+        // positions          // normals           // texture coords
+        {-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f},
+        {0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f},
+        {0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f},
+        {0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f},
+        {-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f},
+        {-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f},
 
-static glm::vec3 cubeVertices[36] = {
-        {-1.0f, -1.0f,  1.0f},
-        { 1.0f, -1.0f,  1.0f},
-        { 1.0f,  1.0f,  1.0f},
-        {-1.0f, -1.0f,  1.0f},
-        { 1.0f,  1.0f,  1.0f},
-        {-1.0f,  1.0f,  1.0f},
+        {-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f},
+        {0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f},
+        {0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f},
+        {0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f},
+        {-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f},
+        {-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f},
 
-        { 1.0f,  1.0f,  1.0f},
-        { 1.0f,  1.0f, -1.0f},
-        { 1.0f, -1.0f, -1.0f},
-        { 1.0f,  1.0f,  1.0f},
-        { 1.0f, -1.0f, -1.0f},
-        { 1.0f, -1.0f,  1.0f},
+        {-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f},
+        {-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f},
+        {-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f},
+        {-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f},
+        {-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f},
+        {-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f},
 
-        {-1.0f, -1.0f, -1.0f},
-        { 1.0f, -1.0f, -1.0f},
-        { 1.0f,  1.0f, -1.0f},
-        {-1.0f, -1.0f, -1.0f},
-        { 1.0f,  1.0f, -1.0f},
-        {-1.0f,  1.0f, -1.0f},
+        {0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f},
+        {0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f},
+        {0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f},
+        {0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f},
+        {0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f},
+        {0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f},
 
-        {-1.0f, -1.0f, -1.0f},
-        {-1.0f, -1.0f,  1.0f},
-        {-1.0f,  1.0f,  1.0f},
-        {-1.0f, -1.0f, -1.0f},
-        {-1.0f,  1.0f,  1.0f},
-        {-1.0f,  1.0f, -1.0f},
+        {-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f},
+        {0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f},
+        {0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f},
+        {0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f},
+        {-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f},
+        {-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f},
 
-        { 1.0f,  1.0f,  1.0f},
-        {-1.0f,  1.0f,  1.0f},
-        {-1.0f,  1.0f, -1.0f},
-        { 1.0f,  1.0f,  1.0f},
-        {-1.0f,  1.0f, -1.0f},
-        { 1.0f,  1.0f, -1.0f},
-
-        {-1.0f, -1.0f, -1.0f},
-        { 1.0f, -1.0f, -1.0f},
-        { 1.0f, -1.0f,  1.0f},
-        {-1.0f, -1.0f, -1.0f},
-        { 1.0f, -1.0f,  1.0f},
-        {-1.0f, -1.0f,  1.0f}
-};
-
-static glm::vec3 cubeNormals[6] = {
-        { 0.0f,  0.0f,  1.0f},
-        {-1.0f,  0.0f,  0.0f},
-        { 0.0f,  0.0f, -1.0f},
-        { 1.0f,  0.0f,  0.0f},
-        { 0.0f,  1.0f,  0.0f},
-        { 0.0f, -1.0f,  0.0f},
-};
-
-static glm::vec2 cubeTexCoords[6] = {
-        {0.0f, 0.0f},
-        {1.0f, 0.0f},
-        {1.0f, 1.0f},
-        {0.0f, 0.0f},
-        {1.0f, 1.0f},
-        {0.0f, 1.0f}
+        {-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f},
+        {0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f},
+        {0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f},
+        {0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f},
+        {-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f},
+        {-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f}
 };
 
 static unsigned int cubeIndices[36] = {
@@ -197,14 +138,8 @@ static unsigned int planeIndices[6] = {
 };
 
 Mesh Mesh::createCube() {
-    using std::vector;
-    vector<Vertex> vertices(36);
-    for (unsigned int i = 0; i < 36; ++i) {
-        vertices[i].position = cubeVertices[i];
-        vertices[i].normal = cubeNormals[i / 6];
-        vertices[i].texCoords = cubeTexCoords[i % 6];
-    }
-    return Mesh(vertices, std::vector<unsigned int>(std::begin(cubeIndices), std::end(cubeIndices)), {});
+    return Mesh(std::vector<Vertex>(std::begin(cubeVertices), std::end(cubeVertices)),
+                std::vector<unsigned int>(std::begin(cubeIndices), std::end(cubeIndices)), {});
 }
 
 Mesh Mesh::createSphere() {
@@ -217,14 +152,8 @@ Mesh Mesh::createPlane() {
 }
 
 Mesh* Mesh::createCubeDyn() {
-    using std::vector;
-    vector<Vertex> vertices(36);
-    for (unsigned int i = 0; i < 36; ++i) {
-        vertices[i].position = cubeVertices[i];
-        vertices[i].normal = cubeNormals[i / 6];
-        vertices[i].texCoords = cubeTexCoords[i % 6];
-    }
-    return new Mesh(vertices, std::vector<unsigned int>(std::begin(cubeIndices), std::end(cubeIndices)), {});
+    return new Mesh(std::vector<Vertex>(std::begin(cubeVertices), std::end(cubeVertices)),
+                std::vector<unsigned int>(std::begin(cubeIndices), std::end(cubeIndices)), {});
 }
 
 Mesh* Mesh::createSphereDyn() {

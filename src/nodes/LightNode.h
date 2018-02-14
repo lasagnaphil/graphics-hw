@@ -11,14 +11,15 @@
 
 class LightNode : public Spatial {
 public:
-    LightNode() : Spatial() {}
+    LightNode();
 
     void update(float dt) override;
 
-    glm::vec3 color;
+    glm::vec3 ambientColor;
+    glm::vec3 diffuseColor;
+    glm::vec3 specularColor;
 
 private:
-    std::vector<Shader> shaders;
 };
 
 

@@ -135,15 +135,25 @@ void App::start() {
     // Shaders
     // Shader defaultShader("shaders/default.vert", "shaders/default.frag");
     Shader defaultShader("shaders/lighting.vert", "shaders/lighting.frag");
+    defaultShader.use();
+    defaultShader.setInt("material.diffuse", 0);
+    defaultShader.setInt("material.specular", 1);
 
     // Images
-    Image containerImage("resources/container.jpg");
+    Image containerImage("resources/container2.png");
+    Image containerSpecularImage("resources/container2_specular.png");
     Image faceImage("resources/awesomeface.png");
 
     // Textures
-    Texture containerTex = Texture::build().setImage(containerImage).create();
-    Texture faceTex = Texture::build().setImage(faceImage).create();
+    Texture containerTex = Texture::fromImage(containerImage);
+    Texture containerSpecularTex = Texture::fromImage(containerSpecularImage);
+    Texture faceTex = Texture::fromImage(faceImage);
 
+    // Materials
+    auto containerMat = std::make_shared<Material>(containerTex, containerSpecularTex, 64.0f);
+    auto lightIndicatorMat = std::make_shared<Material>(faceTex, containerSpecularTex, 64.0f);
+
+    // Mesh
     std::shared_ptr<Mesh> cubeMesh(Mesh::createCubeDyn());
     cubeMesh->textures.push_back(containerTex);
     std::shared_ptr<Mesh> lightIndicatorMesh(Mesh::createCubeDyn());
@@ -164,11 +174,13 @@ void App::start() {
     LightNode* lightNode = scene->createNode<LightNode>();
     lightNode->setPosition(1.2f, 1.0f, 2.0f);
     lightNode->setScale(0.2f, 0.2f, 0.2f);
-    lightNode->color = {1.0f, 1.0f, 1.0f};
+    lightNode->ambientColor = {0.2f, 0.2f, 0.2f};
+    lightNode->diffuseColor = {0.5f, 0.5f, 0.5f};
+    lightNode->specularColor = {1.0f, 1.0f, 1.0f};
     rootNode->addChild(lightNode);
 
     // Cube to show light location
-    MeshNode* lightIndicator = scene->createNode<MeshNode>(lightIndicatorMesh, defaultShader);
+    MeshNode* lightIndicator = scene->createNode<MeshNode>(lightIndicatorMesh, lightIndicatorMat, defaultShader);
     lightNode->addChild(lightIndicator);
 
     // Cubes
@@ -185,7 +197,7 @@ void App::start() {
             glm::vec3(-1.3f,  1.0f, -1.5f)
     };
     for (auto pos : cubePositions) {
-        MeshNode* cubeNode = scene->createNode<MeshNode>(cubeMesh, defaultShader);
+        MeshNode* cubeNode = scene->createNode<MeshNode>(cubeMesh, containerMat, defaultShader);
         cubeNode->setPosition(pos);
         rootNode->addChild(cubeNode);
     }

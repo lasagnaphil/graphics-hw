@@ -17,6 +17,7 @@ Texture::Texture(unsigned char* data,
                  GLenum format,
                  GLenum datatype) {
     glGenTextures(1, &textureID);
+    printf("textureID: %d\n", textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
     glTexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, border, format, datatype, data);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -58,5 +59,7 @@ void Texture::setParameterIuiv(GLenum pname, const GLuint* param) {
     glBindTexture(GL_TEXTURE_2D, textureID);
     glTexParameterIuiv(GL_TEXTURE_2D, pname, param);
 }
+
+#undef SETTER_IMPL
 
 
