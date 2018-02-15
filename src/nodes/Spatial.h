@@ -70,7 +70,11 @@ public:
     }
 
     void pointAt(const glm::vec3& direction) {
-        this->rotation = glm::quat_cast(glm::lookAt({0.0f, 0.0f, 0.0f}, direction, {0.0f, 1.0f, 0.0f}));
+        glm::vec3 dir = glm::normalize(direction);
+        float scale = 1 / glm::length(glm::vec3(0.0f, 0.0f, 1.0f) + dir);
+        float quatR = scale * (1 + dir.z);
+        glm::vec3 quatI = scale * glm::cross({0.0f, 0.0f, 1.0f}, dir);
+        this->rotation = glm::quat(quatR, quatI.x, quatI.y, quatI.z);
     }
 
 protected:

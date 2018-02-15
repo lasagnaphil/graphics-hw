@@ -17,7 +17,7 @@
     }
 
 enum class TextureType {
-    Default, Diffuse, Specular
+    Diffuse, Specular
 };
 
 class Texture {
@@ -94,7 +94,7 @@ public:
 
     static Texture fromImage(Image& image) { return Texture::build().setImage(image).create(); }
 
-    TextureType type = TextureType::Default;
+    TextureType type = TextureType::Diffuse;
     std::string path;
 
 private:

@@ -101,6 +101,7 @@ void Camera::updateCameraVectors() {
     glm::quat quatX = glm::angleAxis(-glm::radians(yaw), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::quat quatY = glm::angleAxis(glm::radians(pitch), glm::vec3(1.0f, 0.0f, 0.0f));
     rotation = quatX * quatY;
+    rotation = glm::normalize(rotation);
     // rotation = glm::toQuat(glm::orientate3(glm::vec3(0.0f, glm::radians(pitch), -glm::radians(yaw))));
 }
 

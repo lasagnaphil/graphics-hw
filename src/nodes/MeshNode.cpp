@@ -4,8 +4,6 @@
 
 #include "MeshNode.h"
 
-#include <variant>
-
 MeshNode::MeshNode(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, Shader shader) :
         mesh(std::move(mesh)), material(std::move(material)), shader(shader) {
 }

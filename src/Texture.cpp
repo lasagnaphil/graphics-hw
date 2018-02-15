@@ -17,7 +17,6 @@ Texture::Texture(unsigned char* data,
                  GLenum format,
                  GLenum datatype) {
     glGenTextures(1, &textureID);
-    printf("textureID: %d\n", textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
     glTexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, border, format, datatype, data);
     glGenerateMipmap(GL_TEXTURE_2D);

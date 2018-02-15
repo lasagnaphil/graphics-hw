@@ -70,7 +70,7 @@ void App::start() {
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
         sdl_die("Couldn't initialize SDL");
-    atexit (SDL_Quit);
+    atexit(SDL_Quit);
     SDL_GL_LoadLibrary(NULL); // Default OpenGL is fine.
 
     // Use OpenGL Version 4.3
@@ -118,7 +118,7 @@ void App::start() {
     SDL_GL_SetSwapInterval(1);
 
     // Set OpenGL viewport
-    int w,h;
+    int w, h;
     SDL_GetWindowSize(window, &w, &h);
     glViewport(0, 0, w, h);
 
@@ -170,18 +170,48 @@ void App::start() {
     Camera* camera = scene->createNode<Camera>();
     rootNode->addChild(camera);
 
-    // Light
-    LightNode* lightNode = scene->createNode<LightNode>();
-    lightNode->setPosition(1.2f, 1.0f, 2.0f);
-    lightNode->setScale(0.2f, 0.2f, 0.2f);
-    lightNode->ambientColor = {0.2f, 0.2f, 0.2f};
-    lightNode->diffuseColor = {0.5f, 0.5f, 0.5f};
-    lightNode->specularColor = {1.0f, 1.0f, 1.0f};
-    rootNode->addChild(lightNode);
+    // Directional Light
+    LightNode* directionalLight = scene->createNode<LightNode>(LightNode::Type::Directional);
 
-    // Cube to show light location
-    MeshNode* lightIndicator = scene->createNode<MeshNode>(lightIndicatorMesh, lightIndicatorMat, defaultShader);
-    lightNode->addChild(lightIndicator);
+    directionalLight->setPosition(3.0f, 3.0f, 3.0f);
+    directionalLight->pointAt({-0.2f, -1.0f, -0.3f});
+    directionalLight->direction = {-0.2f, -1.0f, -0.3f};
+    directionalLight->ambientColor = {0.2f, 0.2f, 0.2f};
+    directionalLight->diffuseColor = {0.8f, 0.8f, 0.8f};
+    directionalLight->specularColor = {1.0f, 1.0f, 1.0f};
+    rootNode->addChild(directionalLight);
+
+    {
+        MeshNode* indicator = scene->createNode<MeshNode>(lightIndicatorMesh, lightIndicatorMat, defaultShader);
+        indicator->setScale(0.2f, 0.2f, 0.2f);
+        directionalLight->addChild(indicator);
+    }
+
+    // Point Lights
+    glm::vec3 pointLightPositions[] = {
+            //{0.7f, 0.2f, 2.0f},
+            //{2.3f, -3.3f, -4.0f},
+            //{-4.0f, 2.0f, -12.0f},
+            //{0.0f, 0.0f, -3.0f}
+    };
+
+    for (const auto& pos : pointLightPositions) {
+        LightNode* pointLight = scene->createNode<LightNode>(LightNode::Type::Point);
+        pointLight->setPosition(pos);
+        pointLight->ambientColor = {0.2f, 0.2f, 0.2f};
+        pointLight->diffuseColor = {0.8f, 0.8f, 0.8f};
+        pointLight->specularColor = {1.0f, 1.0f, 1.0f};
+        pointLight->attenuation = {
+                .constant = 1.0f,
+                .linear = 0.09f,
+                .quadratic = 0.032f
+        };
+        rootNode->addChild(pointLight);
+
+        MeshNode* indicator = scene->createNode<MeshNode>(lightIndicatorMesh, lightIndicatorMat, defaultShader);
+        indicator->setScale(0.2f, 0.2f, 0.2f);
+        pointLight->addChild(indicator);
+    }
 
     // Cubes
     glm::vec3 cubePositions[] = {
@@ -196,9 +226,10 @@ void App::start() {
             glm::vec3( 1.5f,  0.2f, -1.5f),
             glm::vec3(-1.3f,  1.0f, -1.5f)
     };
-    for (auto pos : cubePositions) {
+    for (unsigned int i = 0; i < 10; ++i) {
         MeshNode* cubeNode = scene->createNode<MeshNode>(cubeMesh, containerMat, defaultShader);
-        cubeNode->setPosition(pos);
+        cubeNode->setPosition(cubePositions[i]);
+        cubeNode->setRotation(glm::quat_cast(glm::rotate(20.0f * i, glm::vec3(1.0f, 0.3f, 0.5f))));
         rootNode->addChild(cubeNode);
     }
 
@@ -258,6 +289,7 @@ void App::render() {
 
     // do stuff
     scene->render();
+
 }
 
 App::~App() {

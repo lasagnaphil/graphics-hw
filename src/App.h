@@ -16,6 +16,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Scene.h"
+#include "nodes/MeshNode.h"
 
 class App {
 public:

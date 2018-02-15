@@ -13,6 +13,7 @@
 #include "nodes/Node.h"
 #include "nodes/Spatial.h"
 #include "Shader.h"
+#include "nodes/LightNode.h"
 
 class Scene {
 public:
@@ -66,6 +67,20 @@ private:
         node->render();
         for (Node* child : node->children) {
             render(child);
+        }
+
+        // update remaining lights
+        for (Shader shader : shaders) {
+            if (LightNode::numDirectionalLights== 0) {
+                shader.setBool("dirLight.enabled", false);
+            }
+            for (unsigned int i = LightNode::numPointLights; i < LightNode::maxPointLights; ++i) {
+                std::string pointLightStr = "pointLights[";
+                pointLightStr.append(std::to_string(i));
+                pointLightStr.append("]");
+
+                shader.setBool((pointLightStr + ".enabled").c_str(), false);
+            }
         }
     }
 
