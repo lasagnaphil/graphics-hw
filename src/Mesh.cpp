@@ -29,7 +29,7 @@ void Mesh::draw(Shader shader) {
             shader.setFloat(string("material.texture_diffuse").append(number).c_str(), i);
         }
         else if (type == TextureType::Specular) {
-            number = std::to_string(specularNr++);
+            number = std::to_string(specularNr);
             specularNr++;
             shader.setFloat(string("material.texture_specular").append(number).c_str(), i);
         }

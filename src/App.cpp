@@ -13,6 +13,7 @@
 #include "nodes/Camera.h"
 #include "Model.h"
 #include "nodes/LightNode.h"
+#include "nodes/ModelNode.h"
 
 static void sdl_die(const char * message) {
     fprintf(stderr, "%s: %s\n", message, SDL_GetError());
@@ -166,12 +167,11 @@ void App::start() {
     Node* rootNode = scene->getRootNode();
 
     // Camera
-    Camera* camera = scene->createNode<Camera>();
+    Camera* camera = new Camera();
     rootNode->addChild(camera);
 
-    /*
     // Directional Light
-    LightNode* directionalLight = scene->createNode<LightNode>(LightNode::Type::Directional);
+    LightNode* directionalLight = new LightNode(LightNode::Type::Directional);
 
     directionalLight->setPosition(3.0f, 3.0f, 3.0f);
     directionalLight->pointAt({-0.2f, -1.0f, -0.3f});
@@ -181,13 +181,11 @@ void App::start() {
     rootNode->addChild(directionalLight);
 
     {
-        MeshNode* indicator = scene->createNode<MeshNode>(lightIndicatorMesh, lightIndicatorMat, defaultShader);
+        MeshNode* indicator = new MeshNode(lightIndicatorMesh, lightIndicatorMat, defaultShader);
         indicator->setScale(0.2f, 0.2f, 0.2f);
         directionalLight->addChild(indicator);
     }
-     */
 
-    /*
     // Point Lights
     glm::vec3 pointLightPositions[] = {
             {0.7f, 0.2f, 2.0f},
@@ -197,7 +195,7 @@ void App::start() {
     };
 
     for (const auto& pos : pointLightPositions) {
-        LightNode* pointLight = scene->createNode<LightNode>(LightNode::Type::Point);
+        LightNode* pointLight = new LightNode(LightNode::Type::Point);
         pointLight->setPosition(pos);
         pointLight->ambientColor = {0.2f, 0.2f, 0.2f};
         pointLight->diffuseColor = {0.8f, 0.8f, 0.8f};
@@ -209,14 +207,13 @@ void App::start() {
         };
         rootNode->addChild(pointLight);
 
-        MeshNode* indicator = scene->createNode<MeshNode>(lightIndicatorMesh, lightIndicatorMat, defaultShader);
+        MeshNode* indicator = new MeshNode(lightIndicatorMesh, lightIndicatorMat, defaultShader);
         indicator->setScale(0.2f, 0.2f, 0.2f);
         pointLight->addChild(indicator);
     }
-     */
 
     // Spotlight (from camera)
-    LightNode* flashLight = scene->createNode<LightNode>(LightNode::Type::Spotlight);
+    LightNode* flashLight = new LightNode(LightNode::Type::Spotlight);
     flashLight->ambientColor = {0.2f, 0.2f, 0.2f};
     flashLight->diffuseColor = {0.8f, 0.8f, 0.8f};
     flashLight->specularColor = {1.0f, 1.0f, 1.0f};
@@ -228,6 +225,7 @@ void App::start() {
     camera->addChild(flashLight);
 
     // Cubes
+    /*
     glm::vec3 cubePositions[] = {
             glm::vec3( 0.0f,  0.0f,  0.0f),
             glm::vec3( 2.0f,  5.0f, -15.0f),
@@ -241,14 +239,19 @@ void App::start() {
             glm::vec3(-1.3f,  1.0f, -1.5f)
     };
     for (unsigned int i = 0; i < 10; ++i) {
-        MeshNode* cubeNode = scene->createNode<MeshNode>(cubeMesh, containerMat, defaultShader);
+        MeshNode* cubeNode = new MeshNode(cubeMesh, containerMat, defaultShader);
         cubeNode->setPosition(cubePositions[i]);
         cubeNode->setRotation(glm::quat_cast(glm::rotate(20.0f * i, glm::vec3(1.0f, 0.3f, 0.5f))));
         rootNode->addChild(cubeNode);
     }
+     */
 
     // Nanosuit Model
-    // Model nanosuitModel("resources/nanosuit/nanosuit.obj");
+    auto nanosuitModel = std::make_shared<Model>("resources/nanosuit/nanosuit.obj");
+    ModelNode* modelNode = new ModelNode(nanosuitModel, defaultShader);
+    modelNode->move(0.0f, -1.75f, 0.0f);
+    modelNode->setScale(0.2f, 0.2f, 0.2f);
+    rootNode->addChild(modelNode);
 
     // Program loop
     Uint32 frameTime;
