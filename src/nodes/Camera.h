@@ -38,20 +38,8 @@ public:
 
     virtual void update(float dt) override;
 
-    inline glm::vec3 getFrontVec() const {
-        return glm::rotate(rotation, glm::vec3(0.0f, 0.0f, 1.0f));
-    }
-
-    inline glm::vec3 getUpVec() const {
-        return glm::rotate(rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-    }
-
-    inline glm::vec3 getRightVec() const {
-        return glm::rotate(rotation, glm::vec3(1.0f, 0.0f, 0.0f));
-    }
-
     inline glm::mat4 getViewMatrix() const {
-        return glm::lookAt(position, position + getFrontVec(), getUpVec());
+        return glm::lookAt(getGlobalPosition(), getGlobalPosition() + getGlobalFrontVec(), getGlobalUpVec());
     }
 
     inline glm::mat4 getPerspectiveMatrix() const {

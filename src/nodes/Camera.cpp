@@ -33,8 +33,8 @@ void Camera::update(float dt) {
 
     mouseOffset *= mouseSensitivity;
 
-     yaw += mouseOffset.x;
-     pitch += mouseOffset.y;
+    yaw += mouseOffset.x;
+    pitch += mouseOffset.y;
 
     if (constrainPitch) {
         if (pitch > 89.0f) pitch = 89.0f;
@@ -43,35 +43,25 @@ void Camera::update(float dt) {
 
     updateCameraVectors();
 
-    // pitch(mouseOffset.y);
-    // rotation = glm::rotate(rotation, mouseOffset.y, {0.0f, 1.0f, 0.0f});
-    // rotation.x += mouseOffset.y;
-    // if (rotation.x > glm::radians(89.0f)) rotation.x = glm::radians(89.0f);
-    // if (rotation.x < glm::radians(-89.0f)) rotation.x = glm::radians(-89.0f);
-
-    // yaw(-mouseOffset.x);
-    // rotation = glm::rotate(rotation, -mouseOffset.x, {0.0f, 0.0f, 1.0f});
-    // rotation.z -= mouseOffset.x;
-
     // Keyboard movement
     float velocity = movementSpeed * dt;
     if (inputMgr->keyboardPressed(SDLK_w)) {
-        position += getFrontVec() * velocity;
+        move(getFrontVec() * velocity);
     }
     else if (inputMgr->keyboardPressed(SDLK_s)) {
-        position -= getFrontVec()* velocity;
+        move(-getFrontVec() * velocity);
     }
     if (inputMgr->keyboardPressed(SDLK_a)) {
-        position += getRightVec() * velocity;
+        move(getRightVec() * velocity);
     }
     else if (inputMgr->keyboardPressed(SDLK_d)) {
-        position -= getRightVec() * velocity;
+        move(-getRightVec() * velocity);
     }
     if (inputMgr->keyboardPressed(SDLK_q)) {
-        position += getUpVec() * velocity;
+        move(getUpVec() * velocity);
     }
     else if (inputMgr->keyboardPressed(SDLK_e)) {
-        position -= getUpVec() * velocity;
+        move(-getUpVec() * velocity);
     }
 
     // Mouse scroll movement
@@ -93,15 +83,14 @@ void Camera::update(float dt) {
         shader.use();
         shader.setMat4("proj", getPerspectiveMatrix());
         shader.setMat4("view", getViewMatrix());
-        shader.setVec3("viewPos", position);
+        shader.setVec3("viewPos", getGlobalPosition());
     }
 }
 
 void Camera::updateCameraVectors() {
     glm::quat quatX = glm::angleAxis(-glm::radians(yaw), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::quat quatY = glm::angleAxis(glm::radians(pitch), glm::vec3(1.0f, 0.0f, 0.0f));
-    rotation = quatX * quatY;
-    rotation = glm::normalize(rotation);
+    setRotation(glm::normalize(quatX * quatY));
     // rotation = glm::toQuat(glm::orientate3(glm::vec3(0.0f, glm::radians(pitch), -glm::radians(yaw))));
 }
 

@@ -7,6 +7,8 @@
 
 #include "Node.h"
 
+#include <glm/gtx/matrix_decompose.hpp>
+
 class Spatial : public Node {
     friend class Scene;
 public:
@@ -36,6 +38,14 @@ public:
 
     void setPosition(float x, float y, float z) {
         setPosition(glm::vec3(x, y, z));
+    }
+
+    void move(const glm::vec3& offset) {
+        setPosition(position + offset);
+    }
+
+    void move(float x, float y, float z) {
+        setPosition(position + glm::vec3(x, y, z));
     }
 
     glm::vec3 getScale() const {
@@ -75,6 +85,76 @@ public:
         float quatR = scale * (1 + dir.z);
         glm::vec3 quatI = scale * glm::cross({0.0f, 0.0f, 1.0f}, dir);
         this->rotation = glm::quat(quatR, quatI.x, quatI.y, quatI.z);
+        setDirtyFlag(true);
+    }
+
+    void pointAt(float x, float y, float z) {
+        pointAt({x, y, z});
+    }
+
+    glm::vec3 getGlobalPosition() const {
+        using namespace glm;
+
+        // Get the 3 basis vector planes at the camera origin and transform them into model space.
+        //
+        // NOTE: Planes have to be transformed by the inverse transpose of a matrix
+        //       Nice reference here: http://www.opengl.org/discussion_boards/showthread.php/159564-Clever-way-to-transform-plane-by-matrix
+        //
+        //       So for a transform to model space we need to do:
+        //            inverse(transpose(inverse(MV)))
+        //       This equals : transpose(MV) - see Lemma 5 in http://mathrefresher.blogspot.com.au/2007/06/transpose-of-matrix.html
+        //
+        // As each plane is simply (1,0,0,0), (0,1,0,0), (0,0,1,0) we can pull the data directly from the transpose matrix.
+        //
+        mat4 modelViewT = transpose(worldTransform);
+
+        // Get plane normals
+        vec3 n1(modelViewT[0]);
+        vec3 n2(modelViewT[1]);
+        vec3 n3(modelViewT[2]);
+
+        // Get plane distances
+        float d1(modelViewT[0].w);
+        float d2(modelViewT[1].w);
+        float d3(modelViewT[2].w);
+
+        // Get the intersection of these 3 planes
+        // http://paulbourke.net/geometry/3planes/
+        vec3 n2n3 = cross(n2, n3);
+        vec3 n3n1 = cross(n3, n1);
+        vec3 n1n2 = cross(n1, n2);
+
+        vec3 top = (n2n3 * d1) + (n3n1 * d2) + (n1n2 * d3);
+        float denom = dot(n1, n2n3);
+
+        return top / denom;
+    }
+
+    glm::vec3 getGlobalFrontVec() const {
+        return glm::normalize(glm::vec3(worldTransform * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f)));
+    }
+
+    glm::vec3 getGlobalUpVec() const {
+        return glm::normalize(glm::vec3(worldTransform * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f)));
+    }
+
+    glm::vec3 getGlobalRightVec() const {
+        return glm::normalize(glm::vec3(worldTransform * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
+    }
+
+    glm::vec3 getFrontVec() const {
+        return glm::normalize(glm::vec3(localTransform * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f)));
+        // return glm::rotate(rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+    }
+
+    glm::vec3 getUpVec() const {
+        return glm::normalize(glm::vec3(localTransform * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f)));
+        // return glm::rotate(rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+    }
+
+    glm::vec3 getRightVec() const {
+        return glm::normalize(glm::vec3(localTransform * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
+        // return glm::rotate(rotation, glm::vec3(1.0f, 0.0f, 0.0f));
     }
 
 protected:

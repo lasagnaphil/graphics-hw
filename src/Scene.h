@@ -47,7 +47,7 @@ public:
     template <typename T, typename ... Args>
     T* createNode(Args... args) {
         T* node = new T(args...);
-        node->scene = this;
+        // node->scene = this;
         return node;
     }
 
@@ -90,17 +90,6 @@ private:
             processInput(child, event);
         }
     }
-    /*
-    void setDefaultShaderProgram(Node* node, GLuint shaderProgram) {
-        MeshNode* meshNode = dynamic_cast<MeshNode*>(node);
-        if (meshNode != nullptr) {
-            meshNode->setShaderProgram(shaderProgram);
-        }
-        for (Node* child : node->children) {
-            setDefaultShaderProgram(child, shaderProgram);
-        }
-    }
-     */
 
 protected:
     std::unique_ptr<Spatial> rootNode;

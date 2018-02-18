@@ -13,7 +13,7 @@ class LightNode : public Spatial {
     friend class Scene;
 public:
     enum class Type {
-        Directional, Point
+        Directional, Point, Spotlight
     };
 
     struct Attenuation {
@@ -28,10 +28,11 @@ public:
 
     void update(float dt) override;
 
-    union {
-        glm::vec3 direction;
-        Attenuation attenuation;
-    };
+    // When type == Type::Point
+    Attenuation attenuation;
+
+    // When type == Type::Spotlight
+    float cutOff;
 
     glm::vec3 ambientColor;
     glm::vec3 diffuseColor;
@@ -45,8 +46,10 @@ private:
 
     static constexpr unsigned int maxDirectionalLights = 1;
     static constexpr unsigned int maxPointLights = 4;
+    static constexpr unsigned int maxSpotLights = 4;
     static unsigned int numDirectionalLights;
     static unsigned int numPointLights;
+    static unsigned int numSpotLights;
 };
 
 

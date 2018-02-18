@@ -133,7 +133,6 @@ void App::start() {
     //
 
     // Shaders
-    // Shader defaultShader("shaders/default.vert", "shaders/default.frag");
     Shader defaultShader("shaders/lighting.vert", "shaders/lighting.frag");
     defaultShader.use();
     defaultShader.setInt("material.diffuse", 0);
@@ -170,12 +169,12 @@ void App::start() {
     Camera* camera = scene->createNode<Camera>();
     rootNode->addChild(camera);
 
+    /*
     // Directional Light
     LightNode* directionalLight = scene->createNode<LightNode>(LightNode::Type::Directional);
 
     directionalLight->setPosition(3.0f, 3.0f, 3.0f);
     directionalLight->pointAt({-0.2f, -1.0f, -0.3f});
-    directionalLight->direction = {-0.2f, -1.0f, -0.3f};
     directionalLight->ambientColor = {0.2f, 0.2f, 0.2f};
     directionalLight->diffuseColor = {0.8f, 0.8f, 0.8f};
     directionalLight->specularColor = {1.0f, 1.0f, 1.0f};
@@ -186,13 +185,15 @@ void App::start() {
         indicator->setScale(0.2f, 0.2f, 0.2f);
         directionalLight->addChild(indicator);
     }
+     */
 
+    /*
     // Point Lights
     glm::vec3 pointLightPositions[] = {
-            //{0.7f, 0.2f, 2.0f},
-            //{2.3f, -3.3f, -4.0f},
-            //{-4.0f, 2.0f, -12.0f},
-            //{0.0f, 0.0f, -3.0f}
+            {0.7f, 0.2f, 2.0f},
+            {2.3f, -3.3f, -4.0f},
+            {-4.0f, 2.0f, -12.0f},
+            {0.0f, 0.0f, -3.0f}
     };
 
     for (const auto& pos : pointLightPositions) {
@@ -212,6 +213,19 @@ void App::start() {
         indicator->setScale(0.2f, 0.2f, 0.2f);
         pointLight->addChild(indicator);
     }
+     */
+
+    // Spotlight (from camera)
+    LightNode* flashLight = scene->createNode<LightNode>(LightNode::Type::Spotlight);
+    flashLight->ambientColor = {0.2f, 0.2f, 0.2f};
+    flashLight->diffuseColor = {0.8f, 0.8f, 0.8f};
+    flashLight->specularColor = {1.0f, 1.0f, 1.0f};
+    flashLight->attenuation = {
+            .constant = 1.0f,
+            .linear = 0.09f,
+            .quadratic = 0.032f
+    };
+    camera->addChild(flashLight);
 
     // Cubes
     glm::vec3 cubePositions[] = {
