@@ -33,6 +33,7 @@ public:
 
     // When type == Type::Spotlight
     float cutOff;
+    float outerCutOff;
 
     glm::vec3 ambientColor;
     glm::vec3 diffuseColor;

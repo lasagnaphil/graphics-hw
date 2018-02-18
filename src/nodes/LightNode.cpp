@@ -16,7 +16,8 @@ LightNode::LightNode(Type type)
           diffuseColor(0.5f, 0.5f, 0.5f),
           specularColor(1.0f, 1.0f, 1.0f),
           attenuation({.constant = 1.0f, .linear = 0.09f, .quadratic = 0.032f}),
-          cutOff(glm::cos(glm::radians(12.5f)))
+          cutOff(glm::cos(glm::radians(12.5f))),
+          outerCutOff(glm::cos(glm::radians(17.5f)))
 {
     switch(type) {
         case Type::Directional:
@@ -78,6 +79,7 @@ void LightNode::update(float dt) {
                 shader.setVec3((spotLightStr + ".position").c_str(), getGlobalPosition());
                 shader.setVec3((spotLightStr + ".direction").c_str(), getGlobalFrontVec());
                 shader.setFloat((spotLightStr + ".cutOff").c_str(), cutOff);
+                shader.setFloat((spotLightStr + ".outerCutOff").c_str(), outerCutOff);
                 shader.setFloat((spotLightStr + ".constant").c_str(), attenuation.constant);
                 shader.setFloat((spotLightStr + ".linear").c_str(), attenuation.linear);
                 shader.setFloat((spotLightStr + ".quadratic").c_str(), attenuation.quadratic);
