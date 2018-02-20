@@ -38,6 +38,8 @@ public:
 
     virtual void update(float dt) override;
 
+    virtual void processInput(SDL_Event& ev) override;
+
     inline glm::mat4 getViewMatrix() const {
         return glm::lookAt(getGlobalPosition(), getGlobalPosition() + getGlobalFrontVec(), getGlobalUpVec());
     }
@@ -58,6 +60,8 @@ public:
     float zoom;
     IntRect viewport;
     bool constrainPitch;
+
+    bool mouseMovementEnabled = false;
 
 private:
 

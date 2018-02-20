@@ -28,17 +28,19 @@ void Camera::update(float dt) {
     auto inputMgr = InputManager::getInstance();
 
     // Mouse movement
-    auto mouseOffsetI = inputMgr->relMousePos();
-    auto mouseOffset = glm::vec2((float)mouseOffsetI.x, (float)mouseOffsetI.y);
+    if (mouseMovementEnabled) {
+        auto mouseOffsetI = inputMgr->relMousePos();
+        auto mouseOffset = glm::vec2((float) mouseOffsetI.x, (float) mouseOffsetI.y);
 
-    mouseOffset *= mouseSensitivity;
+        mouseOffset *= mouseSensitivity;
 
-    yaw += mouseOffset.x;
-    pitch += mouseOffset.y;
+        yaw += mouseOffset.x;
+        pitch += mouseOffset.y;
 
-    if (constrainPitch) {
-        if (pitch > 89.0f) pitch = 89.0f;
-        if (pitch < -89.0f) pitch = -89.0f;
+        if (constrainPitch) {
+            if (pitch > 89.0f) pitch = 89.0f;
+            if (pitch < -89.0f) pitch = -89.0f;
+        }
     }
 
     updateCameraVectors();
@@ -65,15 +67,17 @@ void Camera::update(float dt) {
     }
 
     // Mouse scroll movement
-    int yoffset = inputMgr->relWheelPos().y;
-    if (zoom >= 1.0f && zoom <= 45.0f) {
-        zoom -= yoffset;
-    }
-    if (zoom <= 1.0f) {
-        zoom = 1.0f;
-    }
-    if (zoom >= 45.0f) {
-        zoom = 45.0f;
+    if (mouseMovementEnabled) {
+        int yoffset = inputMgr->relWheelPos().y;
+        if (zoom >= 1.0f && zoom <= 45.0f) {
+            zoom -= yoffset;
+        }
+        if (zoom <= 1.0f) {
+            zoom = 1.0f;
+        }
+        if (zoom >= 45.0f) {
+            zoom = 45.0f;
+        }
     }
 
     //
@@ -84,6 +88,14 @@ void Camera::update(float dt) {
         shader.setMat4("proj", getPerspectiveMatrix());
         shader.setMat4("view", getViewMatrix());
         shader.setVec3("viewPos", getGlobalPosition());
+    }
+}
+
+void Camera::processInput(SDL_Event& ev) {
+    if (ev.type == SDL_KEYDOWN) {
+        if (ev.key.keysym.sym == SDLK_m) {
+            mouseMovementEnabled = !mouseMovementEnabled;
+        }
     }
 }
 

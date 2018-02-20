@@ -8,6 +8,8 @@
 #include "Image.h"
 
 #include <glad/glad.h>
+#include <glm/vec4.hpp>
+#include <cmath>
 
 #define VAR_WITH_SETTER(__Type, __memberName, __FaceName) \
     private: __Type __memberName; \
@@ -102,6 +104,25 @@ public:
 
     static Texture fromImage(Image& image, TextureType type = TextureType::Diffuse) {
         return Texture::build().setImage(image).setTextureType(type).create();
+    }
+
+    static Texture fromColor(const glm::vec4& color) {
+        unsigned char imageData[2 * 2 * 4];
+        for (int i = 0; i < 2; ++i) {
+            for (int j = 0; j < 2; ++j) {
+                imageData[i*8 + j*4] = static_cast<unsigned char>(std::round(255 * color.r));
+                imageData[i*8 + j*4 + 1]= static_cast<unsigned char>(std::round(255 * color.g));
+                imageData[i*8 + j*4 + 2]= static_cast<unsigned char>(std::round(255 * color.b));
+                imageData[i*8 + j*4 + 3]= static_cast<unsigned char>(std::round(255 * color.a));
+            }
+        }
+        return Texture::build()
+                .setInternalFormat(GL_RGBA)
+                .setWidth(2)
+                .setHeight(2)
+                .setFormat(GL_RGBA)
+                .setData(imageData)
+                .create();
     }
 
     TextureType type = TextureType::Diffuse;

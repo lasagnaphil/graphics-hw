@@ -147,11 +147,12 @@ void App::start() {
     // Textures
     Texture containerTex = Texture::fromImage(containerImage);
     Texture containerSpecularTex = Texture::fromImage(containerSpecularImage, TextureType::Specular);
-    Texture faceTex = Texture::fromImage(faceImage);
+    Texture lightTex = Texture::fromColor({1.0f, 1.0f, 1.0f, 1.0f});
+    Texture lightSpecularTex = Texture::fromColor({0.0f, 0.0f, 0.0f, 0.0f});
 
     // Materials
     auto containerMat = std::make_shared<Material>(containerTex, containerSpecularTex, 64.0f);
-    auto lightIndicatorMat = std::make_shared<Material>(faceTex, containerSpecularTex, 64.0f);
+    auto lightIndicatorMat = std::make_shared<Material>(lightTex, lightSpecularTex, 64.0f);
 
     // Mesh
     std::shared_ptr<Mesh> cubeMesh(Mesh::createCubeDyn());
@@ -169,6 +170,8 @@ void App::start() {
     // Camera
     Camera* camera = new Camera();
     rootNode->addChild(camera);
+    camera->move(-5.0f, 2.0f, 5.0f);
+    camera->yaw = -135.f;
 
     // Directional Light
     LightNode* directionalLight = new LightNode(LightNode::Type::Directional);
