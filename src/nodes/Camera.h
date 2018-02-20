@@ -61,7 +61,7 @@ public:
     IntRect viewport;
     bool constrainPitch;
 
-    bool mouseMovementEnabled = false;
+    bool mouseMovementEnabled = true;
 
 private:
 

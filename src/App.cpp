@@ -136,8 +136,6 @@ void App::start() {
     // Shaders
     Shader defaultShader("shaders/lighting.vert", "shaders/lighting.frag");
     defaultShader.use();
-    defaultShader.setInt("material.diffuse", 0);
-    defaultShader.setInt("material.specular", 1);
 
     // Images
     Image containerImage("resources/container2.png");
@@ -148,17 +146,26 @@ void App::start() {
     Texture containerTex = Texture::fromImage(containerImage);
     Texture containerSpecularTex = Texture::fromImage(containerSpecularImage, TextureType::Specular);
     Texture lightTex = Texture::fromColor({1.0f, 1.0f, 1.0f, 1.0f});
-    Texture lightSpecularTex = Texture::fromColor({0.0f, 0.0f, 0.0f, 0.0f});
+    Texture defaultTex = Texture::fromColor({0.5f, 0.5f, 0.5f, 1.0f});
+    Texture defaultSpecularTex = Texture::fromColor({0.0f, 0.0f, 0.0f, 0.0f}, TextureType::Specular);
 
     // Materials
-    auto containerMat = std::make_shared<Material>(containerTex, containerSpecularTex, 64.0f);
-    auto lightIndicatorMat = std::make_shared<Material>(lightTex, lightSpecularTex, 64.0f);
+    Material containerMat(containerTex, containerSpecularTex, 64.0f);
+    Material lightIndicatorMat(lightTex, defaultSpecularTex, 64.0f);
+    Material defaultMat(defaultTex, defaultSpecularTex, 64.0f);
 
     // Mesh
     std::shared_ptr<Mesh> cubeMesh(Mesh::createCubeDyn());
-    cubeMesh->setMaterial(*containerMat);
+    cubeMesh->setMaterial(containerMat);
+
     std::shared_ptr<Mesh> lightIndicatorMesh(Mesh::createCubeDyn());
-    lightIndicatorMesh->setMaterial(*lightIndicatorMat);
+    lightIndicatorMesh->setMaterial(lightIndicatorMat);
+
+    std::shared_ptr<Mesh> coneMesh(Mesh::createConeDyn(64, 3.0f, 4.0f));
+    coneMesh->setMaterial(defaultMat);
+
+    std::shared_ptr<Mesh> cylinderMesh(Mesh::createCylinderDyn(64, 3.0f, 4.0f));
+    cylinderMesh->setMaterial(defaultMat);
 
     // Scene
     scene = std::make_unique<Scene>();
@@ -170,8 +177,8 @@ void App::start() {
     // Camera
     Camera* camera = new Camera();
     rootNode->addChild(camera);
-    camera->move(-5.0f, 2.0f, 5.0f);
-    camera->yaw = -135.f;
+    // camera->move(-5.0f, 2.0f, 5.0f);
+    // camera->yaw = -135.f;
 
     // Directional Light
     LightNode* directionalLight = new LightNode(LightNode::Type::Directional);
@@ -189,6 +196,7 @@ void App::start() {
         directionalLight->addChild(indicator);
     }
 
+    /*
     // Point Lights
     glm::vec3 pointLightPositions[] = {
             {0.7f, 0.2f, 2.0f},
@@ -214,8 +222,10 @@ void App::start() {
         indicator->setScale(0.2f, 0.2f, 0.2f);
         pointLight->addChild(indicator);
     }
+     */
 
     // Spotlight (from camera)
+    /*
     LightNode* flashLight = new LightNode(LightNode::Type::Spotlight);
     flashLight->ambientColor = {0.2f, 0.2f, 0.2f};
     flashLight->diffuseColor = {0.8f, 0.8f, 0.8f};
@@ -226,8 +236,10 @@ void App::start() {
             .quadratic = 0.032f
     };
     camera->addChild(flashLight);
+     */
 
     // Cubes
+    /*
     glm::vec3 cubePositions[] = {
             glm::vec3( 0.0f,  0.0f,  0.0f),
             glm::vec3( 2.0f,  5.0f, -15.0f),
@@ -246,13 +258,24 @@ void App::start() {
         cubeNode->setRotation(glm::quat_cast(glm::rotate(20.0f * i, glm::vec3(1.0f, 0.3f, 0.5f))));
         rootNode->addChild(cubeNode);
     }
+     */
 
     // Nanosuit Model
+    /*
     auto nanosuitModel = std::make_shared<Model>("resources/nanosuit/nanosuit.obj");
     ModelNode* modelNode = new ModelNode(nanosuitModel, defaultShader);
     modelNode->move(0.0f, 2.0f, 0.0f);
     modelNode->setScale(0.2f, 0.2f, 0.2f);
     rootNode->addChild(modelNode);
+     */
+
+    // Cone
+    // MeshNode* coneNode = new MeshNode(coneMesh, defaultShader);
+    // rootNode->addChild(coneNode);
+
+    // Cylinder
+    MeshNode* cylinderNode = new MeshNode(cylinderMesh, defaultShader);
+    rootNode->addChild(cylinderNode);
 
     // Program loop
     Uint32 frameTime;

@@ -106,7 +106,7 @@ public:
         return Texture::build().setImage(image).setTextureType(type).create();
     }
 
-    static Texture fromColor(const glm::vec4& color) {
+    static Texture fromColor(const glm::vec4& color, TextureType type = TextureType::Diffuse) {
         unsigned char imageData[2 * 2 * 4];
         for (int i = 0; i < 2; ++i) {
             for (int j = 0; j < 2; ++j) {
@@ -122,6 +122,7 @@ public:
                 .setHeight(2)
                 .setFormat(GL_RGBA)
                 .setData(imageData)
+                .setTextureType(type)
                 .create();
     }
 
