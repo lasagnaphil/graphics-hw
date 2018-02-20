@@ -16,9 +16,7 @@ public:
     using Vec3OrTexture = std::variant<glm::vec3, Texture>;
 
     Material(Texture diffuseMap, Texture specularMap, float shininess = 32.0f)
-            : shininess(shininess) {
-        diffuse = std::move(diffuseMap);
-        specular = std::move(specularMap);
+            : diffuse(std::move(diffuseMap)), specular(std::move(specularMap)), shininess(shininess) {
     }
 
     Texture diffuse;

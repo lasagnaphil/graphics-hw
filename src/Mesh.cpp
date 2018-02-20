@@ -19,6 +19,7 @@ void Mesh::draw(Shader shader) {
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
 
+    shader.use();
     for (unsigned int i = 0; i < textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + i);
         string number;
@@ -26,22 +27,27 @@ void Mesh::draw(Shader shader) {
         if (type == TextureType::Diffuse) {
             number = std::to_string(diffuseNr);
             diffuseNr++;
-            shader.setFloat(string("material.texture_diffuse").append(number).c_str(), i);
+            shader.setInt(string("material.texture_diffuse").append(number).c_str(), i);
         }
         else if (type == TextureType::Specular) {
             number = std::to_string(specularNr);
             specularNr++;
-            shader.setFloat(string("material.texture_specular").append(number).c_str(), i);
+            shader.setInt(string("material.texture_specular").append(number).c_str(), i);
         }
 
         glBindTexture(GL_TEXTURE_2D, textures[i].getID());
     }
-    glActiveTexture(GL_TEXTURE0);
 
-    shader.use();
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+
+    glActiveTexture(GL_TEXTURE0);
+}
+
+void Mesh::setMaterial(const Material& material) {
+    textures.push_back(material.diffuse);
+    textures.push_back(material.specular);
 }
 
 void Mesh::setupMesh() {
@@ -164,4 +170,5 @@ Mesh* Mesh::createPlaneDyn() {
     return new Mesh(std::vector<Vertex>(std::begin(planeVertices), std::end(planeVertices)),
                 std::vector<unsigned int>(std::begin(planeIndices), std::end(planeIndices)), {});
 }
+
 

@@ -1,8 +1,11 @@
 #version 330 core
 
 struct Material {
-    sampler2D diffuse;
-    sampler2D specular;
+    sampler2D texture_diffuse1;
+    sampler2D texture_diffuse2;
+    sampler2D texture_diffuse3;
+    sampler2D texture_specular1;
+    sampler2D texture_specular2;
     float shininess;
 };
 
@@ -64,8 +67,8 @@ uniform int numPointLights;
 uniform int numSpotLights;
 
 vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir) {
-    vec3 materialDiffuse = vec3(texture(material.diffuse, TexCoord));
-    vec3 materialSpecular = vec3(texture(material.specular, TexCoord));
+    vec3 materialDiffuse = vec3(texture(material.texture_diffuse1, TexCoord));
+    vec3 materialSpecular = vec3(texture(material.texture_specular1, TexCoord));
 
     vec3 lightDir = normalize(-light.direction);
 
@@ -82,8 +85,8 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir) {
 }
 
 vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
-    vec3 materialDiffuse = vec3(texture(material.diffuse, TexCoord));
-    vec3 materialSpecular = vec3(texture(material.specular, TexCoord));
+    vec3 materialDiffuse = vec3(texture(material.texture_diffuse1, TexCoord));
+    vec3 materialSpecular = vec3(texture(material.texture_specular1, TexCoord));
 
     vec3 lightDir = normalize(light.position - fragPos);
 
@@ -103,14 +106,14 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
 }
 
 vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
-    vec3 materialDiffuse = vec3(texture(material.diffuse, TexCoord));
+    vec3 materialDiffuse = vec3(texture(material.texture_diffuse1, TexCoord));
     vec3 lightDir = normalize(light.position - fragPos);
 
     float theta = dot(lightDir, normalize(-light.direction));
     float epsilon = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 
-    vec3 materialSpecular = vec3(texture(material.specular, TexCoord));
+    vec3 materialSpecular = vec3(texture(material.texture_specular1, TexCoord));
 
     float diff = max(dot(normal, lightDir), 0.0);
 

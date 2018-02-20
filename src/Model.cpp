@@ -34,8 +34,10 @@ void Model::processNode(aiNode* node, const aiScene* scene) {
 
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
     using std::vector;
-    vector<Vertex> vertices(mesh->mNumVertices);
-    vector<unsigned int> indices(mesh->mNumFaces);
+    vector<Vertex> vertices;
+    vertices.reserve(mesh->mNumVertices);
+    vector<unsigned int> indices;
+    indices.reserve(mesh->mNumFaces);
     vector<Texture> textures;
 
     for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
@@ -83,7 +85,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 }
 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type) {
-    std::vector<Texture> textures(mat->GetTextureCount(type));
+    std::vector<Texture> textures;
+    textures.reserve(mat->GetTextureCount(type));
     for (unsigned int i = 0; i < mat->GetTextureCount(type); ++i) {
         aiString str;
         mat->GetTexture(type, i, &str);

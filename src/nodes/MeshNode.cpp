@@ -4,8 +4,8 @@
 
 #include "MeshNode.h"
 
-MeshNode::MeshNode(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, Shader shader) :
-        mesh(std::move(mesh)), material(std::move(material)), shader(shader) {
+MeshNode::MeshNode(std::shared_ptr<Mesh> mesh, Shader shader) :
+        mesh(std::move(mesh)), shader(shader) {
 }
 
 void MeshNode::update(float dt) {
@@ -14,12 +14,12 @@ void MeshNode::update(float dt) {
 void MeshNode::render() {
     shader.use();
     shader.setMat4("model", worldTransform);
-    shader.setFloat("material.shininess", material->shininess);
+    shader.setFloat("material.shininess", 64.0f);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, material->diffuse.getID());
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, material->specular.getID());
+    //glActiveTexture(GL_TEXTURE0);
+    //glBindTexture(GL_TEXTURE_2D, material->diffuse.getID());
+    //glActiveTexture(GL_TEXTURE1);
+    //glBindTexture(GL_TEXTURE_2D, material->specular.getID());
 
     mesh->draw(shader);
 }

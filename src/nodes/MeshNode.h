@@ -8,7 +8,7 @@
 
 class MeshNode : public Spatial {
 public:
-    MeshNode(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, Shader shader);
+    MeshNode(std::shared_ptr<Mesh> mesh, Shader shader);
 
     virtual void update(float dt) override;
     virtual void render() override;
@@ -16,7 +16,6 @@ public:
     void setShader(Shader shader);
 
     std::shared_ptr<Mesh> mesh;
-    std::shared_ptr<Material> material;
     Shader shader;
 };
 

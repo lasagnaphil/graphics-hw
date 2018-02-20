@@ -15,7 +15,8 @@ Texture::Texture(unsigned char* data,
                  GLsizei height,
                  GLint border,
                  GLenum format,
-                 GLenum datatype) {
+                 GLenum datatype,
+                 TextureType textureType) : type(textureType) {
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
     glTexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, border, format, datatype, data);
@@ -24,10 +25,11 @@ Texture::Texture(unsigned char* data,
 
 Texture::Texture(Builder& builder) :
         Texture(builder.data, builder.level, builder.internalFormat,
-        builder.width, builder.height, builder.border, builder.format, builder.datatype) {}
+        builder.width, builder.height, builder.border, builder.format, builder.datatype,
+        builder.textureType) {}
 
 Texture::Texture() :
-        Texture(nullptr, 0, GL_RGB, 0, 0, 0, GL_RGB, GL_UNSIGNED_BYTE) {}
+        Texture(nullptr, 0, GL_RGB, 0, 0, 0, GL_RGB, GL_UNSIGNED_BYTE, TextureType::Diffuse) {}
 
 void Texture::setParameterf(GLenum pname, GLfloat param) {
     glBindTexture(GL_TEXTURE_2D, textureID);

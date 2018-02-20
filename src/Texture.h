@@ -58,11 +58,12 @@ class Texture {
         VAR_WITH_SETTER(GLint, border, Border)
         VAR_WITH_SETTER(GLenum, format, Format)
         VAR_WITH_SETTER(GLenum, datatype, Datatype)
+        VAR_WITH_SETTER(TextureType, textureType, TextureType)
 
         Texture create() {
             return Texture(data, level, internalFormat,
                            width, height, border,
-                           format, datatype);
+                           format, datatype, textureType);
         }
 
     };
@@ -75,11 +76,18 @@ public:
             GLsizei height,
             GLint border,
             GLenum format,
-            GLenum datatype);
+            GLenum datatype,
+            TextureType textureType);
 
     Texture(Builder& builder);
 
     Texture();
+
+    ~Texture() = default;
+    Texture(const Texture& other) = default;
+    Texture& operator=(const Texture& other) = default;
+    Texture(Texture&& other) = default;
+    Texture& operator=(Texture&& other) = default;
 
     void setParameterf(GLenum pname, GLfloat param);
     void setParameteri(GLenum pname, GLint param);
@@ -92,7 +100,9 @@ public:
 
     static Builder build() { return Builder(); }
 
-    static Texture fromImage(Image& image) { return Texture::build().setImage(image).create(); }
+    static Texture fromImage(Image& image, TextureType type = TextureType::Diffuse) {
+        return Texture::build().setImage(image).setTextureType(type).create();
+    }
 
     TextureType type = TextureType::Diffuse;
     std::string path;

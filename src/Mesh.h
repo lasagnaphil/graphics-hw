@@ -9,6 +9,7 @@
 #include <vector>
 #include "Shader.h"
 #include "Texture.h"
+#include "Material.h"
 
 struct Vertex {
     glm::vec3 position;
@@ -31,6 +32,8 @@ public:
          std::vector<Texture> textures);
 
     void draw(Shader shader);
+
+    void setMaterial(const Material& material);
 
     static Mesh createCube();
     static Mesh createSphere();

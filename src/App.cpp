@@ -146,7 +146,7 @@ void App::start() {
 
     // Textures
     Texture containerTex = Texture::fromImage(containerImage);
-    Texture containerSpecularTex = Texture::fromImage(containerSpecularImage);
+    Texture containerSpecularTex = Texture::fromImage(containerSpecularImage, TextureType::Specular);
     Texture faceTex = Texture::fromImage(faceImage);
 
     // Materials
@@ -155,9 +155,9 @@ void App::start() {
 
     // Mesh
     std::shared_ptr<Mesh> cubeMesh(Mesh::createCubeDyn());
-    cubeMesh->textures.push_back(containerTex);
+    cubeMesh->setMaterial(*containerMat);
     std::shared_ptr<Mesh> lightIndicatorMesh(Mesh::createCubeDyn());
-    lightIndicatorMesh->textures.push_back(faceTex);
+    lightIndicatorMesh->setMaterial(*lightIndicatorMat);
 
     // Scene
     scene = std::make_unique<Scene>();
@@ -181,7 +181,7 @@ void App::start() {
     rootNode->addChild(directionalLight);
 
     {
-        MeshNode* indicator = new MeshNode(lightIndicatorMesh, lightIndicatorMat, defaultShader);
+        MeshNode* indicator = new MeshNode(lightIndicatorMesh, defaultShader);
         indicator->setScale(0.2f, 0.2f, 0.2f);
         directionalLight->addChild(indicator);
     }
@@ -207,7 +207,7 @@ void App::start() {
         };
         rootNode->addChild(pointLight);
 
-        MeshNode* indicator = new MeshNode(lightIndicatorMesh, lightIndicatorMat, defaultShader);
+        MeshNode* indicator = new MeshNode(lightIndicatorMesh, defaultShader);
         indicator->setScale(0.2f, 0.2f, 0.2f);
         pointLight->addChild(indicator);
     }
@@ -225,7 +225,6 @@ void App::start() {
     camera->addChild(flashLight);
 
     // Cubes
-    /*
     glm::vec3 cubePositions[] = {
             glm::vec3( 0.0f,  0.0f,  0.0f),
             glm::vec3( 2.0f,  5.0f, -15.0f),
@@ -239,17 +238,16 @@ void App::start() {
             glm::vec3(-1.3f,  1.0f, -1.5f)
     };
     for (unsigned int i = 0; i < 10; ++i) {
-        MeshNode* cubeNode = new MeshNode(cubeMesh, containerMat, defaultShader);
+        MeshNode* cubeNode = new MeshNode(cubeMesh, defaultShader);
         cubeNode->setPosition(cubePositions[i]);
         cubeNode->setRotation(glm::quat_cast(glm::rotate(20.0f * i, glm::vec3(1.0f, 0.3f, 0.5f))));
         rootNode->addChild(cubeNode);
     }
-     */
 
     // Nanosuit Model
     auto nanosuitModel = std::make_shared<Model>("resources/nanosuit/nanosuit.obj");
     ModelNode* modelNode = new ModelNode(nanosuitModel, defaultShader);
-    modelNode->move(0.0f, -1.75f, 0.0f);
+    modelNode->move(0.0f, 2.0f, 0.0f);
     modelNode->setScale(0.2f, 0.2f, 0.2f);
     rootNode->addChild(modelNode);
 
