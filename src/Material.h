@@ -9,19 +9,18 @@
 #include <memory>
 #include <variant>
 #include <glm/vec3.hpp>
+#include <vector>
 #include "Texture.h"
 
 class Material {
 public:
-    using Vec3OrTexture = std::variant<glm::vec3, Texture>;
-
-    Material(Texture diffuseMap, Texture specularMap, float shininess = 32.0f)
-            : diffuse(std::move(diffuseMap)), specular(std::move(specularMap)), shininess(shininess) {
+    Material(std::initializer_list<Texture> texturesToInsert = {}, float shininess = 32.0f)
+            : shininess(shininess)
+    {
+        textures.insert(textures.end(), texturesToInsert.begin(), texturesToInsert.end());
     }
 
-    Texture diffuse;
-    Texture specular;
-
+    std::vector<Texture> textures;
     float shininess;
 };
 

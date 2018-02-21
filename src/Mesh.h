@@ -27,17 +27,19 @@ class Mesh {
 public:
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<Texture> textures;
+    std::shared_ptr<Material> material;
 
     Mesh(std::vector<Vertex> vertices,
          std::vector<unsigned int> indices,
-         std::vector<Texture> textures,
+         std::shared_ptr<Material> material,
          GLenum drawMode = GL_TRIANGLES,
          bool isIndexed = true);
 
     void draw(Shader shader);
 
-    void setMaterial(const Material& material);
+    void setMaterial(std::shared_ptr<Material> material) {
+        this->material = std::move(material);
+    }
 
     static Mesh* createCubeDyn();
     static Mesh* createSphereDyn();

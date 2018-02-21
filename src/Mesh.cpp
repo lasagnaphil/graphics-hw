@@ -7,12 +7,12 @@
 
 Mesh::Mesh(std::vector<Vertex> vertices,
            std::vector<unsigned int> indices,
-           std::vector<Texture> textures,
+           std::shared_ptr<Material> material,
            GLenum drawMode,
            bool isIndexed)
         : vertices(std::move(vertices)),
           indices(std::move(indices)),
-          textures(std::move(textures)),
+          material(std::move(material)),
           drawMode(drawMode),
           isIndexed(isIndexed)
 {
@@ -25,10 +25,10 @@ void Mesh::draw(Shader shader) {
     unsigned int specularNr = 1;
 
     shader.use();
-    for (unsigned int i = 0; i < textures.size(); i++) {
+    for (unsigned int i = 0; i < material->textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + i);
         string number;
-        TextureType type = textures[i].type;
+        TextureType type = material->textures[i].type;
         if (type == TextureType::Diffuse) {
             number = std::to_string(diffuseNr);
             diffuseNr++;
@@ -40,7 +40,7 @@ void Mesh::draw(Shader shader) {
             shader.setInt(string("material.texture_specular").append(number).c_str(), i);
         }
 
-        glBindTexture(GL_TEXTURE_2D, textures[i].getID());
+        glBindTexture(GL_TEXTURE_2D, material->textures[i].getID());
     }
 
     glBindVertexArray(vao);
@@ -53,11 +53,6 @@ void Mesh::draw(Shader shader) {
     glBindVertexArray(0);
 
     glActiveTexture(GL_TEXTURE0);
-}
-
-void Mesh::setMaterial(const Material& material) {
-    textures.push_back(material.diffuse);
-    textures.push_back(material.specular);
 }
 
 void Mesh::setupMesh() {
@@ -164,7 +159,7 @@ Mesh* Mesh::createCubeDyn() {
 }
 
 Mesh* Mesh::createSphereDyn() {
-    return new Mesh(std::vector<Vertex>(), std::vector<unsigned int>(), std::vector<Texture>());
+    return new Mesh(std::vector<Vertex>(), std::vector<unsigned int>(), {});
 }
 
 Mesh* Mesh::createPlaneDyn() {

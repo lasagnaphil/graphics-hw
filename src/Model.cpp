@@ -70,18 +70,19 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
         }
     }
 
+    auto material = std::make_shared<Material>();
     if (mesh->mMaterialIndex >= 0) {
-        aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+        aiMaterial *aMaterial = scene->mMaterials[mesh->mMaterialIndex];
         vector<Texture> diffuseMaps = loadMaterialTextures(
-                material, aiTextureType_DIFFUSE
+                aMaterial, aiTextureType_DIFFUSE
         );
-        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+        material->textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
         vector<Texture> specularMaps = loadMaterialTextures(
-                material, aiTextureType_SPECULAR
+                aMaterial, aiTextureType_SPECULAR
         );
-        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+        material->textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
-    return Mesh(vertices, indices, textures);
+    return Mesh(vertices, indices, material);
 }
 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type) {
