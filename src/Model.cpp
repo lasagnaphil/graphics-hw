@@ -70,7 +70,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
         }
     }
 
-    auto material = std::make_shared<Material>();
+    auto material = Material::create();
     if (mesh->mMaterialIndex >= 0) {
         aiMaterial *aMaterial = scene->mMaterials[mesh->mMaterialIndex];
         vector<Texture> diffuseMaps = loadMaterialTextures(

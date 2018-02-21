@@ -150,9 +150,9 @@ void App::start() {
     Texture defaultSpecularTex = Texture::fromColor({0.0f, 0.0f, 0.0f, 0.0f}, TextureType::Specular);
 
     // Materials
-    auto containerMat = std::shared_ptr<Material>(new Material({containerTex, containerSpecularTex}, 64.0f));
-    auto lightIndicatorMat = std::shared_ptr<Material>(new Material({lightTex, defaultSpecularTex}, 64.0f));
-    auto defaultMat = std::shared_ptr<Material>(new Material({defaultTex, defaultSpecularTex}, 64.0f));
+    auto containerMat = Material::create({containerTex, containerSpecularTex}, 64.0f);
+    auto lightIndicatorMat = Material::create({lightTex, defaultSpecularTex}, 64.0f);
+    auto defaultMat = Material::create({defaultTex, defaultSpecularTex}, 64.0f);
 
     // Mesh
     std::shared_ptr<Mesh> cubeMesh(Mesh::createCubeDyn());
