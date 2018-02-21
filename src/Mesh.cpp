@@ -153,21 +153,22 @@ static unsigned int planeIndices[6] = {
         0, 1, 3, 1, 2, 3
 };
 
-Mesh* Mesh::createCubeDyn() {
-    return new Mesh(std::vector<Vertex>(std::begin(cubeVertices), std::end(cubeVertices)),
-                    {}, {}, GL_TRIANGLES, false);
+std::shared_ptr<Mesh> Mesh::createCube() {
+    std::vector<Vertex> vertices(std::begin(cubeVertices), std::end(cubeVertices));
+    return std::shared_ptr<Mesh>(new Mesh(std::move(vertices),
+            {}, {}, GL_TRIANGLES, false));
 }
 
-Mesh* Mesh::createSphereDyn() {
-    return new Mesh(std::vector<Vertex>(), std::vector<unsigned int>(), {});
+std::shared_ptr<Mesh> Mesh::createSphere() {
+    return std::shared_ptr<Mesh>(new Mesh(std::vector<Vertex>(), std::vector<unsigned int>(), {}, GL_TRIANGLES, false));
 }
 
-Mesh* Mesh::createPlaneDyn() {
-    return new Mesh(std::vector<Vertex>(std::begin(planeVertices), std::end(planeVertices)),
-                std::vector<unsigned int>(std::begin(planeIndices), std::end(planeIndices)), {});
+std::shared_ptr<Mesh> Mesh::createPlane() {
+    return std::shared_ptr<Mesh>(new Mesh(std::vector<Vertex>(std::begin(planeVertices), std::end(planeVertices)),
+                std::vector<unsigned int>(std::begin(planeIndices), std::end(planeIndices)), {}, GL_TRIANGLES, true));
 }
 
-Mesh* Mesh::createConeDyn(unsigned int numTriangles, float r, float h) {
+std::shared_ptr<Mesh> Mesh::createCone(unsigned int numTriangles, float r, float h) {
     std::vector<Vertex> vertices;
     vertices.reserve(numTriangles * 3);
     float delta = glm::two_pi<float>() / numTriangles;
@@ -176,36 +177,36 @@ Mesh* Mesh::createConeDyn(unsigned int numTriangles, float r, float h) {
         float thetap = (i + 1) * delta;
         float thetam = (theta + thetap) / 2;
         float slopeLen = glm::sqrt(r*r + h*h);
-        glm::vec3 normal(
-            glm::cos(thetam) * h / slopeLen, r / slopeLen, -glm::sin(thetam) * h / slopeLen
-        );
-        vertices.push_back(Vertex({0.0f, h, 0.0f}, normal, {0.0f, 0.0f}));
+        glm::vec3 normal(glm::cos(theta) * h / slopeLen, r / slopeLen, -glm::sin(theta) * h / slopeLen);
+        glm::vec3 normalm(glm::cos(thetam) * h / slopeLen, r / slopeLen, -glm::sin(thetam) * h / slopeLen);
+        glm::vec3 normalp(glm::cos(thetap) * h / slopeLen, r / slopeLen, -glm::sin(thetap) * h / slopeLen);
+        vertices.push_back(Vertex({0.0f, h, 0.0f}, normalm, {0.0f, 0.0f}));
         vertices.push_back(Vertex({r * glm::cos(theta), 0, -r * glm::sin(theta)}, normal, {1.0f, 0.0f}));
-        vertices.push_back(Vertex({r * glm::cos(thetap), 0, -r * glm::sin(thetap)}, normal, {0.0f, 1.0f}));
+        vertices.push_back(Vertex({r * glm::cos(thetap), 0, -r * glm::sin(thetap)}, normalp, {0.0f, 1.0f}));
     }
-    return new Mesh(vertices, {}, {}, GL_TRIANGLES, false);
+    return std::shared_ptr<Mesh>(new Mesh(vertices, {}, {}, GL_TRIANGLES, false));
 }
 
-Mesh* Mesh::createCircleDyn(unsigned int numTriangles, float radius) {
-    return createConeDyn(numTriangles, radius, 0.0f);
+std::shared_ptr<Mesh> Mesh::createCircle(unsigned int numTriangles, float radius) {
+    return createCone(numTriangles, radius, 0.0f);
 }
 
-Mesh* Mesh::createCylinderDyn(unsigned int numQuads, float r, float h) {
+std::shared_ptr<Mesh> Mesh::createCylinder(unsigned int numQuads, float r, float h) {
     std::vector<Vertex> vertices;
     vertices.reserve(numQuads * 6);
     float delta = glm::two_pi<float>() / numQuads;
     for (unsigned int i = 0; i < numQuads; ++i) {
         float theta = i * delta;
         float thetap = (i + 1) * delta;
-        float thetam = (theta + thetap) / 2;
-        glm::vec3 normal(r * glm::cos(thetam), h, -r * glm::sin(thetam));
+        glm::vec3 normal(r * glm::cos(theta), h, -r * glm::sin(theta));
+        glm::vec3 normalp(r * glm::cos(thetap), h, -r * glm::sin(thetap));
         vertices.push_back(Vertex({r * glm::cos(theta), 0, -r * glm::sin(theta)}, normal, {0.0f, 0.0f}));
         vertices.push_back(Vertex({r * glm::cos(theta), h, -r * glm::sin(theta)}, normal, {0.0f, 1.0f}));
-        vertices.push_back(Vertex({r * glm::cos(thetap), h, -r * glm::sin(thetap)}, normal, {1.0f, 1.0f}));
+        vertices.push_back(Vertex({r * glm::cos(thetap), h, -r * glm::sin(thetap)}, normalp, {1.0f, 1.0f}));
         vertices.push_back(Vertex({r * glm::cos(theta), 0, -r * glm::sin(theta)}, normal, {0.0f, 0.0f}));
-        vertices.push_back(Vertex({r * glm::cos(thetap), h, -r * glm::sin(thetap)}, normal, {1.0f, 1.0f}));
-        vertices.push_back(Vertex({r * glm::cos(thetap), 0, -r * glm::sin(thetap)}, normal, {1.0f, 0.0f}));
+        vertices.push_back(Vertex({r * glm::cos(thetap), h, -r * glm::sin(thetap)}, normalp, {1.0f, 1.0f}));
+        vertices.push_back(Vertex({r * glm::cos(thetap), 0, -r * glm::sin(thetap)}, normalp, {1.0f, 0.0f}));
     }
-    return new Mesh(vertices, {}, {}, GL_TRIANGLES, false);
+    return std::shared_ptr<Mesh>(new Mesh(vertices, {}, {}, GL_TRIANGLES, false));
 }
 

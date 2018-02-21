@@ -41,12 +41,12 @@ public:
         this->material = std::move(material);
     }
 
-    static Mesh* createCubeDyn();
-    static Mesh* createSphereDyn();
-    static Mesh* createPlaneDyn();
-    static Mesh* createConeDyn(unsigned int numTriangles, float radius, float height);
-    static Mesh* createCircleDyn(unsigned int numTriangles, float radius);
-    static Mesh* createCylinderDyn(unsigned int numQuads, float radius, float height);
+    static std::shared_ptr<Mesh> createCube();
+    static std::shared_ptr<Mesh> createSphere();
+    static std::shared_ptr<Mesh> createPlane();
+    static std::shared_ptr<Mesh> createCone(unsigned int numTriangles, float radius, float height);
+    static std::shared_ptr<Mesh> createCircle(unsigned int numTriangles, float radius);
+    static std::shared_ptr<Mesh> createCylinder(unsigned int numQuads, float radius, float height);
 
 private:
     unsigned int vao, vbo, ebo;

@@ -155,17 +155,11 @@ void App::start() {
     auto defaultMat = Material::create({defaultTex, defaultSpecularTex}, 64.0f);
 
     // Mesh
-    std::shared_ptr<Mesh> cubeMesh(Mesh::createCubeDyn());
+    auto cubeMesh = Mesh::createCube();
     cubeMesh->setMaterial(containerMat);
 
-    std::shared_ptr<Mesh> lightIndicatorMesh(Mesh::createCubeDyn());
+    auto lightIndicatorMesh = Mesh::createCube();
     lightIndicatorMesh->setMaterial(lightIndicatorMat);
-
-    std::shared_ptr<Mesh> coneMesh(Mesh::createConeDyn(64, 3.0f, 4.0f));
-    coneMesh->setMaterial(defaultMat);
-
-    std::shared_ptr<Mesh> cylinderMesh(Mesh::createCylinderDyn(64, 3.0f, 4.0f));
-    cylinderMesh->setMaterial(defaultMat);
 
     // Scene
     scene = std::make_unique<Scene>();
@@ -177,6 +171,7 @@ void App::start() {
     // Camera
     Camera* camera = new Camera();
     rootNode->addChild(camera);
+    camera->move(-10.0f, 1.5f, 0.0f);
     // camera->move(-5.0f, 2.0f, 5.0f);
     // camera->yaw = -135.f;
 
@@ -195,7 +190,6 @@ void App::start() {
         indicator->setScale(0.2f, 0.2f, 0.2f);
         directionalLight->addChild(indicator);
     }
-
 
     /*
     // Point Lights
@@ -270,13 +264,52 @@ void App::start() {
     rootNode->addChild(modelNode);
      */
 
-    // Cone
-    // MeshNode* coneNode = new MeshNode(coneMesh, defaultShader);
-    // rootNode->addChild(coneNode);
+    float outerRadius = 8.0f;
+    float poleRadius = 7.5f;
+    float innerRadius = 3.0f;
+    float carouselHeight = 4.0f;
+    float roofHeight = 2.0f;
+    float baseHeight = 0.5f;
+    unsigned int numPoles = 12;
+    float poleThickness = 0.1f;
+    float pillarHeight = carouselHeight + (1 - innerRadius / outerRadius) * roofHeight;
+    float poleHeight = carouselHeight + (1 - (poleRadius + poleThickness) / outerRadius) * roofHeight;
 
-    // Cylinder
-    MeshNode* cylinderNode = new MeshNode(cylinderMesh, defaultShader);
-    rootNode->addChild(cylinderNode);
+    auto groundMesh = Mesh::createCircle(64, 64.0f);
+    groundMesh->setMaterial(defaultMat);
+    auto groundNode = new MeshNode(groundMesh, defaultShader);
+    rootNode->addChild(groundNode);
+
+    auto baseMesh = Mesh::createCylinder(64, outerRadius, baseHeight);
+    baseMesh->setMaterial(defaultMat);
+    baseNode = new MeshNode(baseMesh, defaultShader);
+    groundNode->addChild(baseNode);
+
+    auto floorMesh = Mesh::createCircle(64, outerRadius);
+    floorMesh->setMaterial(defaultMat);
+    auto floorNode = new MeshNode(floorMesh, defaultShader);
+    baseNode->addChild(floorNode);
+    floorNode->setPosition(0.0f, baseHeight, 0.0f);
+
+    auto pillarMesh = Mesh::createCylinder(64, innerRadius, pillarHeight);
+    pillarMesh->setMaterial(defaultMat);
+    auto pillarNode = new MeshNode(pillarMesh, defaultShader);
+    floorNode->addChild(pillarNode);
+
+    auto roofMesh = Mesh::createCone(64, outerRadius, roofHeight);
+    roofMesh->setMaterial(defaultMat);
+    auto roofNode = new MeshNode(roofMesh, defaultShader);
+    pillarNode->addChild(roofNode);
+    roofNode->setPosition(0.0f, carouselHeight, 0.0f);
+
+    auto poleMesh = Mesh::createCylinder(8, poleThickness, poleHeight);
+    poleMesh->setMaterial(defaultMat);
+    for (unsigned int i = 0; i < numPoles; ++i) {
+        float theta = i * glm::two_pi<float>() / numPoles;
+        auto poleNode = new MeshNode(poleMesh, defaultShader);
+        floorNode->addChild(poleNode);
+        poleNode->setPosition(poleRadius * glm::cos(theta), 0.0f, -poleRadius * glm::sin(theta));
+    }
 
     // Program loop
     Uint32 frameTime;
@@ -321,7 +354,9 @@ void App::processInput() {
 }
 
 void App::update(float dt) {
+    baseNode->rotate(0.2f * dt, {0.0f, 1.0f, 0.0f});
     scene->update(dt);
+
 }
 
 void App::render() {

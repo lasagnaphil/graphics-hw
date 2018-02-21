@@ -34,6 +34,8 @@ private:
     bool quit = false;
 
     std::unique_ptr<Scene> scene;
+
+    MeshNode* baseNode;
 };
 
 

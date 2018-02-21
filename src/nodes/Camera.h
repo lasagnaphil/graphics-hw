@@ -29,7 +29,7 @@ public:
     struct Settings {
         static constexpr float Yaw = -90.0f;
         static constexpr float Pitch = 0.0f;
-        static constexpr float Speed = 2.5f;
+        static constexpr float Speed = 10.0f;
         static constexpr float Sensitivity = 0.1f;
         static constexpr float Zoom = 45.0f;
     };
