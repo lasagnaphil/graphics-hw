@@ -84,6 +84,7 @@ void SceneData::loadError(const YAML::Mark& mark, const char* err) {
     printMark(mark);
     printf(err);
     printf("\n");
+    exit(1);
 }
 
 void SceneData::printMark(const YAML::Mark& mark) {

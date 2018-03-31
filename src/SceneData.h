@@ -49,7 +49,7 @@ private:
         else {
             printMark(data.Mark());
             printf("missing field \"%s\"\n", field);
-            return {};
+            exit(0);
         }
     }
 

@@ -30,6 +30,12 @@ public:
     std::vector<Node*> getChildren() { return children; }
     void setChildren(const std::vector<Node*>& children) { this->children = children; }
 
+    Node* getChild(const std::string& name);
+    Node* query(std::string path);
+
+    template <typename T>
+    inline T* cast() { return dynamic_cast<T*>(this); }
+
     virtual void update(float dt) {}
     virtual void render() {}
     virtual void processInput(SDL_Event& event) {}

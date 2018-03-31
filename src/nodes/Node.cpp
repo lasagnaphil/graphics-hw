@@ -39,3 +39,28 @@ Node* Node::findSpatial(Node* node) {
     if (spatial) return this;
     else return findSpatial(this->parent);
 }
+
+Node* Node::getChild(const std::string& name) {
+    auto it = std::find_if(children.begin(), children.end(),
+                        [&](Node* child){ return child->name == name; });
+    if (it != children.end()) return *it;
+    else return nullptr;
+}
+
+Node* Node::query(std::string path) {
+    Node* node = this;
+
+    // split string by delimiter "."
+    size_t pos = 0;
+    std::string token;
+    while ((pos = path.find('.')) != std::string::npos) {
+        token = path.substr(0, pos);
+        node = node->getChild(token);
+        if (!node) {
+            return nullptr;
+        }
+        path.erase(0, pos + 1);
+    }
+    node = node->getChild(path);
+    return node;
+}

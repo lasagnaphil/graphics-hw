@@ -70,6 +70,11 @@ public:
         setDirtyFlag(true);
     }
 
+    void setRotationEuler(const glm::vec3 rotation) {
+        this->rotation = glm::quat(glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z));
+        setDirtyFlag(true);
+    }
+
     void rotate(float angleRadians, const glm::vec3& axis) {
         rotate(glm::angleAxis(angleRadians, axis));
     }

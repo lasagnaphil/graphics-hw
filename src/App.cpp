@@ -141,197 +141,9 @@ void App::start() {
     sceneData.setDefaultShader(defaultShader);
     this->scene = sceneData.load("resources/scene.yml");
 
-    /*
-    // Images
-    Image containerImage("resources/container2.png");
-    Image containerSpecularImage("resources/container2_specular.png");
-    Image faceImage("resources/awesomeface.png");
-
-    // Textures
-    Texture containerTex = Texture::fromImage(containerImage);
-    Texture containerSpecularTex = Texture::fromImage(containerSpecularImage, TextureType::Specular);
-    Texture lightTex = Texture::fromColor({1.0f, 1.0f, 1.0f, 1.0f});
-    Texture defaultTex = Texture::fromColor({0.5f, 0.5f, 0.5f, 1.0f});
-    Texture stringTex = Texture::fromColor({222.f / 256.f, 197.f / 256.f, 161.f / 256.f, 1.0f});
-    Texture defaultSpecularTex = Texture::fromColor({0.0f, 0.0f, 0.0f, 0.0f}, TextureType::Specular);
-
-    // Materials
-    auto containerMat = Material::create({containerTex, containerSpecularTex}, 64.0f);
-    auto lightIndicatorMat = Material::create({lightTex, defaultSpecularTex}, 64.0f);
-    auto defaultMat = Material::create({defaultTex, defaultSpecularTex}, 64.0f);
-    auto stringMat = Material::create({stringTex, defaultSpecularTex}, 64.0f);
-
-    // Mesh
-    auto cubeMesh = Mesh::createCube();
-    cubeMesh->setMaterial(containerMat);
-
-    auto lightIndicatorMesh = Mesh::createCube();
-    lightIndicatorMesh->setMaterial(lightIndicatorMat);
-
-    // Scene
-    //scene = std::make_unique<Scene>();
-    scene = new Scene();
-    scene->addShader(defaultShader);
-
-    // Root Node
-    Node* rootNode = scene->getRootNode();
-
-    // Camera
-    Camera* camera = new Camera();
-    rootNode->addChild(camera);
-    camera->move(-10.0f, 1.5f, 0.0f);
-    // camera->move(-5.0f, 2.0f, 5.0f);
-    // camera->yaw = -135.f;
-
-    // Directional Light
-    LightNode* directionalLight = new LightNode(LightNode::Type::Directional);
-
-    directionalLight->setPosition(2.0f, 2.0f, 2.0f);
-    directionalLight->rotate(glm::radians(60.f), {1.0f, 0.0f, 0.0f});
-    directionalLight->ambientColor = {0.2f, 0.2f, 0.2f};
-    directionalLight->diffuseColor = {0.8f, 0.8f, 0.8f};
-    directionalLight->specularColor = {1.0f, 1.0f, 1.0f};
-    rootNode->addChild(directionalLight);
-
-    {
-        MeshNode* indicator = new MeshNode(lightIndicatorMesh, defaultShader);
-        indicator->setScale(0.2f, 0.2f, 0.2f);
-        directionalLight->addChild(indicator);
-    }
-     */
-
-    /*
-    // Point Lights
-    glm::vec3 pointLightPositions[] = {
-            {0.7f, 0.2f, 2.0f},
-            {2.3f, -3.3f, -4.0f},
-            {-4.0f, 2.0f, -12.0f},
-            {0.0f, 0.0f, -3.0f}
-    };
-
-    for (const auto& pos : pointLightPositions) {
-        LightNode* pointLight = new LightNode(LightNode::Type::Point);
-        pointLight->setPosition(pos);
-        pointLight->ambientColor = {0.2f, 0.2f, 0.2f};
-        pointLight->diffuseColor = {0.8f, 0.8f, 0.8f};
-        pointLight->specularColor = {1.0f, 1.0f, 1.0f};
-        pointLight->attenuation = {
-                .constant = 1.0f,
-                .linear = 0.09f,
-                .quadratic = 0.032f
-        };
-        rootNode->addChild(pointLight);
-
-        MeshNode* indicator = new MeshNode(lightIndicatorMesh, defaultShader);
-        indicator->setScale(0.2f, 0.2f, 0.2f);
-        pointLight->addChild(indicator);
-    }
-     */
-
-    // Spotlight (from camera)
-    /*
-    LightNode* flashLight = new LightNode(LightNode::Type::Spotlight);
-    flashLight->ambientColor = {0.2f, 0.2f, 0.2f};
-    flashLight->diffuseColor = {0.8f, 0.8f, 0.8f};
-    flashLight->specularColor = {1.0f, 1.0f, 1.0f};
-    flashLight->attenuation = {
-            .constant = 1.0f,
-            .linear = 0.09f,
-            .quadratic = 0.032f
-    };
-    camera->addChild(flashLight);
-     */
-
-    // Cubes
-    /*
-    glm::vec3 cubePositions[] = {
-            glm::vec3( 0.0f,  0.0f,  0.0f),
-            glm::vec3( 2.0f,  5.0f, -15.0f),
-            glm::vec3(-1.5f, -2.2f, -2.5f),
-            glm::vec3(-3.8f, -2.0f, -12.3f),
-            glm::vec3( 2.4f, -0.4f, -3.5f),
-            glm::vec3(-1.7f,  3.0f, -7.5f),
-            glm::vec3( 1.3f, -2.0f, -2.5f),
-            glm::vec3( 1.5f,  2.0f, -2.5f),
-            glm::vec3( 1.5f,  0.2f, -1.5f),
-            glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
-    for (unsigned int i = 0; i < 10; ++i) {
-        MeshNode* cubeNode = new MeshNode(cubeMesh, defaultShader);
-        cubeNode->setPosition(cubePositions[i]);
-        cubeNode->setRotation(glm::quat_cast(glm::rotate(20.0f * i, glm::vec3(1.0f, 0.3f, 0.5f))));
-        rootNode->addChild(cubeNode);
-    }
-     */
-
-    // Nanosuit Model
-    /*
-    auto nanosuitModel = std::make_shared<Model>("resources/nanosuit/nanosuit.obj");
-    ModelNode* modelNode = new ModelNode(nanosuitModel, defaultShader);
-    modelNode->move(0.0f, 2.0f, 0.0f);
-    modelNode->setScale(0.2f, 0.2f, 0.2f);
-    rootNode->addChild(modelNode);
-     */
-
-    /*
-    float stringLen1 = 1.2f;
-    float poleLen1 = 3.0f;
-    float stringLen2 = 1.0f;
-    float stringLen3 = 1.0f;
-    float poleLen2 = 1.0f;
-
-    auto ceilingMesh = Mesh::createCircle(64, 1.0f);
-    ceilingMesh->setMaterial(defaultMat);
-    auto stringMesh = Mesh::createCylinder(16, 0.01f, 1.0f);
-    stringMesh->setMaterial(stringMat);
-    auto poleMesh = Mesh::createCylinder(16, 0.02f, 1.0f);
-    poleMesh->setMaterial(defaultMat);
-
-    auto ceilingNode = new MeshNode(ceilingMesh, defaultShader);
-    rootNode->addChild(ceilingNode);
-
-    auto stringNode1 = new MeshNode(stringMesh, defaultShader);
-    ceilingNode->addChild(stringNode1);
-    stringNode1->setScale(1.0f, stringLen1, 1.0f);
-    stringNode1->setPosition(0.0f, -1.0f, 0.0f);
-
-    //for (int i = 0; i < 1; ++i) {
-        auto poleNode1 = new MeshNode(poleMesh, defaultShader);
-        stringNode1->addChild(poleNode1);
-        poleNode1->setPosition(0.0f, -0.5f, 0.0f);
-        poleNode1->rotate(glm::radians(90.f), {1.0f, 0.0f, 0.0f});
-        // poleNode1->rotate(glm::radians(60.f * i), {0.0f, 0.0f, 1.0f});
-        poleNode1->setScale(1.0f, poleLen1, 1.0f);
-
-        auto stringNode2 = new MeshNode(stringMesh, defaultShader);
-        poleNode1->addChild(stringNode2);
-        stringNode2->rotate(glm::radians(-90.f), {1.0f, 0.0f, 0.0f});
-        stringNode2->setPosition(0.0f, -1.0f, 0.0f);
-        stringNode2->setScale(1.0f, stringLen2, 1.0f);
-
-        auto stringNode3 = new MeshNode(stringMesh, defaultShader);
-        poleNode1->addChild(stringNode3);
-        stringNode3->rotate(glm::radians(-90.f), {1.0f, 0.0f, 0.0f});
-        stringNode3->setPosition(0.0f, -1.0f, 1.0f);
-        stringNode3->setScale(1.0f, stringLen3, 1.0f);
-
-        std::vector<MeshNode*> strings = {stringNode2, stringNode3};
-
-        for (MeshNode* stringNode : strings) {
-            auto poleNode2 = new MeshNode(poleMesh, defaultShader);
-            stringNode2->addChild(poleNode2);
-            poleNode2->setScale(1.0f, poleLen2, 1.0f);
-            poleNode2->setPosition(0.0f, -0.5f, 0.0f);
-            poleNode2->rotate(glm::radians(90.f), {1.0f, 0.0f, 0.0f});
-        }
-    //}
-     */
-
-
-
     // Program loop
     Uint32 frameTime;
-    Uint32 lastFrameTime;
+    Uint32 lastFrameTime = SDL_GetTicks();
 
     while (!quit) {
         frameTime = SDL_GetTicks();
@@ -340,7 +152,7 @@ void App::start() {
 
         Uint32 dt = frameTime - lastFrameTime;
         lastFrameTime = frameTime;
-        update(dt / 1000.f);
+        update(static_cast<float>(dt) / 1000.f);
 
         render();
 
@@ -361,13 +173,26 @@ void App::processInput() {
             break;
         } else if (event.type == SDL_KEYDOWN) {
             switch (event.key.keysym.sym) {
-                case SDLK_r:
+                case SDLK_r: {
                     scene = sceneData.load("resources/scene.yml");
+                    auto camera = sceneData.getCamera();
+                    if (camera->mouseMovementEnabled) {
+                        SDL_SetRelativeMouseMode(SDL_TRUE);
+                    } else {
+                        SDL_SetRelativeMouseMode(SDL_FALSE);
+                    }
                     break;
-                case SDLK_SPACE:
-                    sceneData.getCamera()->mouseMovementEnabled =
-                            !sceneData.getCamera()->mouseMovementEnabled;
+                }
+                case SDLK_SPACE: {
+                    auto camera = sceneData.getCamera();
+                    camera->mouseMovementEnabled = !camera->mouseMovementEnabled;
+                    if (camera->mouseMovementEnabled) {
+                        SDL_SetRelativeMouseMode(SDL_TRUE);
+                    } else {
+                        SDL_SetRelativeMouseMode(SDL_FALSE);
+                    }
                     break;
+                }
                 case SDLK_ESCAPE:
                     quit = true;
                     break;
@@ -379,8 +204,23 @@ void App::processInput() {
 }
 
 void App::update(float dt) {
+    static float time = 0.f;
+    time += dt;
+
     scene->update(dt);
 
+    Node* root = scene->getRootNode();
+    float tiltAngle = glm::radians(10 * std::sin(time));
+    auto string1 = root->query("ceiling.string1")->cast<Spatial>();
+    string1->setRotationEuler({tiltAngle, 0.f, 0.f});
+    auto string1_end = root->query("ceiling.string1_end")->cast<Spatial>();
+    string1_end->setRotationEuler({tiltAngle, 0.f, 0.f});
+    string1_end->rotate(0.2f * time, {0.f, 1.f, 0.f});
+    auto pole1 = root->query("ceiling.string1_end.pole1")->cast<Spatial>();
+    pole1->rotate(tiltAngle, {1.f, 0.f, 0.f});
+    auto string2 = root->query("ceiling.string1_end.pole1")->cast<Spatial>();
+    string2->rotate(-tiltAngle, {1.f, 0.f, 0.f});
+    //string2->setRotationEuler({glm::radians(90.f) - tiltAngle, 0.f, 0.f});
 }
 
 void App::render() {
@@ -390,7 +230,6 @@ void App::render() {
 
     // do stuff
     scene->render();
-
 }
 
 App::~App() {
