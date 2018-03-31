@@ -6,6 +6,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
 #include "Mesh.h"
 #include "nodes/MeshNode.h"
 #include "AppSettings.h"
@@ -89,7 +90,7 @@ void App::start() {
     if (window == NULL) sdl_die("Couldn't set video mode");
 
     // SDL Settings
-    SDL_SetRelativeMouseMode(SDL_TRUE);
+    // SDL_SetRelativeMouseMode(SDL_TRUE);
 
     // Create OpenGL Context
     mainContext = SDL_GL_CreateContext(window);
@@ -137,6 +138,10 @@ void App::start() {
     Shader defaultShader("shaders/lighting.vert", "shaders/lighting.frag");
     defaultShader.use();
 
+    sceneData.setDefaultShader(defaultShader);
+    this->scene = sceneData.load("resources/scene.yml");
+
+    /*
     // Images
     Image containerImage("resources/container2.png");
     Image containerSpecularImage("resources/container2_specular.png");
@@ -147,12 +152,14 @@ void App::start() {
     Texture containerSpecularTex = Texture::fromImage(containerSpecularImage, TextureType::Specular);
     Texture lightTex = Texture::fromColor({1.0f, 1.0f, 1.0f, 1.0f});
     Texture defaultTex = Texture::fromColor({0.5f, 0.5f, 0.5f, 1.0f});
+    Texture stringTex = Texture::fromColor({222.f / 256.f, 197.f / 256.f, 161.f / 256.f, 1.0f});
     Texture defaultSpecularTex = Texture::fromColor({0.0f, 0.0f, 0.0f, 0.0f}, TextureType::Specular);
 
     // Materials
     auto containerMat = Material::create({containerTex, containerSpecularTex}, 64.0f);
     auto lightIndicatorMat = Material::create({lightTex, defaultSpecularTex}, 64.0f);
     auto defaultMat = Material::create({defaultTex, defaultSpecularTex}, 64.0f);
+    auto stringMat = Material::create({stringTex, defaultSpecularTex}, 64.0f);
 
     // Mesh
     auto cubeMesh = Mesh::createCube();
@@ -162,7 +169,8 @@ void App::start() {
     lightIndicatorMesh->setMaterial(lightIndicatorMat);
 
     // Scene
-    scene = std::make_unique<Scene>();
+    //scene = std::make_unique<Scene>();
+    scene = new Scene();
     scene->addShader(defaultShader);
 
     // Root Node
@@ -178,8 +186,8 @@ void App::start() {
     // Directional Light
     LightNode* directionalLight = new LightNode(LightNode::Type::Directional);
 
-    directionalLight->setPosition(3.0f, 3.0f, 3.0f);
-    directionalLight->pointAt({-0.2f, -1.0f, -0.3f});
+    directionalLight->setPosition(2.0f, 2.0f, 2.0f);
+    directionalLight->rotate(glm::radians(60.f), {1.0f, 0.0f, 0.0f});
     directionalLight->ambientColor = {0.2f, 0.2f, 0.2f};
     directionalLight->diffuseColor = {0.8f, 0.8f, 0.8f};
     directionalLight->specularColor = {1.0f, 1.0f, 1.0f};
@@ -190,6 +198,7 @@ void App::start() {
         indicator->setScale(0.2f, 0.2f, 0.2f);
         directionalLight->addChild(indicator);
     }
+     */
 
     /*
     // Point Lights
@@ -264,52 +273,61 @@ void App::start() {
     rootNode->addChild(modelNode);
      */
 
-    float outerRadius = 8.0f;
-    float poleRadius = 7.5f;
-    float innerRadius = 3.0f;
-    float carouselHeight = 4.0f;
-    float roofHeight = 2.0f;
-    float baseHeight = 0.5f;
-    unsigned int numPoles = 12;
-    float poleThickness = 0.1f;
-    float pillarHeight = carouselHeight + (1 - innerRadius / outerRadius) * roofHeight;
-    float poleHeight = carouselHeight + (1 - (poleRadius + poleThickness) / outerRadius) * roofHeight;
+    /*
+    float stringLen1 = 1.2f;
+    float poleLen1 = 3.0f;
+    float stringLen2 = 1.0f;
+    float stringLen3 = 1.0f;
+    float poleLen2 = 1.0f;
 
-    auto groundMesh = Mesh::createCircle(64, 64.0f);
-    groundMesh->setMaterial(defaultMat);
-    auto groundNode = new MeshNode(groundMesh, defaultShader);
-    rootNode->addChild(groundNode);
-
-    auto baseMesh = Mesh::createCylinder(64, outerRadius, baseHeight);
-    baseMesh->setMaterial(defaultMat);
-    baseNode = new MeshNode(baseMesh, defaultShader);
-    groundNode->addChild(baseNode);
-
-    auto floorMesh = Mesh::createCircle(64, outerRadius);
-    floorMesh->setMaterial(defaultMat);
-    auto floorNode = new MeshNode(floorMesh, defaultShader);
-    baseNode->addChild(floorNode);
-    floorNode->setPosition(0.0f, baseHeight, 0.0f);
-
-    auto pillarMesh = Mesh::createCylinder(64, innerRadius, pillarHeight);
-    pillarMesh->setMaterial(defaultMat);
-    auto pillarNode = new MeshNode(pillarMesh, defaultShader);
-    floorNode->addChild(pillarNode);
-
-    auto roofMesh = Mesh::createCone(64, outerRadius, roofHeight);
-    roofMesh->setMaterial(defaultMat);
-    auto roofNode = new MeshNode(roofMesh, defaultShader);
-    pillarNode->addChild(roofNode);
-    roofNode->setPosition(0.0f, carouselHeight, 0.0f);
-
-    auto poleMesh = Mesh::createCylinder(8, poleThickness, poleHeight);
+    auto ceilingMesh = Mesh::createCircle(64, 1.0f);
+    ceilingMesh->setMaterial(defaultMat);
+    auto stringMesh = Mesh::createCylinder(16, 0.01f, 1.0f);
+    stringMesh->setMaterial(stringMat);
+    auto poleMesh = Mesh::createCylinder(16, 0.02f, 1.0f);
     poleMesh->setMaterial(defaultMat);
-    for (unsigned int i = 0; i < numPoles; ++i) {
-        float theta = i * glm::two_pi<float>() / numPoles;
-        auto poleNode = new MeshNode(poleMesh, defaultShader);
-        floorNode->addChild(poleNode);
-        poleNode->setPosition(poleRadius * glm::cos(theta), 0.0f, -poleRadius * glm::sin(theta));
-    }
+
+    auto ceilingNode = new MeshNode(ceilingMesh, defaultShader);
+    rootNode->addChild(ceilingNode);
+
+    auto stringNode1 = new MeshNode(stringMesh, defaultShader);
+    ceilingNode->addChild(stringNode1);
+    stringNode1->setScale(1.0f, stringLen1, 1.0f);
+    stringNode1->setPosition(0.0f, -1.0f, 0.0f);
+
+    //for (int i = 0; i < 1; ++i) {
+        auto poleNode1 = new MeshNode(poleMesh, defaultShader);
+        stringNode1->addChild(poleNode1);
+        poleNode1->setPosition(0.0f, -0.5f, 0.0f);
+        poleNode1->rotate(glm::radians(90.f), {1.0f, 0.0f, 0.0f});
+        // poleNode1->rotate(glm::radians(60.f * i), {0.0f, 0.0f, 1.0f});
+        poleNode1->setScale(1.0f, poleLen1, 1.0f);
+
+        auto stringNode2 = new MeshNode(stringMesh, defaultShader);
+        poleNode1->addChild(stringNode2);
+        stringNode2->rotate(glm::radians(-90.f), {1.0f, 0.0f, 0.0f});
+        stringNode2->setPosition(0.0f, -1.0f, 0.0f);
+        stringNode2->setScale(1.0f, stringLen2, 1.0f);
+
+        auto stringNode3 = new MeshNode(stringMesh, defaultShader);
+        poleNode1->addChild(stringNode3);
+        stringNode3->rotate(glm::radians(-90.f), {1.0f, 0.0f, 0.0f});
+        stringNode3->setPosition(0.0f, -1.0f, 1.0f);
+        stringNode3->setScale(1.0f, stringLen3, 1.0f);
+
+        std::vector<MeshNode*> strings = {stringNode2, stringNode3};
+
+        for (MeshNode* stringNode : strings) {
+            auto poleNode2 = new MeshNode(poleMesh, defaultShader);
+            stringNode2->addChild(poleNode2);
+            poleNode2->setScale(1.0f, poleLen2, 1.0f);
+            poleNode2->setPosition(0.0f, -0.5f, 0.0f);
+            poleNode2->rotate(glm::radians(90.f), {1.0f, 0.0f, 0.0f});
+        }
+    //}
+     */
+
+
 
     // Program loop
     Uint32 frameTime;
@@ -343,6 +361,13 @@ void App::processInput() {
             break;
         } else if (event.type == SDL_KEYDOWN) {
             switch (event.key.keysym.sym) {
+                case SDLK_r:
+                    scene = sceneData.load("resources/scene.yml");
+                    break;
+                case SDLK_SPACE:
+                    sceneData.getCamera()->mouseMovementEnabled =
+                            !sceneData.getCamera()->mouseMovementEnabled;
+                    break;
                 case SDLK_ESCAPE:
                     quit = true;
                     break;
@@ -354,7 +379,6 @@ void App::processInput() {
 }
 
 void App::update(float dt) {
-    baseNode->rotate(0.2f * dt, {0.0f, 1.0f, 0.0f});
     scene->update(dt);
 
 }
@@ -372,3 +396,4 @@ void App::render() {
 App::~App() {
     SDL_DestroyWindow(window);
 }
+

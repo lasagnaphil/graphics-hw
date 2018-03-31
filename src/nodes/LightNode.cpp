@@ -43,6 +43,40 @@ LightNode::LightNode(Type type)
     }
 }
 
+void LightNode::changeType(Type type) {
+    switch(this->type) {
+        case Type::Directional:
+            numDirectionalLights--; break;
+        case Type::Point:
+            numPointLights--; break;
+        case Type::Spotlight:
+            numSpotLights--; break;
+    }
+    switch(type) {
+        case Type::Directional:
+            if (numDirectionalLights >= maxDirectionalLights) {
+                std::cerr << "Exceeded max number of directional lights!" << std::endl;
+            }
+            lightID = numDirectionalLights;
+            numDirectionalLights++;
+            break;
+        case Type::Point:
+            if (numPointLights >= maxPointLights) {
+                std::cerr << "Exceeded max number of point lights!" << std::endl;
+            }
+            lightID = numPointLights;
+            numPointLights++;
+            break;
+        case Type::Spotlight:
+            if (numSpotLights >= maxSpotLights) {
+                std::cerr << "Exceeded max number of spot lights!" << std::endl;
+            }
+            lightID = numSpotLights;
+            numSpotLights++;
+    }
+    this->type = type;
+}
+
 void LightNode::update(float dt) {
     for (Shader shader : scene->getShaders()) {
         shader.use();

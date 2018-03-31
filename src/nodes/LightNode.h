@@ -22,11 +22,14 @@ public:
         float quadratic;
     };
 
-    LightNode(Type type = Type::Point);
+    LightNode(Type type = Type::Directional);
 
-    ~LightNode();
+    virtual ~LightNode();
+
+    void changeType(Type type);
 
     void update(float dt) override;
+
 
     // When type == Type::Point
     Attenuation attenuation;
@@ -42,8 +45,9 @@ public:
     unsigned int getLightID() { return lightID; }
 
 private:
-    unsigned int lightID;
     Type type;
+
+    unsigned int lightID;
 
     static constexpr unsigned int maxDirectionalLights = 1;
     static constexpr unsigned int maxPointLights = 4;

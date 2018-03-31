@@ -157,6 +157,39 @@ public:
         // return glm::rotate(rotation, glm::vec3(1.0f, 0.0f, 0.0f));
     }
 
+    glm::mat4 getLocalTransform() const {
+        return localTransform;
+    }
+
+    glm::mat4 getWorldTransform() const {
+        return worldTransform;
+    }
+
+    glm::vec3 getGlobalRotation() const {
+
+    }
+    glm::vec3 getGlobalScale() const {
+        if (spatialParent) {
+            return spatialParent->getGlobalScale() * scale;
+        }
+        else {
+            return scale;
+        }
+    }
+
+    void setGlobalScale(const glm::vec3& newScale) {
+        auto globalScale = getGlobalScale();
+        scale.x *= newScale.x / globalScale.x;
+        scale.y *= newScale.y / globalScale.y;
+        scale.z *= newScale.z / globalScale.z;
+        setDirtyFlag(true);
+    }
+
+    void setGlobalScale(float x, float y, float z) {
+        setGlobalScale({x, y, z});
+    }
+
+
 protected:
     glm::vec3 position;
     glm::quat rotation;

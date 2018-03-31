@@ -34,6 +34,8 @@ public:
     virtual void render() {}
     virtual void processInput(SDL_Event& event) {}
 
+    std::string name;
+
 protected:
 
     Scene* scene;

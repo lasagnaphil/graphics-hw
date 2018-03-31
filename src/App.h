@@ -10,6 +10,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <SDL2/SDL.h>
+#include <yaml-cpp/yaml.h>
+
 #include <memory>
 
 #include "glad/glad.h"
@@ -17,6 +19,7 @@
 #include "Texture.h"
 #include "Scene.h"
 #include "nodes/MeshNode.h"
+#include "SceneData.h"
 
 class App {
 public:
@@ -26,6 +29,8 @@ public:
     void update(float dt);
     void render();
 
+    void loadScene(const std::string& filename);
+
     static constexpr Uint32 msPerFrame = 16;
 
 private:
@@ -33,9 +38,9 @@ private:
     SDL_GLContext mainContext;
     bool quit = false;
 
-    std::unique_ptr<Scene> scene;
+    Scene* scene;
 
-    MeshNode* baseNode;
+    SceneData sceneData;
 };
 
 

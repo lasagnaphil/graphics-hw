@@ -42,6 +42,10 @@ set(TWEENY_BUILD_DOCUMENTATION OFF)
 add_subdirectory("deps/tweeny")
 target_link_libraries(${PROJECT_NAME} tweeny)
 
+# YAML
+add_subdirectory("deps/yaml-cpp")
+target_link_libraries(${PROJECT_NAME} yaml-cpp)
+
 # STB
 set(STB_DIR "deps/stb")
 target_include_directories(${PROJECT_NAME} PRIVATE ${STB_DIR})

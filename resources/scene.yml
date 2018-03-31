@@ -1,0 +1,97 @@
+textures:
+  default:
+    color: [0.5, 0.5, 0.5, 1.0]
+  defaultSpecular:
+    color: [1, 1, 1, 1]
+  light:
+    color: [1, 1, 1, 1]
+  string:
+    colorInt: [222, 197, 161, 255]
+
+meshes:
+  cube:
+    type: Cube
+  ceiling:
+    type: Circle
+    poly: 64
+    radius: 1.0
+  string:
+    type: Cylinder
+    poly: 16
+    radius: 0.01
+    height: 1.0
+    mat: string
+  pole:
+    type: Cylinder
+    poly: 16
+    radius: 0.02
+    height: 1.0
+
+nodes:
+  - name: camera
+    type: Camera
+    pos: [-7.0, 1.5, 0.0]
+  - name: light
+    type: LightNode
+    lightType: Directional
+    pos: [2.0, 2.0, 2.0]
+    rot: [60, 0, 0]
+    ambientColor: [0.2, 0.2, 0.2]
+    diffuseColor: [0.8, 0.8, 0.8]
+    specularColor: [1.0, 1.0, 1.0]
+    children:
+      - name: lightIndicator
+        mesh: cube
+        scale: [0.2, 0.2, 0.2]
+  - name: ceiling
+    type: MeshNode
+    mesh: ceiling
+    pos: [0, 3, 0]
+    children:
+      - name: string1
+        type: MeshNode
+        mesh: string
+        pos: [0, -1, 0]
+        scale: [1, 1.2, 1]
+      - name: string1_end
+        type: Spatial
+        pos: [0, -1.2, 0]
+        children:
+          - name: pole1
+            type: MeshNode
+            mesh: pole
+            pos: [0, -0.5, 0]
+            rot: [90, 0, 0]
+            scale: [1, 3, 1]
+          - name: pole1_left_end
+            type: Spatial
+            pos: [0, 0, -1.5]
+            children:
+            - name: string2
+              type: MeshNode
+              mesh: string
+              pos: [0, -1, 0]
+              scale: [1, 1, 1]
+              children:
+                - name: pole2
+                  type: MeshNode
+                  mesh: pole
+                  pos: [0, -0.5, 0]
+                  rot: [90, 0, 0]
+                  scale: [1, 1, 1]
+          - name: pole1_right_end
+            type: Spatial
+            pos: [0, 0, 1.5]
+            children:
+            - name: string3
+              type: MeshNode
+              mesh: string
+              pos: [0, -1, 0]
+              scale: [1, 1, 1]
+              children:
+                - name: pole3
+                  type: MeshNode
+                  mesh: pole
+                  pos: [0, -0.5, 0]
+                  rot: [90, 0, 0]
+                  scale: [1, 1, 1]

@@ -1,3 +1,6 @@
 [submodule "deps/tweeny"]
 	path = deps/tweeny
 	url = https://github.com/mobius3/tweeny
+[submodule "deps/yaml-cpp"]
+	path = deps/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp

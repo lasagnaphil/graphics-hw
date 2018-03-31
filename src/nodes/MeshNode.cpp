@@ -27,3 +27,7 @@ void MeshNode::render() {
 void MeshNode::setShader(Shader shader) {
     this->shader = shader;
 }
+
+void MeshNode::setMesh(std::shared_ptr<Mesh> mesh) {
+    this->mesh = mesh;
+}

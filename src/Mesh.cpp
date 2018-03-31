@@ -3,6 +3,7 @@
 //
 
 #include <glm/gtc/constants.hpp>
+#include <algorithm>
 #include "Mesh.h"
 
 Mesh::Mesh(std::vector<Vertex> vertices,
