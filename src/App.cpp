@@ -12,9 +12,7 @@
 #include "AppSettings.h"
 #include "InputManager.h"
 #include "nodes/Camera.h"
-#include "Model.h"
 #include "nodes/LightNode.h"
-#include "nodes/ModelNode.h"
 
 static void sdl_die(const char * message) {
     fprintf(stderr, "%s: %s\n", message, SDL_GetError());
@@ -130,10 +128,6 @@ void App::start() {
     // Load textures
     stbi_set_flip_vertically_on_load(true);
 
-    //
-    // Preparation
-    //
-
     // Shaders
     Shader defaultShader("shaders/lighting.vert", "shaders/lighting.frag");
     defaultShader.use();
@@ -216,7 +210,6 @@ void App::update(float dt) {
     string1->setRotationEuler({tiltAngle, 0.f, 0.f});
     auto string1_end = root->query("ceiling.string1_end")->cast<Spatial>();
     string1_end->setRotationEuler({tiltAngle, glm::radians(180.f), 0.f});
-    //string1_end->rotate(0.2f * time, {0.f, 1.f, 0.f});
 
     auto pole1 = string1_end->query("pole1")->cast<Spatial>();
     pole1->setRotationEuler({glm::radians(90.f) + 0.4 * tiltAngle, 0.f, 0.f});

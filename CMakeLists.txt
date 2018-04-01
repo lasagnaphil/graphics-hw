@@ -7,7 +7,6 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 find_package(SDL2 REQUIRED)
 find_package(GLM REQUIRED)
-find_package(Assimp REQUIRED)
 
 file(GLOB_RECURSE PROJECT_HEADERS src/*.h)
 file(GLOB_RECURSE PROJECT_SOURCES glad/glad.c src/*.cpp)
@@ -27,7 +26,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
         ${GLM_INCLUDE_DIRS}
         ${ASSIMP_INCLUDE_DIR})
 
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY} ${ASSIMP_LIBRARY})
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY})
 
 # GLAD
 set(GLAD_DIR "deps/glad")
@@ -36,13 +35,11 @@ target_include_directories("glad" PRIVATE "${GLAD_DIR}/include")
 target_include_directories(${PROJECT_NAME} PRIVATE "${GLAD_DIR}/include")
 target_link_libraries(${PROJECT_NAME} "glad" "${CMAKE_DL_LIBS}")
 
-# Tweeny
-set(TWEENY_BUILD_EXAMPLES OFF)
-set(TWEENY_BUILD_DOCUMENTATION OFF)
-add_subdirectory("deps/tweeny")
-target_link_libraries(${PROJECT_NAME} tweeny)
-
 # YAML
+set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "disable yaml tests")
+set(YAML_CPP_BUILD_TOOLS OFF CACHE BOOL "disable yaml tools")
+set(YAML_CPP_BUILD_CONTRIB OFF CACHE BOOL "disable yaml contrib")
+set(EVENT__DISABLE_TESTS ON)
 add_subdirectory("deps/yaml-cpp")
 target_link_libraries(${PROJECT_NAME} yaml-cpp)
 
@@ -51,7 +48,7 @@ set(STB_DIR "deps/stb")
 target_include_directories(${PROJECT_NAME} PRIVATE ${STB_DIR})
 
 # set build directory
-set_target_properties(${PROJECT_NAME} PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build")
-INSTALL(DIRECTORY "${CMAKE_SOURCE_DIR}/resources/" DESTINATION "build/resources/")
-INSTALL(DIRECTORY "${CMAKE_SOURCE_DIR}/shaders/" DESTINATION "build/shaders/")
+file(COPY ${CMAKE_SOURCE_DIR}/resources
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${CMAKE_SOURCE_DIR}/shaders
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
