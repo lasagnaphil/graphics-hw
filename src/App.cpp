@@ -210,17 +210,45 @@ void App::update(float dt) {
     scene->update(dt);
 
     Node* root = scene->getRootNode();
-    float tiltAngle = glm::radians(10 * std::sin(time));
+    float tiltAngle = glm::radians(12.5f * std::sin(time));
+
     auto string1 = root->query("ceiling.string1")->cast<Spatial>();
     string1->setRotationEuler({tiltAngle, 0.f, 0.f});
     auto string1_end = root->query("ceiling.string1_end")->cast<Spatial>();
-    string1_end->setRotationEuler({tiltAngle, 0.f, 0.f});
-    string1_end->rotate(0.2f * time, {0.f, 1.f, 0.f});
-    auto pole1 = root->query("ceiling.string1_end.pole1")->cast<Spatial>();
-    pole1->rotate(tiltAngle, {1.f, 0.f, 0.f});
-    auto string2 = root->query("ceiling.string1_end.pole1")->cast<Spatial>();
-    string2->rotate(-tiltAngle, {1.f, 0.f, 0.f});
-    //string2->setRotationEuler({glm::radians(90.f) - tiltAngle, 0.f, 0.f});
+    string1_end->setRotationEuler({tiltAngle, glm::radians(180.f), 0.f});
+    //string1_end->rotate(0.2f * time, {0.f, 1.f, 0.f});
+
+    auto pole1 = string1_end->query("pole1")->cast<Spatial>();
+    pole1->setRotationEuler({glm::radians(90.f) + 0.4 * tiltAngle, 0.f, 0.f});
+
+    auto pole1_left_end = string1_end->query("pole1_left_end")->cast<Spatial>();
+    auto pole1_right_end = string1_end->query("pole1_right_end")->cast<Spatial>();
+    auto pole1_middle1_end = string1_end->query("pole1_middle1_end")->cast<Spatial>();
+    auto pole1_middle2_end = string1_end->query("pole1_middle2_end")->cast<Spatial>();
+    std::vector<Spatial*> pole1_ends = {pole1_left_end, pole1_right_end, pole1_middle1_end, pole1_middle2_end};
+    for (auto pole1_end : pole1_ends) {
+        pole1_end->setRotationEuler({0.4f * tiltAngle, 0.f, 0.f});
+    }
+
+    auto string2 = pole1_left_end->query("string2")->cast<Spatial>();
+    auto string3 = pole1_right_end->query("string3")->cast<Spatial>();
+    auto string4 = pole1_middle1_end->query("string4")->cast<Spatial>();
+    auto string4_end = pole1_middle1_end->query("string4_end")->cast<Spatial>();
+    auto string5 = pole1_middle2_end->query("string5")->cast<Spatial>();
+    auto string5_end = pole1_middle2_end->query("string5_end")->cast<Spatial>();
+    std::vector<Spatial*> strings = {string2, string3, string4, string4_end, string5, string5_end};
+    for (auto string : strings) {
+        string->setRotationEuler({0.4f * tiltAngle, 0.f, 0.f});
+    }
+
+    auto deco1 = string2->query("deco1")->cast<Spatial>();
+    deco1->setRotationEuler({0.5f * (time + 1.f), 0.5f * (time + 2.f), 0.5f * time});
+    auto deco2 = string3->query("deco2")->cast<Spatial>();
+    deco2->setRotationEuler({0.5f * time, 0.5f * (-time + 2.f), 0.5f * (time + 1.f)});
+    auto deco3 = string4_end->query("deco3")->cast<Spatial>();
+    deco3->setRotationEuler({0.5f * (-time + 2.f), 0.5f * time, 0.5f * (time + 1.f)});
+    auto deco4 = string5_end->query("deco4")->cast<Spatial>();
+    deco4->setRotationEuler({0.5f * (time + 1.f), 0.5f * (time + 2.f), 0.5f * (-time)});
 }
 
 void App::render() {
