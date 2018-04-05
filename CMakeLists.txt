@@ -36,11 +36,14 @@ target_include_directories(${PROJECT_NAME} PRIVATE "${GLAD_DIR}/include")
 target_link_libraries(${PROJECT_NAME} "glad" "${CMAKE_DL_LIBS}")
 
 # YAML
+set(YAML_DIR "deps/yaml-cpp")
 set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "disable yaml tests")
 set(YAML_CPP_BUILD_TOOLS OFF CACHE BOOL "disable yaml tools")
 set(YAML_CPP_BUILD_CONTRIB OFF CACHE BOOL "disable yaml contrib")
 set(EVENT__DISABLE_TESTS ON)
-add_subdirectory("deps/yaml-cpp")
+add_subdirectory("${YAML_DIR}")
+target_include_directories("yaml-cpp" PRIVATE "${YAML_DIR}/include")
+target_include_directories(${PROJECT_NAME} PRIVATE "${YAML_DIR}/include")
 target_link_libraries(${PROJECT_NAME} yaml-cpp)
 
 # STB
