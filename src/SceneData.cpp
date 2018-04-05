@@ -132,7 +132,8 @@ Node* SceneData::loadNode(const YAML::Node& data) {
     auto meshNode = dynamic_cast<MeshNode*>(node);
     if (meshNode) {
         if (auto meshName = loadField<string>(data, "mesh")) {
-            if (auto found = meshes.find(*meshName); found != meshes.end()) {
+            auto found = meshes.find(*meshName);
+            if (found != meshes.end()) {
                 meshNode->setMesh(meshes[*meshName]);
             }
             else {
