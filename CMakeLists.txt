@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 set(PROJECT_NAME gengine)
 project(${PROJECT_NAME})
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
@@ -46,6 +46,10 @@ target_link_libraries(${PROJECT_NAME} yaml-cpp)
 # STB
 set(STB_DIR "deps/stb")
 target_include_directories(${PROJECT_NAME} PRIVATE ${STB_DIR})
+
+# std::optional support for versions before C++17
+set(OPTIONAL_LITE_DIR "deps/optional-lite")
+target_include_directories(${PROJECT_NAME} PRIVATE ${OPTIONAL_LITE_DIR})
 
 # set build directory
 file(COPY ${CMAKE_SOURCE_DIR}/resources

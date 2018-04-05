@@ -10,6 +10,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <optional.hpp>
 
 #include "Texture.h"
 #include "Mesh.h"
@@ -42,7 +43,7 @@ private:
     void loadError(const YAML::Mark& mark, const char* err);
 
     template <typename T>
-    std::optional<T> loadField(const YAML::Node& data, const char* field) {
+    nonstd::optional<T> loadField(const YAML::Node& data, const char* field) {
         if (data[field]) {
             return data[field].as<T>();
         }
@@ -54,7 +55,7 @@ private:
     }
 
     template <typename T>
-    std::optional<T> loadFieldOpt(const YAML::Node& data, const char* field) {
+    nonstd::optional<T> loadFieldOpt(const YAML::Node& data, const char* field) {
         if (data[field]) {
             return data[field].as<T>();
         }
