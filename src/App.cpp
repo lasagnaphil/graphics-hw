@@ -73,8 +73,8 @@ void App::start() {
     atexit(SDL_Quit);
     SDL_GL_LoadLibrary(NULL); // Default OpenGL is fine.
 
-    // Use OpenGL Version 4.3
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    // Use OpenGL Version 3.3
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
@@ -103,6 +103,7 @@ void App::start() {
     printf("Version:  %s\n", glGetString(GL_VERSION));
 
     // Enable the debug callback
+    /*
     GLint flags;
     glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
     if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
@@ -113,6 +114,7 @@ void App::start() {
                 GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, true
         );
     }
+     */
 
     // Use v-sync
     SDL_GL_SetSwapInterval(1);
