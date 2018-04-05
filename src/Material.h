@@ -7,7 +7,6 @@
 
 
 #include <memory>
-#include <variant>
 #include <glm/vec3.hpp>
 #include <vector>
 #include "Texture.h"
