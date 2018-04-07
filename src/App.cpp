@@ -2,6 +2,8 @@
 // Created by lasagnaphil on 2/6/18.
 //
 
+#include <imgui.h>
+#include <imgui_impl_sdl_gl3.h>
 #include "App.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -77,6 +79,10 @@ void App::start() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
     // Create the window
     window = SDL_CreateWindow(
@@ -127,6 +133,13 @@ void App::start() {
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
 
+
+    // Setup ImGui binding
+    ImGui::CreateContext();
+    ImGui_ImplSdlGL3_Init(window);
+    ImGuiIO& io = ImGui::GetIO();
+    ImGui::StyleColorsDark();
+
     // Load textures
     stbi_set_flip_vertically_on_load(true);
 
@@ -164,6 +177,7 @@ void App::start() {
 void App::processInput() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
+        ImGui_ImplSdlGL3_ProcessEvent(&event);
         if (event.type == SDL_QUIT) {
             quit = true;
             break;
@@ -247,12 +261,20 @@ void App::update(float dt) {
 }
 
 void App::render() {
+    ImGui_ImplSdlGL3_NewFrame(window);
+
     // clear screen
+    glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // do stuff
     scene->render();
+
+    bool showDemoWindow = true;
+    ImGui::ShowDemoWindow(&showDemoWindow);
+    ImGui::Render();
+    ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 App::~App() {
