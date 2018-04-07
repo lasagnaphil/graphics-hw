@@ -40,6 +40,18 @@ target_link_libraries(${PROJECT_NAME} glad ${CMAKE_DL_LIBS})
 set(GLM_DIR "deps/glm")
 target_include_directories(${PROJECT_NAME} PRIVATE "${GLM_DIR}")
 
+# IMGUI
+set(IMGUI_DIR "deps/imgui")
+add_library(imgui
+        "${IMGUI_DIR}/imgui.cpp"
+        "${IMGUI_DIR}/imgui_draw.cpp"
+        "${IMGUI_DIR}/imgui_demo.cpp"
+        "${IMGUI_DIR}/imgui_impl_sdl_gl3.cpp")
+
+target_include_directories(imgui PRIVATE "${IMGUI_DIR}")
+target_include_directories(${PROJECT_NAME} PRIVATE "${IMGUI_DIR}")
+target_link_libraries(${PROJECT_NAME} imgui)
+
 # YAML
 set(YAML_DIR "deps/yaml-cpp")
 set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "disable yaml tests")
