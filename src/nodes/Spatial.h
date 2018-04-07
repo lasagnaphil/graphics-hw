@@ -7,7 +7,9 @@
 
 #include "Node.h"
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
 class Spatial : public Node {
     friend class Scene;

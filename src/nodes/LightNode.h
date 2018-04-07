@@ -5,7 +5,6 @@
 #ifndef GENGINE_LIGHTNODE_H
 #define GENGINE_LIGHTNODE_H
 
-
 #include "Spatial.h"
 #include "../Shader.h"
 

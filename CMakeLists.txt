@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 find_package(SDL2 REQUIRED)
-find_package(GLM REQUIRED)
 
 file(GLOB_RECURSE PROJECT_HEADERS src/*.h)
 file(GLOB_RECURSE PROJECT_SOURCES glad/glad.c src/*.cpp)
@@ -28,21 +27,26 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY})
 
+set(EVENT__DISABLE_TESTS ON)
+
 # GLAD
 set(GLAD_DIR "deps/glad")
-add_library("glad" "${GLAD_DIR}/src/glad.c")
-target_include_directories("glad" PRIVATE "${GLAD_DIR}/include")
+add_library(glad "${GLAD_DIR}/src/glad.c")
+target_include_directories(glad PRIVATE "${GLAD_DIR}/include")
 target_include_directories(${PROJECT_NAME} PRIVATE "${GLAD_DIR}/include")
-target_link_libraries(${PROJECT_NAME} "glad" "${CMAKE_DL_LIBS}")
+target_link_libraries(${PROJECT_NAME} glad ${CMAKE_DL_LIBS})
+
+# GLM
+set(GLM_DIR "deps/glm")
+target_include_directories(${PROJECT_NAME} PRIVATE "${GLM_DIR}")
 
 # YAML
 set(YAML_DIR "deps/yaml-cpp")
 set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "disable yaml tests")
 set(YAML_CPP_BUILD_TOOLS OFF CACHE BOOL "disable yaml tools")
 set(YAML_CPP_BUILD_CONTRIB OFF CACHE BOOL "disable yaml contrib")
-set(EVENT__DISABLE_TESTS ON)
-add_subdirectory("${YAML_DIR}")
-target_include_directories("yaml-cpp" PRIVATE "${YAML_DIR}/include")
+add_subdirectory(${YAML_DIR})
+target_include_directories(yaml-cpp PRIVATE "${YAML_DIR}/include")
 target_include_directories(${PROJECT_NAME} PRIVATE "${YAML_DIR}/include")
 target_link_libraries(${PROJECT_NAME} yaml-cpp)
 

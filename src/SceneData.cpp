@@ -5,7 +5,6 @@
 #include <yaml-cpp/yaml.h>
 #include "SceneData.h"
 
-
 Scene* SceneData::load(const std::string& filename) {
     using std::string;
 

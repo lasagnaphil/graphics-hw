@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
+#include <string>
 #include <vector>
 #include <algorithm>
 #include <SDL2/SDL_events.h>
