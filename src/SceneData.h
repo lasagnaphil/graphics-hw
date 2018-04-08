@@ -17,7 +17,7 @@
 #include "nodes/Node.h"
 #include "nodes/LightNode.h"
 #include "nodes/MeshNode.h"
-#include "nodes/Camera.h"
+#include "nodes/FirstPersonCamera.h"
 #include "Scene.h"
 
 class SceneData {

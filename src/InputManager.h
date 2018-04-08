@@ -47,6 +47,10 @@ public:
         return mouseMap[button];
     }
 
+    bool mouseReleased(Uint8 button) {
+        return !mouseMap[button];
+    }
+
     glm::ivec2 mousePos() {
         int x, y;
         SDL_GetMouseState(&x, &y);

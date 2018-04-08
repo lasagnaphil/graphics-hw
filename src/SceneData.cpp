@@ -4,6 +4,7 @@
 
 #include <yaml-cpp/yaml.h>
 #include "SceneData.h"
+#include "nodes/TrackballCamera.h"
 
 Scene* SceneData::load(const std::string& filename) {
     using std::string;
@@ -68,7 +69,6 @@ Scene* SceneData::load(const std::string& filename) {
         }
     }
 
-
     auto nodes = data["nodes"];
     if (nodes) {
         loadChildren(scene->getRootNode(), nodes);
@@ -98,7 +98,18 @@ Node* SceneData::loadNode(const YAML::Node& data) {
     if (auto type = loadFieldOpt<string>(data, "type")) {
         if (type == "Node") { node = new Node(); }
         else if (type == "Spatial") { node = new Spatial(); }
-        else if (type == "Camera") { node = new Camera(); camera = dynamic_cast<Camera*>(node); }
+        else if (type == "Camera") {
+            node = new Camera();
+            camera = dynamic_cast<Camera*>(node);
+        }
+        else if (type == "FirstPersonCamera") {
+            node = new FirstPersonCamera();
+            camera = dynamic_cast<FirstPersonCamera*>(node);
+        }
+        else if (type == "TrackballCamera") {
+            node = new TrackballCamera();
+            camera = dynamic_cast<TrackballCamera*>(node);
+        }
         else if (type == "MeshNode") { node = new MeshNode(); }
         else if (type == "LightNode") { node = new LightNode(); }
         else {
@@ -169,6 +180,7 @@ Node* SceneData::loadNode(const YAML::Node& data) {
         }
     }
 
+    node->scene = scene.get();
     if (data["children"]) {
         loadChildren(node, data["children"]);
     }

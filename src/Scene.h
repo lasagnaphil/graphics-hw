@@ -70,7 +70,7 @@ private:
         }
 
         // update remaining lights
-        for (Shader shader : shaders) {
+        for (Shader& shader : shaders) {
             if (LightNode::numDirectionalLights== 0) {
                 shader.setBool("dirLight.enabled", false);
             }
