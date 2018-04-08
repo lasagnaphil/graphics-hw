@@ -13,8 +13,9 @@
 #include "nodes/MeshNode.h"
 #include "AppSettings.h"
 #include "InputManager.h"
-#include "nodes/Camera.h"
+#include "nodes/FirstPersonCamera.h"
 #include "nodes/LightNode.h"
+#include "nodes/TrackballCamera.h"
 
 static void sdl_die(const char * message) {
     fprintf(stderr, "%s: %s\n", message, SDL_GetError());
@@ -185,15 +186,18 @@ void App::processInput() {
             switch (event.key.keysym.sym) {
                 case SDLK_r: {
                     scene = sceneData.load("resources/scene.yml");
+                    /*
                     auto camera = sceneData.getCamera();
                     if (camera->mouseMovementEnabled) {
                         SDL_SetRelativeMouseMode(SDL_TRUE);
                     } else {
                         SDL_SetRelativeMouseMode(SDL_FALSE);
                     }
+                     */
                     break;
                 }
                 case SDLK_SPACE: {
+                    /*
                     auto camera = sceneData.getCamera();
                     camera->mouseMovementEnabled = !camera->mouseMovementEnabled;
                     if (camera->mouseMovementEnabled) {
@@ -201,6 +205,7 @@ void App::processInput() {
                     } else {
                         SDL_SetRelativeMouseMode(SDL_FALSE);
                     }
+                     */
                     break;
                 }
                 case SDLK_ESCAPE:
@@ -219,6 +224,7 @@ void App::update(float dt) {
 
     scene->update(dt);
 
+    /*
     Node* root = scene->getRootNode();
     float tiltAngle = glm::radians(12.5f * std::sin(time));
 
@@ -258,6 +264,7 @@ void App::update(float dt) {
     deco3->setRotationEuler({0.5f * (-time + 2.f), 0.5f * time, 0.5f * (time + 1.f)});
     auto deco4 = string5_end->query("deco4")->cast<Spatial>();
     deco4->setRotationEuler({0.5f * (time + 1.f), 0.5f * (time + 2.f), 0.5f * (-time)});
+     */
 }
 
 void App::render() {
@@ -271,8 +278,6 @@ void App::render() {
     // do stuff
     scene->render();
 
-    bool showDemoWindow = true;
-    ImGui::ShowDemoWindow(&showDemoWindow);
     ImGui::Render();
     ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
 }

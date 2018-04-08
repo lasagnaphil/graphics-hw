@@ -19,6 +19,7 @@ class Spatial;
 
 class Node {
     friend class Scene;
+    friend class SceneData;
 public:
     Node(const std::vector<Node*> children = std::vector<Node*>(0));
 
@@ -28,6 +29,7 @@ public:
 
     void removeChild(Node* child);
 
+    Node* getParent() { return parent; }
     std::vector<Node*> getChildren() { return children; }
     void setChildren(const std::vector<Node*>& children) { this->children = children; }
 

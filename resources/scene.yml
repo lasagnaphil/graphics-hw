@@ -48,9 +48,18 @@ meshes:
     height: 1.0
 
 nodes:
-  - name: camera
-    type: Camera
-    pos: [-7.0, 1.5, 0.0]
+# - name: camera
+#   type: FirstPersonCamera
+#   pos: [0, 0, 10]
+  - name: trackball focus
+    type: Spatial
+    pos: [0, 0, 0]
+    rot: [0, 0, 0]
+    children:
+      - name: camera
+        type: TrackballCamera
+        pos: [0, 0, 10]
+        rot: [0, 180, 0]
   - name: light
     type: LightNode
     lightType: Directional
@@ -63,10 +72,42 @@ nodes:
       - name: lightIndicator
         mesh: cube
         scale: [0.2, 0.2, 0.2]
+  - name: cube1
+    type: MeshNode
+    mesh: cube
+    pos: [1, 1, 1]
+  - name: cube2
+    type: MeshNode
+    mesh: cube
+    pos: [1, 1, -1]
+  - name: cube3
+    type: MeshNode
+    mesh: cube
+    pos: [1, -1, 1]
+  - name: cube4
+    type: MeshNode
+    mesh: cube
+    pos: [-1, 1, 1]
+  - name: cube5
+    type: MeshNode
+    mesh: cube
+    pos: [1, -1, -1]
+  - name: cube6
+    type: MeshNode
+    mesh: cube
+    pos: [-1, -1, 1]
+  - name: cube7
+    type: MeshNode
+    mesh: cube
+    pos: [-1, 1, -1]
+  - name: cube8
+    type: MeshNode
+    mesh: cube
+    pos: [-1, -1, -1]
   - name: ceiling
     type: MeshNode
-    mesh: ceiling
-    pos: [0, 3, 0]
+    mesh: cube
+    pos: [0, 0, 0]
     children:
       - name: string1
         type: MeshNode
@@ -81,11 +122,11 @@ nodes:
             type: MeshNode
             mesh: pole
             pos: [0, -0.5, 0]
-            rot: [90, 0, 0]
+            rot: [0, 0, 90]
             scale: [1, 3, 1]
           - name: pole1_left_end
             type: Spatial
-            pos: [0, 0, -1.5]
+            pos: [-1.5, 0, 0]
             children:
             - name: string2
               type: MeshNode
@@ -99,7 +140,7 @@ nodes:
                   scale: [0.3, 0.3, 0.3]
           - name: pole1_middle1_end
             type: Spatial
-            pos: [0, 0, -0.5]
+            pos: [-0.5, 0, 0]
             children:
             - name: string4
               type: MeshNode
@@ -116,7 +157,7 @@ nodes:
                 scale: [0.24, 0.24, 0.24]
           - name: pole1_middle2_end
             type: Spatial
-            pos: [0, 0, 0.5]
+            pos: [0.5, 0, 0]
             children:
             - name: string5
               type: MeshNode
@@ -133,7 +174,7 @@ nodes:
                 scale: [0.20, 0.20, 0.20]
           - name: pole1_right_end
             type: Spatial
-            pos: [0, 0, 1.5]
+            pos: [1.5, 0, 0]
             children:
             - name: string3
               type: MeshNode

@@ -82,7 +82,7 @@ public:
     }
 
     void rotate(const glm::quat& rotation) {
-        this->rotation *= rotation;
+        this->rotation = rotation * this->rotation;
         setDirtyFlag(true);
     }
 
@@ -100,6 +100,8 @@ public:
     }
 
     glm::vec3 getGlobalPosition() const {
+        return glm::vec3(worldTransform * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        /*
         using namespace glm;
 
         // Get the 3 basis vector planes at the camera origin and transform them into model space.
@@ -135,6 +137,7 @@ public:
         float denom = dot(n1, n2n3);
 
         return top / denom;
+         */
     }
 
     glm::vec3 getGlobalFrontVec() const {
