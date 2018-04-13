@@ -56,21 +56,37 @@ void TrackballCamera::update(float dt) {
     }
 
     Camera::update(dt);
-
 }
 
 void TrackballCamera::render() {
     auto inputMgr = InputManager::getInstance();
-    ImGui::Begin("Camera coordinates");
+    ImGui::Begin("Trackball");
     ImGui::Text("Position of trackball focus: %s", glm::to_string(spatialParent->getGlobalPosition()).c_str());
     ImGui::Text("Position of trackball camera: %s", glm::to_string(getGlobalPosition()).c_str());
     ImGui::Text("Theta: %f", glm::degrees(theta));
     ImGui::Text("GlobalFrontVec: %s", glm::to_string(getGlobalFrontVec()).c_str());
     ImGui::Text("GlobalUpVec: %s", glm::to_string(getGlobalUpVec()).c_str());
+    ImGui::Text("Distance: %f", distance);
+    ImGui::Text("Zoom: %f", zoom);
+    ImGui::Checkbox("Use zoom instead of dolly", &enableZoom);
     ImGui::End();
 }
 
 void TrackballCamera::processInput(SDL_Event& ev) {
+    if (ev.type == SDL_MOUSEWHEEL) {
+        if (enableZoom) {
+            zoom += ev.wheel.y;
+        }
+        else {
+            float increment = 0.1f * ev.wheel.y;
+            if (distance + increment > 0.f) {
+                distance += increment;
+            }
+            auto curPos = getPosition();
+            auto nextPos = distance / glm::length(curPos) * curPos;
+            setPosition(nextPos);
+        }
+    }
 }
 
 glm::vec3 TrackballCamera::calcMouseVec(glm::vec2 mousePos) {

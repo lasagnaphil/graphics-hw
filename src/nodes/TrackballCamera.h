@@ -21,14 +21,14 @@ private:
 
     glm::vec3 calcMouseVec(glm::vec2 mousePos);
 
-    Spatial* focusedNode;
-
-    glm::mat4 perspectiveMatrix;
-    float zoom = 45.0f;
     float radius = 300.0f;
+    float distance = 7.0f;
 
-    //debug
+    // debug
     float theta = 0.0f;
+
+    // UI state
+    bool enableZoom = false;
 
 };
 
