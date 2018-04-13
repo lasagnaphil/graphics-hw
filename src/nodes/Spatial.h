@@ -86,6 +86,11 @@ public:
         setDirtyFlag(true);
     }
 
+    void rotateLocal(const glm::quat& rotation) {
+        this->rotation = this->rotation * rotation;
+        setDirtyFlag(true);
+    }
+
     void pointAt(const glm::vec3& direction) {
         glm::vec3 dir = glm::normalize(direction);
         float scale = 1 / glm::length(glm::vec3(0.0f, 0.0f, 1.0f) + dir);
