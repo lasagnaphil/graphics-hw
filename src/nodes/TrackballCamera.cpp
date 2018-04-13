@@ -22,10 +22,6 @@ void TrackballCamera::update(float dt) {
 
     auto inputMgr = InputManager::getInstance();
 
-    //
-    // Update shader uniforms
-    //
-
     if (inputMgr->mousePressed(SDL_BUTTON_LEFT)) {
         auto displaySize = ImGui::GetIO().DisplaySize;
         glm::vec2 mousePos = inputMgr->mousePos();
@@ -51,24 +47,7 @@ void TrackballCamera::update(float dt) {
             q = glm::normalize(q);
         }
 
-        /*
-        Quaternion get_rotation_between(Vector3 u, Vector3 v)
-        {
-            float k_cos_theta = dot(u, v);
-            float k = sqrt(length_2(u) * length_2(v));
-
-            if (k_cos_theta / k == -1)
-            {
-                // 180 degree rotation around any orthogonal vector
-                return Quaternion(0, normalized(orthogonal(u)));
-            }
-
-            return normalized(Quaternion(k_cos_theta + k, cross(u, v)));
-        }
-         */
-
-
-        spatialParent->rotate(q);
+        spatialParent->rotateLocal(q);
 
         prevMousePos = mousePos;
     }
@@ -81,7 +60,6 @@ void TrackballCamera::update(float dt) {
 }
 
 void TrackballCamera::render() {
-
     auto inputMgr = InputManager::getInstance();
     ImGui::Begin("Camera coordinates");
     ImGui::Text("Position of trackball focus: %s", glm::to_string(spatialParent->getGlobalPosition()).c_str());

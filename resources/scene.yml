@@ -72,38 +72,6 @@ nodes:
       - name: lightIndicator
         mesh: cube
         scale: [0.2, 0.2, 0.2]
-  - name: cube1
-    type: MeshNode
-    mesh: cube
-    pos: [1, 1, 1]
-  - name: cube2
-    type: MeshNode
-    mesh: cube
-    pos: [1, 1, -1]
-  - name: cube3
-    type: MeshNode
-    mesh: cube
-    pos: [1, -1, 1]
-  - name: cube4
-    type: MeshNode
-    mesh: cube
-    pos: [-1, 1, 1]
-  - name: cube5
-    type: MeshNode
-    mesh: cube
-    pos: [1, -1, -1]
-  - name: cube6
-    type: MeshNode
-    mesh: cube
-    pos: [-1, -1, 1]
-  - name: cube7
-    type: MeshNode
-    mesh: cube
-    pos: [-1, 1, -1]
-  - name: cube8
-    type: MeshNode
-    mesh: cube
-    pos: [-1, -1, -1]
   - name: ceiling
     type: MeshNode
     mesh: cube
