@@ -36,6 +36,12 @@ target_include_directories(glad PRIVATE "${GLAD_DIR}/include")
 target_include_directories(${PROJECT_NAME} PRIVATE "${GLAD_DIR}/include")
 target_link_libraries(${PROJECT_NAME} glad ${CMAKE_DL_LIBS})
 
+# SDL
+set(SDL_DIR "deps/sdl2")
+set(SDL_STATIC ON CACHE BOOL "build sdl as a static library")
+add_subdirectory(${SDL_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE "${STB_DIR}/$include")
+
 # GLM
 set(GLM_DIR "deps/glm")
 target_include_directories(${PROJECT_NAME} PRIVATE "${GLM_DIR}")
