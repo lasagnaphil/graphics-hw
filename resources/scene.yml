@@ -53,13 +53,14 @@ nodes:
 #   pos: [0, 0, 10]
   - name: trackball focus
     type: Spatial
-    pos: [0, 0, 0]
-    rot: [0, 0, 0]
     children:
-      - name: camera
-        type: TrackballCamera
-        pos: [0, 0, 10]
-        rot: [0, 180, 0]
+      - name: trackball pivot
+        type: Spatial
+        children:
+          - name: camera
+            type: TrackballCamera
+            pos: [0, 0, 10]
+            rot: [0, 0, 0]
   - name: light
     type: LightNode
     lightType: Directional
@@ -72,9 +73,9 @@ nodes:
       - name: lightIndicator
         mesh: cube
         scale: [0.2, 0.2, 0.2]
-  - name: ceiling
+  - name: mobile
     type: MeshNode
-    mesh: cube
+    mesh: ceiling
     pos: [0, 0, 0]
     children:
       - name: string1
