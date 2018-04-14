@@ -5,8 +5,6 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-find_package(SDL2 REQUIRED)
-
 file(GLOB_RECURSE PROJECT_HEADERS src/*.h)
 file(GLOB_RECURSE PROJECT_SOURCES glad/glad.c src/*.cpp)
 file(GLOB_RECURSE PROJECT_SHADERS
@@ -25,22 +23,19 @@ target_include_directories(${PROJECT_NAME} PUBLIC
         ${GLM_INCLUDE_DIRS}
         ${ASSIMP_INCLUDE_DIR})
 
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY})
-
 set(EVENT__DISABLE_TESTS ON)
 
 # GLAD
 set(GLAD_DIR "deps/glad")
 add_library(glad "${GLAD_DIR}/src/glad.c")
-target_include_directories(glad PRIVATE "${GLAD_DIR}/include")
-target_include_directories(${PROJECT_NAME} PRIVATE "${GLAD_DIR}/include")
+target_include_directories(glad PUBLIC "${GLAD_DIR}/include")
 target_link_libraries(${PROJECT_NAME} glad ${CMAKE_DL_LIBS})
 
 # SDL
 set(SDL_DIR "deps/sdl2")
-set(SDL_STATIC ON CACHE BOOL "build sdl as a static library")
 add_subdirectory(${SDL_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE "${STB_DIR}/$include")
+target_include_directories(${PROJECT_NAME} PRIVATE "${SDL_DIR}/include")
+target_link_libraries(${PROJECT_NAME} SDL2-static)
 
 # GLM
 set(GLM_DIR "deps/glm")
@@ -54,8 +49,7 @@ add_library(imgui
         "${IMGUI_DIR}/imgui_demo.cpp"
         "${IMGUI_DIR}/imgui_impl_sdl_gl3.cpp")
 
-target_include_directories(imgui PRIVATE "${IMGUI_DIR}")
-target_include_directories(${PROJECT_NAME} PRIVATE "${IMGUI_DIR}")
+target_include_directories(imgui PUBLIC "${IMGUI_DIR}")
 target_link_libraries(${PROJECT_NAME} imgui)
 
 # YAML
@@ -64,7 +58,6 @@ set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "disable yaml tests")
 set(YAML_CPP_BUILD_TOOLS OFF CACHE BOOL "disable yaml tools")
 set(YAML_CPP_BUILD_CONTRIB OFF CACHE BOOL "disable yaml contrib")
 add_subdirectory(${YAML_DIR})
-target_include_directories(yaml-cpp PRIVATE "${YAML_DIR}/include")
 target_include_directories(${PROJECT_NAME} PRIVATE "${YAML_DIR}/include")
 target_link_libraries(${PROJECT_NAME} yaml-cpp)
 
