@@ -6,7 +6,7 @@
 #define GENGINE_INPUTMANAGER_H
 
 
-#include <SDL2/SDL_events.h>
+#include "SDL_events.h"
 #include <unordered_map>
 
 #include <glm/ext.hpp>
