@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <SDL2/SDL_events.h>
+#include "SDL_events.h"
 
 class Scene;
 

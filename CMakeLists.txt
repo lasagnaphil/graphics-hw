@@ -49,6 +49,7 @@ add_library(imgui
         "${IMGUI_DIR}/imgui_demo.cpp"
         "${IMGUI_DIR}/imgui_impl_sdl_gl3.cpp")
 
+target_include_directories(imgui PRIVATE "${SDL_DIR}/include")
 target_include_directories(imgui PUBLIC "${IMGUI_DIR}")
 target_link_libraries(${PROJECT_NAME} imgui)
 

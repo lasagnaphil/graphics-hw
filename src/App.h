@@ -10,7 +10,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <SDL2/SDL.h>
+#include "SDL.h"
 #include <yaml-cpp/yaml.h>
 
 #include <memory>
