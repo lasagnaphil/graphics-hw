@@ -8,6 +8,7 @@
 
 #include "Spatial.h"
 #include "Camera.h"
+#include "MeshNode.h"
 
 class TrackballCamera : public Camera {
 public:
@@ -22,14 +23,16 @@ private:
     glm::vec3 calcMouseVec(glm::vec2 mousePos);
 
     float radius = 300.0f;
-    float distance = 7.0f;
+    float distance = 10.0f;
+    float translationSpeed = 10.0f;
+
+    MeshNode::BoundingBox boundingBox;
 
     // debug
     float theta = 0.0f;
 
     // UI state
     bool enableZoom = false;
-
 };
 
 

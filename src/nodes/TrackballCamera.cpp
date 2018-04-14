@@ -12,6 +12,7 @@
 #include "../Scene.h"
 #include "../InputManager.h"
 #include "../AppSettings.h"
+#include "MeshNode.h"
 
 TrackballCamera::TrackballCamera() {
 }
@@ -22,11 +23,16 @@ void TrackballCamera::update(float dt) {
 
     auto inputMgr = InputManager::getInstance();
 
+    auto trackballFocus = this->spatialParent->spatialParent;
+    auto trackballPivot = this->spatialParent;
+
     if (inputMgr->mousePressed(SDL_BUTTON_LEFT)) {
+
         auto displaySize = ImGui::GetIO().DisplaySize;
         glm::vec2 mousePos = inputMgr->mousePos();
         mousePos.x -= displaySize.x / 2;
         mousePos.y -= displaySize.y / 2;
+        mousePos.y *= -1;
 
         if (!started) {
             started = true;
@@ -47,12 +53,27 @@ void TrackballCamera::update(float dt) {
             q = glm::normalize(q);
         }
 
-        spatialParent->rotateLocal(q);
+        trackballPivot->rotateLocal(q);
 
         prevMousePos = mousePos;
     }
     else {
         started = false;
+    }
+
+    auto upDir = getGlobalUpVec();
+    auto rightDir = getGlobalRightVec();
+    if (inputMgr->keyboardPressed(SDLK_LEFT)) {
+        trackballFocus->move(-translationSpeed * dt * rightDir);
+    }
+    else if (inputMgr->keyboardPressed(SDLK_RIGHT)) {
+        trackballFocus->move(translationSpeed * dt * rightDir);
+    }
+    else if (inputMgr->keyboardPressed(SDLK_UP)) {
+        trackballFocus->move(translationSpeed * dt * upDir);
+    }
+    else if (inputMgr->keyboardPressed(SDLK_DOWN)) {
+        trackballFocus->move(-translationSpeed * dt * upDir);
     }
 
     Camera::update(dt);
@@ -68,6 +89,27 @@ void TrackballCamera::render() {
     ImGui::Text("GlobalUpVec: %s", glm::to_string(getGlobalUpVec()).c_str());
     ImGui::Text("Distance: %f", distance);
     ImGui::Text("Zoom: %f", zoom);
+    if (ImGui::Button("Fit To Screen")) {
+        auto mobile = scene->getRootNode()->query("mobile")->cast<MeshNode>();
+        glm::mat4 projMatrix = getPerspectiveMatrix();
+        glm::mat4 viewMatrix = getViewMatrix();
+        glm::mat4 projViewMatrix = projMatrix * viewMatrix;
+        boundingBox = mobile->findBoundingBox(projViewMatrix);
+
+        auto trackballFocus = this->spatialParent->spatialParent;
+        auto trackballPivot = this->spatialParent;
+
+        glm::vec4 x1 = glm::inverse(projViewMatrix) * glm::vec4(boundingBox.leftTop, 1.0f, 1.0f);
+        glm::vec4 x2 = glm::inverse(projViewMatrix) * glm::vec4(boundingBox.rightBottom, 1.0f, 1.0f);
+        glm::vec4 y1 = glm::inverse(projMatrix) * glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f);
+        glm::vec4 y2 = glm::inverse(projMatrix) * glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+
+        float r1 = (y1 - glm::mat4(trackballFocus->getRotation()) * x1).z;
+        float r2 = (y2 - glm::mat4(trackballFocus->getRotation()) * x2).z;
+        printf("r1 = %f, r2 = %f\n", r1, r2);
+    }
+    ImGui::Text("Bounding Box: Left %f Right %f Bottom %f Top %f",
+                boundingBox.leftTop.x, boundingBox.rightBottom.x, boundingBox.leftTop.y, boundingBox.rightBottom.y);
     ImGui::Checkbox("Use zoom instead of dolly", &enableZoom);
     ImGui::End();
 }

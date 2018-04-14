@@ -204,6 +204,8 @@ public:
         setGlobalScale({x, y, z});
     }
 
+    std::vector<Spatial*> spatialChildren;
+    Spatial* spatialParent;
 
 protected:
     glm::vec3 position;
@@ -214,9 +216,6 @@ protected:
     glm::mat4 worldTransform;
 
     bool dirtyFlag = true;
-
-    std::vector<Spatial*> spatialChildren;
-    Spatial* spatialParent;
 };
 
 
