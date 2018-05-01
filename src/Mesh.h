@@ -55,7 +55,6 @@ private:
     bool isIndexed;
 
     void setupMesh();
-
 };
 
 
