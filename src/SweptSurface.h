@@ -18,13 +18,10 @@ public:
     using Polygon2D = std::vector<glm::vec2>;
     using Polygon3D = std::vector<glm::vec3>;
 
-    static std::shared_ptr<Mesh> constructFromFile(const char* filename, std::shared_ptr<Material> material);
+    static std::shared_ptr<Mesh> constructFromFile(const char* filename);
 
-    static std::shared_ptr<Mesh> construct(std::vector<Polygon2D> controlPolygons,
-                                           std::vector<Transform> polygonTransforms,
-                                           std::shared_ptr<Material> material,
-                                           int numControlPoints,
-                                           int numCrossSections);
+    static std::shared_ptr<Mesh> construct(std::vector<SweptSurface::Polygon2D> controlPolygons, std::vector<Transform> polygonTransforms,
+                                               int numControlPoints, int numCrossSections);
 };
 
 

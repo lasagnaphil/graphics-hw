@@ -4,7 +4,7 @@
 
 #include "SweptSurface.h"
 
-std::shared_ptr<Mesh> SweptSurface::constructFromFile(const char* filename, std::shared_ptr<Material> material) {
+std::shared_ptr<Mesh> SweptSurface::constructFromFile(const char* filename) {
     using std::cerr;
     using std::endl;
 
@@ -54,12 +54,15 @@ std::shared_ptr<Mesh> SweptSurface::constructFromFile(const char* filename, std:
         polygons.push_back(polygon);
         transforms.push_back(transform);
     }
-    return construct(polygons, transforms, material, numControlPoints, numCrossSections);
+    return construct(polygons, transforms, numControlPoints, numCrossSections);
 }
 
 std::shared_ptr<Mesh>
 SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons, std::vector<Transform> polygonTransforms,
-                        std::shared_ptr<Material> material, int numControlPoints, int numCrossSections) {
+                        int numControlPoints, int numCrossSections) {
+
+    assert(controlPolygons.size() == numCrossSections);
+    assert(polygonTransforms.size() == numCrossSections);
 
     int interpPolygonSize = numControlPoints * (1 << INTERP_FACTOR);
     std::vector<Polygon2D> bsplines;
@@ -92,14 +95,14 @@ SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons, st
         bsplines.push_back(result);
     }
 
-    std::vector<Vertex> vertices;
-    std::vector<Vertex> verticeBuffer1, verticeBuffer2;
+    std::vector<WireframeVertex> vertices;
+    std::vector<WireframeVertex> verticeBuffer1, verticeBuffer2;
     verticeBuffer1.reserve(interpPolygonSize);
     verticeBuffer2.reserve(interpPolygonSize);
-    std::vector<Vertex>* prevVertices = &verticeBuffer1;
-    std::vector<Vertex>* nextVertices = &verticeBuffer2;
+    std::vector<WireframeVertex>* prevVertices = &verticeBuffer1;
+    std::vector<WireframeVertex>* nextVertices = &verticeBuffer2;
 
-    for (int i = 0; i < polygonTransforms.size() - 1; ++i) {
+    for (int i = 0; i < numCrossSections - 1; ++i) {
         auto& tprev = polygonTransforms[i];
         auto& tnext = polygonTransforms[i + 1];
 
@@ -113,23 +116,28 @@ SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons, st
             transform.scale = alpha * tprev.scale + (1 - alpha) * tnext.scale;
 
             for (auto& pos : bspline) {
-                Vertex vertex;
+                WireframeVertex vertex;
                 vertex.position = transform.toMat4() * glm::vec4(pos.x, pos.y, 0.0f, 0.0f);
-                vertex.normal = {};
-                vertex.texCoords = {};
                 nextVertices->push_back(vertex);
             }
 
-            if (i > 0) {
+            if (j > 0) {
                 // using prev and next vertices, we create the triangle strip
                 for (int k = 0; k < interpPolygonSize; ++k) {
                     int kp = (k + 1) % interpPolygonSize;
-                    vertices.push_back((*prevVertices)[k]);
-                    vertices.push_back((*prevVertices)[kp]);
-                    vertices.push_back((*nextVertices)[k]);
-                    vertices.push_back((*prevVertices)[kp]);
-                    vertices.push_back((*nextVertices)[kp]);
-                    vertices.push_back((*nextVertices)[k]);
+                    WireframeVertex v1 = (*prevVertices)[k];
+                    v1.barycentric = {1.0f, 0.0f, 0.0f};
+                    WireframeVertex v2 = (*prevVertices)[kp];
+                    v2.barycentric = {0.0f, 1.0f, 0.0f};
+                    WireframeVertex v3 = (*nextVertices)[k];
+                    v3.barycentric = {0.0f, 0.0f, 1.0f};
+                    WireframeVertex v4 = (*prevVertices)[kp];
+                    v4.barycentric = {1.0f, 0.0f, 0.0f};
+                    WireframeVertex v5 = (*prevVertices)[kp];
+                    v5.barycentric = {0.0f, 1.0f, 0.0f};
+                    WireframeVertex v6 = (*nextVertices)[k];
+                    v6.barycentric = {0.0f, 0.0f, 1.0f};
+                    vertices.insert(vertices.end(), {v1, v2, v3, v4, v5, v6});
                 }
             }
         }
@@ -138,17 +146,6 @@ SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons, st
         nextVertices = temp;
     }
 
-    // don't forget to include the last point!
-    auto& bspline = *(bsplines.end() - 1);
-    auto& transform = *(polygonTransforms.end() - 1);
-    for (auto& pos : bspline) {
-        Vertex vertex;
-        vertex.position = transform.toMat4() * glm::vec4(pos.x, pos.y, 0.0f, 0.0f);
-        vertex.normal = {};
-        vertex.texCoords = {};
-        vertices.push_back(vertex);
-    }
-
-    std::shared_ptr<Mesh> mesh(new Mesh(vertices, {}, std::move(material), GL_TRIANGLES, false));
+    std::shared_ptr<Mesh> mesh(new Mesh(vertices));
     return mesh;
 }
