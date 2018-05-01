@@ -174,7 +174,7 @@ void App::start() {
 void App::loadScene() {
     // Shaders
     Shader defaultShader("shaders/lighting.vert", "shaders/lighting.frag");
-    defaultShader.use();
+    Shader wireframeShader("shaders/wireframe.vert", "shaders/wireframe.frag");
 
     sceneData.setDefaultShader(defaultShader);
     sceneData.loadResources("resources/scene.yml");
@@ -184,7 +184,7 @@ void App::loadScene() {
     sceneData.addMesh("swept_surface", mesh);
 
     scene = sceneData.loadSceneGraph("resources/scene.yml");
-
+    scene->getRootNode()->query("Swept Surface")->cast<MeshNode>()->setShader(wireframeShader);
 }
 
 void App::processInput() {

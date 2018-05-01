@@ -20,28 +20,36 @@ Mesh::Mesh(std::vector<Vertex> vertices,
     setupMesh();
 }
 
+Mesh::Mesh(std::vector<WireframeVertex> wireframeVertices)
+        : wireframeVertices(std::move(wireframeVertices)), drawMode(GL_TRIANGLES), isIndexed(false)
+{
+    setupMesh();
+}
+
 void Mesh::draw(Shader shader) {
     using std::string;
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
 
     shader.use();
-    for (unsigned int i = 0; i < material->textures.size(); i++) {
-        glActiveTexture(GL_TEXTURE0 + i);
-        string number;
-        TextureType type = material->textures[i].type;
-        if (type == TextureType::Diffuse) {
-            number = std::to_string(diffuseNr);
-            diffuseNr++;
-            shader.setInt(string("material.texture_diffuse").append(number).c_str(), i);
-        }
-        else if (type == TextureType::Specular) {
-            number = std::to_string(specularNr);
-            specularNr++;
-            shader.setInt(string("material.texture_specular").append(number).c_str(), i);
-        }
+    if (type == Type::Textured) {
+        for (unsigned int i = 0; i < material->textures.size(); i++) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            string number;
+            TextureType type = material->textures[i].type;
+            if (type == TextureType::Diffuse) {
+                number = std::to_string(diffuseNr);
+                diffuseNr++;
+                shader.setInt(string("material.texture_diffuse").append(number).c_str(), i);
+            }
+            else if (type == TextureType::Specular) {
+                number = std::to_string(specularNr);
+                specularNr++;
+                shader.setInt(string("material.texture_specular").append(number).c_str(), i);
+            }
 
-        glBindTexture(GL_TEXTURE_2D, material->textures[i].getID());
+            glBindTexture(GL_TEXTURE_2D, material->textures[i].getID());
+        }
     }
 
     glBindVertexArray(vao);
@@ -53,7 +61,9 @@ void Mesh::draw(Shader shader) {
     }
     glBindVertexArray(0);
 
-    glActiveTexture(GL_TEXTURE0);
+    if (type == Type::Textured) {
+        glActiveTexture(GL_TEXTURE0);
+    }
 }
 
 void Mesh::setupMesh() {
@@ -66,7 +76,16 @@ void Mesh::setupMesh() {
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+    if (type == Type::Textured) {
+        glBufferData(GL_ARRAY_BUFFER,
+                     vertices.size() * sizeof(Vertex),
+                     &vertices[0], GL_STATIC_DRAW);
+    }
+    else if (type == Type::Wireframe) {
+        glBufferData(GL_ARRAY_BUFFER,
+                     wireframeVertices.size() * sizeof(WireframeVertex),
+                     &wireframeVertices[0], GL_STATIC_DRAW);
+    }
 
     if (isIndexed) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
@@ -74,17 +93,27 @@ void Mesh::setupMesh() {
                      &indices[0], GL_STATIC_DRAW);
     }
 
-    // vertex positions
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+    if (type == Type::Textured) {
+        // vertex positions
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 0);
 
-    // vertex normals
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+        // vertex normals
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, normal));
 
-    // vertex texture coords
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
+        // vertex texture coords
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, texCoords));
+    }
+    else if (type == Type::Wireframe) {
+        // wireframe vertex positions
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(WireframeVertex), (void*) 0);
+
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(WireframeVertex), (void*) offsetof(WireframeVertex, barycentric));
+    }
 
     glBindVertexArray(0);
 }
@@ -210,4 +239,5 @@ std::shared_ptr<Mesh> Mesh::createCylinder(unsigned int numQuads, float r, float
     }
     return std::shared_ptr<Mesh>(new Mesh(vertices, {}, {}, GL_TRIANGLES, false));
 }
+
 
