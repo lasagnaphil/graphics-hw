@@ -4,7 +4,6 @@
 
 #include <glm/ext.hpp>
 #include "MeshNode.h"
-
 MeshNode::MeshNode(std::shared_ptr<Mesh> mesh, Shader shader) :
         mesh(std::move(mesh)), shader(shader) {
 }
