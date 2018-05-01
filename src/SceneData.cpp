@@ -6,10 +6,8 @@
 #include "SceneData.h"
 #include "nodes/TrackballCamera.h"
 
-Scene* SceneData::load(const std::string& filename) {
+void SceneData::loadResources(const std::string& filename) {
     using std::string;
-
-    scene = std::make_unique<Scene>();
 
     YAML::Node data = YAML::LoadFile(filename);
     auto textureData = data["textures"];
@@ -68,6 +66,10 @@ Scene* SceneData::load(const std::string& filename) {
             meshes[name]->setMaterial(materials["default"]);
         }
     }
+}
+
+Scene* SceneData::loadSceneGraph(const std::string& filename) {
+    YAML::Node data = YAML::LoadFile(filename);
 
     auto nodes = data["nodes"];
     if (nodes) {
@@ -197,4 +199,5 @@ void SceneData::loadChildren(Node* node, const YAML::Node& data) {
         node->addChild(child);
     }
 }
+
 

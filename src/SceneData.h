@@ -22,10 +22,40 @@
 
 class SceneData {
 public:
-    Scene* load(const std::string& filename);
+    SceneData() {
+        scene = std::make_unique<Scene>();
+    }
+
+    void loadResources(const std::string& filename);
+    Scene* loadSceneGraph(const std::string& filename);
+
     void setDefaultShader(Shader shader) { this->defaultShader = shader; }
 
     Camera* getCamera() { return camera; }
+
+    void addTexture(const std::string& name, Texture texture) {
+        textures[name] = std::move(texture);
+    }
+
+    Texture getTexture(const std::string& name) {
+        return textures[name];
+    }
+
+    void addMesh(const std::string& name, std::shared_ptr<Mesh> mesh) {
+        meshes[name] = std::move(mesh);
+    }
+
+    std::shared_ptr<Mesh> getMesh(const std::string& name) {
+        return meshes[name];
+    }
+
+    void addMaterial(const std::string& name, std::shared_ptr<Material> material) {
+        materials[name] = std::move(material);
+    }
+
+    std::shared_ptr<Material> getMaterial(const std::string& name) {
+        return materials[name];
+    }
 
 private:
 
