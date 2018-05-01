@@ -26,6 +26,7 @@ class App {
 public:
     ~App();
     void start();
+    void loadScene();
     void processInput();
     void update(float dt);
     void render();
