@@ -41,12 +41,6 @@ MeshNode::BoundingBox MeshNode::findBoundingBox(glm::mat4 projViewMatrix) {
         return glm::vec2(result.x / result.w, result.y / result.w);
     });
 
-    /*
-    printf("Screen vertices: \n");
-    for (auto& pos : screenVertices) {
-        printf("%f %f\n", pos.x, pos.y);
-    }
-     */
     BoundingBox box {
             .leftTop = screenVertices[0],
             .rightBottom = screenVertices[0]

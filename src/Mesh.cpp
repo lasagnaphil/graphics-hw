@@ -15,13 +15,17 @@ Mesh::Mesh(std::vector<Vertex> vertices,
           indices(std::move(indices)),
           material(std::move(material)),
           drawMode(drawMode),
-          isIndexed(isIndexed)
+          isIndexed(isIndexed),
+          type(Type::Textured)
 {
     setupMesh();
 }
 
 Mesh::Mesh(std::vector<WireframeVertex> wireframeVertices)
-        : wireframeVertices(std::move(wireframeVertices)), drawMode(GL_TRIANGLES), isIndexed(false)
+        : wireframeVertices(std::move(wireframeVertices)),
+          drawMode(GL_TRIANGLES),
+          isIndexed(false),
+          type(Type::Wireframe)
 {
     setupMesh();
 }

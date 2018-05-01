@@ -111,7 +111,6 @@ void App::start() {
     printf("Version:  %s\n", glGetString(GL_VERSION));
 
     // Enable the debug callback
-    /*
     GLint flags;
     glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
     if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
@@ -122,7 +121,6 @@ void App::start() {
                 GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, true
         );
     }
-     */
 
     // Use v-sync
     SDL_GL_SetSwapInterval(1);
@@ -180,11 +178,12 @@ void App::loadScene() {
     sceneData.loadResources("resources/scene.yml");
 
     // Load the swept surface
-    std::shared_ptr<Mesh> mesh = SweptSurface::constructFromFile("resources/test.swsf", sceneData.getMaterial("default"));
+    std::shared_ptr<Mesh> mesh = SweptSurface::constructFromFile("resources/test.swsf");
     sceneData.addMesh("swept_surface", mesh);
 
     scene = sceneData.loadSceneGraph("resources/scene.yml");
-    scene->getRootNode()->query("Swept Surface")->cast<MeshNode>()->setShader(wireframeShader);
+    MeshNode* sweptSurface = scene->getRootNode()->query("Swept Surface")->cast<MeshNode>();
+    sweptSurface->setShader(wireframeShader);
 }
 
 void App::processInput() {
