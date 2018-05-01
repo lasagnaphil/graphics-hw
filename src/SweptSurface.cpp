@@ -61,11 +61,12 @@ std::shared_ptr<Mesh>
 SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons, std::vector<Transform> polygonTransforms,
                         std::shared_ptr<Material> material, int numControlPoints, int numCrossSections) {
 
+    int interpPolygonSize = numControlPoints * (1 << INTERP_FACTOR);
     std::vector<Polygon2D> bsplines;
     for (auto polygon : controlPolygons) {
-        polygon.resize(numControlPoints * (1 << INTERP_FACTOR));
+        polygon.resize(interpPolygonSize);
         Polygon2D otherPolygon;
-        otherPolygon.resize(numControlPoints * (1 << INTERP_FACTOR));
+        otherPolygon.resize(interpPolygonSize);
         Polygon2D* prevP = &otherPolygon;
         Polygon2D* nextP = &polygon;
 
@@ -92,6 +93,12 @@ SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons, st
     }
 
     std::vector<Vertex> vertices;
+    std::vector<Vertex> verticeBuffer1, verticeBuffer2;
+    verticeBuffer1.reserve(interpPolygonSize);
+    verticeBuffer2.reserve(interpPolygonSize);
+    std::vector<Vertex>* prevVertices = &verticeBuffer1;
+    std::vector<Vertex>* nextVertices = &verticeBuffer2;
+
     for (int i = 0; i < polygonTransforms.size() - 1; ++i) {
         auto& tprev = polygonTransforms[i];
         auto& tnext = polygonTransforms[i + 1];
@@ -110,9 +117,25 @@ SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons, st
                 vertex.position = transform.toMat4() * glm::vec4(pos.x, pos.y, 0.0f, 0.0f);
                 vertex.normal = {};
                 vertex.texCoords = {};
-                vertices.push_back(vertex);
+                nextVertices->push_back(vertex);
+            }
+
+            if (i > 0) {
+                // using prev and next vertices, we create the triangle strip
+                for (int k = 0; k < interpPolygonSize; ++k) {
+                    int kp = (k + 1) % interpPolygonSize;
+                    vertices.push_back((*prevVertices)[k]);
+                    vertices.push_back((*prevVertices)[kp]);
+                    vertices.push_back((*nextVertices)[k]);
+                    vertices.push_back((*prevVertices)[kp]);
+                    vertices.push_back((*nextVertices)[kp]);
+                    vertices.push_back((*nextVertices)[k]);
+                }
             }
         }
+        auto temp = prevVertices;
+        prevVertices = nextVertices;
+        nextVertices = temp;
     }
 
     // don't forget to include the last point!

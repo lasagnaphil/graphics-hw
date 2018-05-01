@@ -23,9 +23,23 @@ struct Vertex {
             : position(x, y, z), normal(nx, ny, nz), texCoords(u, v) {}
 };
 
+struct WireframeVertex {
+    glm::vec3 position;
+    glm::vec3 barycentric;
+
+    WireframeVertex() {}
+    WireframeVertex(const glm::vec3& position, const glm::vec3& barycentric)
+            : position(position), barycentric(barycentric) {}
+};
+
 class Mesh {
 public:
+    enum class Type { Textured, Wireframe };
+
     std::vector<Vertex> vertices;
+    std::vector<WireframeVertex> wireframeVertices;
+    Type type = Type::Textured;
+
     std::vector<unsigned int> indices;
     std::shared_ptr<Material> material;
 
@@ -34,6 +48,8 @@ public:
          std::shared_ptr<Material> material,
          GLenum drawMode = GL_TRIANGLES,
          bool isIndexed = true);
+
+    explicit Mesh(std::vector<WireframeVertex> wireframeVertices);
 
     void draw(Shader shader);
 
