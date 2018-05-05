@@ -7,8 +7,15 @@
 #include "SweptSurface.h"
 
 std::string rtrim(std::string& str) {
-    str.erase(str.find_last_not_of(" \n\r\t")+1);
-    return str;
+    auto commentLoc = str.find('#');
+    std::string::iterator it = str.end();
+    if (commentLoc != std::string::npos) {
+        it = str.begin() + commentLoc;
+    }
+    std::string line(str.begin(), it);
+    line.erase(line.find_last_not_of(" \n\r\t")+1);
+    str = line;
+    return line;
 }
 
 void getline(std::ifstream& istream, std::string& line) {
@@ -29,7 +36,9 @@ std::shared_ptr<Mesh> SweptSurface::constructFromFile(const char* filename, std:
     getline(istream, line);
 
     if (line != "BSPLINE") {
+        std::cout << line << std::endl;
         std::cerr << "Sorry, we only allow BSPLINE" << std::endl;
+        exit(0);
     }
     int numCrossSections = 0;
     int numControlPoints = 0;
@@ -83,9 +92,9 @@ T catmullRom(T v0, T v1, T v2, T v3, float t) {
 
 glm::mat4 toMatrix(const Transform& transform) {
     glm::mat4 mat;
-    mat = glm::translate(glm::mat4(1.0f), transform.position);
+    mat = glm::scale(glm::mat4(1.0f), transform.scale);
     mat = glm::mat4_cast(transform.rotation) * mat;
-    mat = glm::scale(mat, transform.scale);
+    mat = glm::translate(glm::mat4(1.0f), transform.position) * mat;
     return mat;
 }
 
