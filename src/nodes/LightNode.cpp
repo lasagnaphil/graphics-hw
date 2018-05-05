@@ -78,30 +78,30 @@ void LightNode::changeType(Type type) {
 }
 
 void LightNode::update(float dt) {
-    for (Shader shader : scene->getShaders()) {
-        shader.use();
-        shader.setInt("numPointLights", numPointLights);
-        shader.setInt("numSpotLights", numSpotLights);
+    for (auto shader : scene->getShaders()) {
+        shader->use();
+        shader->setInt("numPointLights", numPointLights);
+        shader->setInt("numSpotLights", numSpotLights);
 
         switch(type) {
             case Type::Directional: {
-                shader.setVec3("dirLight.direction", getGlobalFrontVec());
-                shader.setVec3("dirLight.ambient", ambientColor);
-                shader.setVec3("dirLight.diffuse", diffuseColor);
-                shader.setVec3("dirLight.specular", specularColor);
+                shader->setVec3("dirLight.direction", getGlobalFrontVec());
+                shader->setVec3("dirLight.ambient", ambientColor);
+                shader->setVec3("dirLight.diffuse", diffuseColor);
+                shader->setVec3("dirLight.specular", specularColor);
                 break;
             }
             case Type::Point: {
                 std::string pointLightStr = "pointLights[";
                 pointLightStr.append(std::to_string(lightID));
                 pointLightStr.append("]");
-                shader.setVec3((pointLightStr + ".position").c_str(), getGlobalPosition());
-                shader.setFloat((pointLightStr + ".constant").c_str(), attenuation.constant);
-                shader.setFloat((pointLightStr + ".linear").c_str(), attenuation.linear);
-                shader.setFloat((pointLightStr + ".quadratic").c_str(), attenuation.quadratic);
-                shader.setVec3((pointLightStr + ".ambient").c_str(), ambientColor);
-                shader.setVec3((pointLightStr + ".diffuse").c_str(), diffuseColor);
-                shader.setVec3((pointLightStr + ".specular").c_str(), specularColor);
+                shader->setVec3((pointLightStr + ".position").c_str(), getGlobalPosition());
+                shader->setFloat((pointLightStr + ".constant").c_str(), attenuation.constant);
+                shader->setFloat((pointLightStr + ".linear").c_str(), attenuation.linear);
+                shader->setFloat((pointLightStr + ".quadratic").c_str(), attenuation.quadratic);
+                shader->setVec3((pointLightStr + ".ambient").c_str(), ambientColor);
+                shader->setVec3((pointLightStr + ".diffuse").c_str(), diffuseColor);
+                shader->setVec3((pointLightStr + ".specular").c_str(), specularColor);
                 break;
             }
             case Type::Spotlight: {
@@ -110,16 +110,16 @@ void LightNode::update(float dt) {
                 spotLightStr.append(std::to_string(lightID));
                 spotLightStr.append("]");
 
-                shader.setVec3((spotLightStr + ".position").c_str(), getGlobalPosition());
-                shader.setVec3((spotLightStr + ".direction").c_str(), getGlobalFrontVec());
-                shader.setFloat((spotLightStr + ".cutOff").c_str(), cutOff);
-                shader.setFloat((spotLightStr + ".outerCutOff").c_str(), outerCutOff);
-                shader.setFloat((spotLightStr + ".constant").c_str(), attenuation.constant);
-                shader.setFloat((spotLightStr + ".linear").c_str(), attenuation.linear);
-                shader.setFloat((spotLightStr + ".quadratic").c_str(), attenuation.quadratic);
-                shader.setVec3((spotLightStr + ".ambient").c_str(), ambientColor);
-                shader.setVec3((spotLightStr + ".diffuse").c_str(), diffuseColor);
-                shader.setVec3((spotLightStr + ".specular").c_str(), specularColor);
+                shader->setVec3((spotLightStr + ".position").c_str(), getGlobalPosition());
+                shader->setVec3((spotLightStr + ".direction").c_str(), getGlobalFrontVec());
+                shader->setFloat((spotLightStr + ".cutOff").c_str(), cutOff);
+                shader->setFloat((spotLightStr + ".outerCutOff").c_str(), outerCutOff);
+                shader->setFloat((spotLightStr + ".constant").c_str(), attenuation.constant);
+                shader->setFloat((spotLightStr + ".linear").c_str(), attenuation.linear);
+                shader->setFloat((spotLightStr + ".quadratic").c_str(), attenuation.quadratic);
+                shader->setVec3((spotLightStr + ".ambient").c_str(), ambientColor);
+                shader->setVec3((spotLightStr + ".diffuse").c_str(), diffuseColor);
+                shader->setVec3((spotLightStr + ".specular").c_str(), specularColor);
                 break;
             }
         }

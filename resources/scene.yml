@@ -1,3 +1,12 @@
+shaders:
+  default:
+    vertex: shaders/lighting.vert
+    fragment: shaders/lighting.frag
+  wireframe:
+    vertex: shaders/wireframe.vert
+    fragment: shaders/wireframe.frag
+    geometry: shaders/wireframe.geom
+
 textures:
   default:
     color: [0.8, 0.8, 0.8, 1.0]

@@ -17,10 +17,11 @@ class Shader {
 public:
 
     Shader() {}
-    Shader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geomPath = "");
+    Shader(std::string vertexPath, std::string fragmentPath, std::string geometryPath = "")
+            : vertexPath(std::move(vertexPath)), fragmentPath(std::move(fragmentPath)), geometryPath(std::move(geometryPath)) {}
 
+    void compile();
     void setProgram(GLuint program);
-
     void use();
 
     void setBool(const char* name, bool value) const;
@@ -37,5 +38,8 @@ public:
     GLint getUniformLocation(const char* name);
 
     GLuint program;
+    std::string vertexPath;
+    std::string fragmentPath;
+    std::string geometryPath;
 };
 

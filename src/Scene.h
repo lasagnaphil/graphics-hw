@@ -36,11 +36,11 @@ public:
         processInput(rootNode.get(), event);
     }
 
-    std::vector<Shader> getShaders() const {
+    std::vector<std::shared_ptr<Shader>> getShaders() const {
         return shaders;
     }
 
-    void addShader(Shader shader) {
+    void addShader(std::shared_ptr<Shader> shader) {
         shaders.push_back(shader);
     }
 
@@ -70,16 +70,16 @@ private:
         }
 
         // update remaining lights
-        for (Shader& shader : shaders) {
+        for (std::shared_ptr<Shader>& shader : shaders) {
             if (LightNode::numDirectionalLights== 0) {
-                shader.setBool("dirLight.enabled", false);
+                shader->setBool("dirLight.enabled", false);
             }
             for (unsigned int i = LightNode::numPointLights; i < LightNode::maxPointLights; ++i) {
                 std::string pointLightStr = "pointLights[";
                 pointLightStr.append(std::to_string(i));
                 pointLightStr.append("]");
 
-                shader.setBool((pointLightStr + ".enabled").c_str(), false);
+                shader->setBool((pointLightStr + ".enabled").c_str(), false);
             }
         }
     }
@@ -94,7 +94,7 @@ private:
 protected:
     std::unique_ptr<Spatial> rootNode;
 
-    std::vector<Shader> shaders;
+    std::vector<std::shared_ptr<Shader>> shaders;
 
     bool firstTime = true;
 };

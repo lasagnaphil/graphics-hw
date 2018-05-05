@@ -36,7 +36,7 @@ public:
          GLenum drawMode = GL_TRIANGLES,
          bool isIndexed = true);
 
-    void draw(Shader shader);
+    void draw(std::shared_ptr<Shader> shader);
 
     void setMaterial(std::shared_ptr<Material> material) {
         this->material = std::move(material);
