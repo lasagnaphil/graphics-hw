@@ -178,7 +178,7 @@ void App::loadScene() {
     sceneData.loadResources("resources/scene.yml");
 
     // Load the swept surface
-    std::shared_ptr<Mesh> mesh = SweptSurface::constructFromFile("resources/test.txt", sceneData.getMaterial("default"));
+    std::shared_ptr<Mesh> mesh = SweptSurface::constructFromFile("resources/trombone.txt", sceneData.getMaterial("default"));
     sceneData.addMesh("swept_surface", mesh);
 
     scene = sceneData.loadSceneGraph("resources/scene.yml");
