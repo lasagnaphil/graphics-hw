@@ -20,7 +20,7 @@ public:
                 glm::radians(zoom),
                 (float)AppSettings::ScreenWidth / (float)AppSettings::ScreenHeight,
                 0.1f,
-                100.0f
+                1000.0f
         );
     }
 
