@@ -60,8 +60,11 @@ void Mesh::draw(Shader shader) {
     if (isIndexed) {
         glDrawElements(drawMode, indices.size(), GL_UNSIGNED_INT, 0);
     }
-    else {
+    else if (type == Type::Textured) {
         glDrawArrays(drawMode, 0, vertices.size());
+    }
+    else if (type == Type::Wireframe) {
+        glDrawArrays(drawMode, 0, wireframeVertices.size());
     }
     glBindVertexArray(0);
 

@@ -120,7 +120,7 @@ void TrackballCamera::processInput(SDL_Event& ev) {
             zoom += ev.wheel.y;
         }
         else {
-            float increment = 0.1f * ev.wheel.y;
+            float increment = 1.0f * ev.wheel.y;
             if (distance + increment > 0.f) {
                 distance += increment;
             }

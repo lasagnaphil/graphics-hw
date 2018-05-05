@@ -172,18 +172,19 @@ void App::start() {
 void App::loadScene() {
     // Shaders
     Shader defaultShader("shaders/lighting.vert", "shaders/lighting.frag");
-    Shader wireframeShader("shaders/wireframe.vert", "shaders/wireframe.frag");
+    // Shader wireframeShader("shaders/wireframe.vert", "shaders/wireframe.frag");
 
     sceneData.setDefaultShader(defaultShader);
     sceneData.loadResources("resources/scene.yml");
 
     // Load the swept surface
-    std::shared_ptr<Mesh> mesh = SweptSurface::constructFromFile("resources/test.swsf");
+    std::shared_ptr<Mesh> mesh = SweptSurface::constructFromFile("resources/test.txt", sceneData.getMaterial("default"));
     sceneData.addMesh("swept_surface", mesh);
 
     scene = sceneData.loadSceneGraph("resources/scene.yml");
-    MeshNode* sweptSurface = scene->getRootNode()->query("Swept Surface")->cast<MeshNode>();
-    sweptSurface->setShader(wireframeShader);
+
+    // MeshNode* sweptSurface = scene->getRootNode()->query("Swept Surface")->cast<MeshNode>();
+    // sweptSurface->setShader(wireframeShader);
 }
 
 void App::processInput() {
@@ -237,6 +238,3 @@ void App::render() {
 App::~App() {
     SDL_DestroyWindow(window);
 }
-
-
-
