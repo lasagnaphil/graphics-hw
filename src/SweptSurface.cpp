@@ -82,7 +82,7 @@ T catmullRom(T v0, T v1, T v2, T v3, float t) {
 }
 
 std::shared_ptr<Mesh>
-SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons,
+SweptSurface::construct(std::vector<Polygon2D> controlPolygons,
                         std::vector<Transform> polygonTransforms,
                         std::shared_ptr<Material> material,
                         int numControlPoints, int numCrossSections) {
@@ -90,9 +90,27 @@ SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons,
     assert(controlPolygons.size() == numCrossSections);
     assert(polygonTransforms.size() == numCrossSections);
 
+    int polygonCount = (numCrossSections - 1) * TRANSFORM_INTERP_SIZE + 1;
+    std::vector<Polygon2D> interpPolygons(polygonCount);
+    for (auto& polygon : interpPolygons) {
+        polygon.resize(numControlPoints);
+    }
+    for (int i = 0; i < numCrossSections - 1; ++i) {
+        for (int j = 0; j < TRANSFORM_INTERP_SIZE; ++j) {
+            int im1 = (i == 0)? 0 : i - 1;
+            int ip2 = (i == numCrossSections - 2)? numCrossSections - 1 : i + 2;
+            float t = (float) (j) / TRANSFORM_INTERP_SIZE;
+            for (int k = 0; k < numControlPoints; ++k) {
+                interpPolygons[i * TRANSFORM_INTERP_SIZE + j][k] =
+                        catmullRom(controlPolygons[im1][k], controlPolygons[i][k], controlPolygons[i+1][k], controlPolygons[ip2][k], t);
+            }
+        }
+    }
+    interpPolygons[polygonCount - 1] = controlPolygons[numCrossSections - 1];
+
     int interpPolygonSize = numControlPoints * (1 << INTERP_FACTOR);
     std::vector<Polygon2D> bsplines;
-    for (auto& polygon : controlPolygons) {
+    for (auto& polygon : interpPolygons) {
         Polygon2D prev;
         Polygon2D next = polygon;
         for (int iter = 0; iter < INTERP_FACTOR; iter++) {
@@ -122,45 +140,41 @@ SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons,
     //
     // Calculate the final B-spline positions
     //
-    int finalBsplineCount = (numCrossSections - 1) * (TRANSFORM_INTERP_SIZE + 1);
-    std::vector<std::vector<Vertex>> finalBsplines(finalBsplineCount);
-
+    std::vector<std::vector<Vertex>> finalBsplines(polygonCount);
     for (auto& v : finalBsplines) {
         v.reserve(interpPolygonSize);
     }
 
     for (int i = 0; i < numCrossSections - 1; ++i) {
         auto& trans = polygonTransforms;
-        auto& bspline = bsplines[i];
 
-        for (int j = 0; j <= TRANSFORM_INTERP_SIZE; ++j) {
-            Transform transform;
+        for (int j = 0; j < TRANSFORM_INTERP_SIZE; ++j) {
             float t = (float) (j) / TRANSFORM_INTERP_SIZE;
             int im1 = (i == 0)? 0 : i-1;
             int ip2 = (i == numCrossSections - 2)? numCrossSections - 1 : i+2;
+            Transform transform;
             transform.position = catmullRom(trans[im1].position, trans[i].position, trans[i+1].position, trans[ip2].position, t);
             transform.rotation = catmullRom(trans[im1].rotation, trans[i].rotation, trans[i+1].rotation, trans[ip2].rotation, t);
             transform.rotation = glm::normalize(transform.rotation);
             transform.scale = catmullRom(trans[im1].scale, trans[i].scale, trans[i+1].scale, trans[ip2].scale, t);
 
+            auto& bspline = bsplines[i * TRANSFORM_INTERP_SIZE + j];
             for (auto& pos : bspline) {
                 Vertex vertex;
                 vertex.position = transform.toMat4() * glm::vec4(pos.x, 0.0f, pos.y, 1.0f);
-                finalBsplines[i * (TRANSFORM_INTERP_SIZE + 1) + j].push_back(vertex);
+                finalBsplines[i * TRANSFORM_INTERP_SIZE + j].push_back(vertex);
             }
         }
     }
 
     // Don't forget to include the last one!
-    /*
-    auto& lastBspline = bsplines[numCrossSections - 1];
+    auto& lastBspline = bsplines[polygonCount - 1];
     auto& lastTransform = polygonTransforms[numCrossSections - 1];
     for (auto& pos : lastBspline) {
         Vertex vertex;
-        vertex.position = lastTransform.toMat4() * glm::vec4(pos.x, pos.y, 0.0f, 1.0f);
-        finalBsplines[finalBsplineCount - 1].push_back(vertex);
+        vertex.position = lastTransform.toMat4() * glm::vec4(pos.x, 0.0f, pos.y, 1.0f);
+        finalBsplines[polygonCount - 1].push_back(vertex);
     }
-     */
 
     /*
     for (auto& bspline : finalBsplines) {
@@ -174,12 +188,12 @@ SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons,
     //
     // Find all the normals of the bspline vertices
     //
-    for (int i = 0; i < finalBsplineCount; ++i) {
+    for (int i = 0; i < polygonCount; ++i) {
         for (int j = 0; j < interpPolygonSize; ++j) {
             int jnext = (j + 1) % interpPolygonSize;
             int jprev = (j - 1) % interpPolygonSize;
             finalBsplines[i][j].normal = {0.0f, 0.0f, 0.0f};
-            if (i != finalBsplineCount - 1) {
+            if (i != polygonCount - 1) {
                 finalBsplines[i][j].normal += normalOfTriangle(
                         finalBsplines[i][j].position,
                         finalBsplines[i + 1][j].position,
@@ -209,7 +223,7 @@ SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons,
 
     // create the final vertices list
     std::vector<Vertex> vertices;
-    for (int i = 0; i < finalBsplineCount - 1; ++i) {
+    for (int i = 0; i < polygonCount - 1; ++i) {
         for (int j = 0; j < interpPolygonSize; ++j) {
             int jnext = (j + 1) % interpPolygonSize;
             auto& v1 = finalBsplines[i][j];
@@ -221,9 +235,11 @@ SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons,
         }
     }
 
+    /*
     for (auto& vertex : vertices) {
         std::cout << vertex.position.x << " " << vertex.position.y << " " << vertex.position.z << " " << std::endl;
     }
+     */
 
     std::shared_ptr<Mesh> mesh(new Mesh(vertices, {}, std::move(material), GL_TRIANGLES, false));
     return mesh;
