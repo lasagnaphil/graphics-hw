@@ -24,14 +24,15 @@
 
 class App {
 public:
+    enum class Mode {
+        Textured, Wireframe
+    };
     ~App();
     void start();
-    void loadScene();
+    void loadScene(Mode mode);
     void processInput();
     void update(float dt);
     void render();
-
-    void loadScene(const std::string& filename);
 
     static constexpr Uint32 msPerFrame = 16;
 

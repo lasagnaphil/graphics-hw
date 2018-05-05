@@ -143,7 +143,7 @@ void App::start() {
     // Load textures
     stbi_set_flip_vertically_on_load(true);
 
-    loadScene();
+    loadScene(Mode::Textured);
 
     // Program loop
     Uint32 frameTime;
@@ -169,12 +169,17 @@ void App::start() {
     }
 }
 
-void App::loadScene() {
+void App::loadScene(Mode mode) {
     // Shaders
     Shader defaultShader("shaders/lighting.vert", "shaders/lighting.frag");
     Shader wireframeShader("shaders/wireframe.vert", "shaders/wireframe.frag", "shaders/wireframe.geom");
 
-    sceneData.setDefaultShader(wireframeShader);
+    if (mode == Mode::Textured) {
+        sceneData.setDefaultShader(defaultShader);
+    }
+    else if (mode == Mode::Wireframe) {
+        sceneData.setDefaultShader(wireframeShader);
+    }
     sceneData.loadResources("resources/scene.yml");
 
     // Load the swept surface
@@ -196,8 +201,12 @@ void App::processInput() {
             break;
         } else if (event.type == SDL_KEYDOWN) {
             switch (event.key.keysym.sym) {
-                case SDLK_r: {
-                    loadScene();
+                case SDLK_t: {
+                    loadScene(Mode::Textured);
+                    break;
+                }
+                case SDLK_w: {
+                    loadScene(Mode::Wireframe);
                     break;
                 }
                 case SDLK_SPACE: {
