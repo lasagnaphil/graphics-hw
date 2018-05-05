@@ -39,12 +39,12 @@ std::shared_ptr<Mesh> SweptSurface::constructFromFile(const char* filename, std:
     if (line == "BSPLINE") {
         type = Type::Bspline;
     }
-    else if (line == "CATMULLROM") {
+    else if (line == "CATMULL_ROM") {
         type = Type::CatmullRom;
     }
     else {
         std::cout << line << std::endl;
-        std::cerr << "Sorry, we only allow BSPLINE" << std::endl;
+        std::cerr << "Sorry, we only allow BSPLINE or CATMULL_ROM" << std::endl;
         exit(0);
     }
     int numCrossSections = 0;
@@ -158,7 +158,18 @@ SweptSurface::construct(std::vector<Polygon2D> controlPolygons,
     }
     else if (type == Type::CatmullRom) {
         for (auto& polygon : interpPolygons) {
-
+            Polygon2D interpPolygon;
+            constexpr int interpCount = 1 << INTERP_FACTOR;
+            for (int i = 0; i < numControlPoints; ++i) {
+                for (int j = 0; j < interpCount; ++j) {
+                    float t = (float)(j) / interpCount;
+                    int ip1 = (i == numControlPoints - 1)? 0 : i + 1;
+                    int ip2 = (i >= numControlPoints - 2)? (i - numControlPoints + 2) : i + 2;
+                    int ip3 = (i >= numControlPoints - 3)? (i - numControlPoints + 3)  : i + 3;
+                    interpPolygon.push_back(catmullRom(polygon[i], polygon[ip1], polygon[ip2], polygon[ip3], t));
+                }
+            }
+            bsplines.push_back(interpPolygon);
         }
     }
 

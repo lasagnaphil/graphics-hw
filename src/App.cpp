@@ -237,7 +237,7 @@ void App::render() {
     // do stuff
     scene->render();
 
-    const char* items[] = {"Screwbar", "Trombone", "Coke Bottle"};
+    const char* items[] = {"Screwbar", "Screwbar (Catmull-Rom)", "Trombone", "Coke Bottle"};
     static const char* selected = items[0];
     static ImGuiComboFlags flags = 0;
 
@@ -255,9 +255,12 @@ void App::render() {
                         mesh = SweptSurface::constructFromFile("resources/screwbar.txt", sceneData.getMaterial("default"));
                         break;
                     case 1:
-                        mesh = SweptSurface::constructFromFile("resources/trombone.txt", sceneData.getMaterial("default"));
+                        mesh = SweptSurface::constructFromFile("resources/screwbar_cr.txt", sceneData.getMaterial("default"));
                         break;
                     case 2:
+                        mesh = SweptSurface::constructFromFile("resources/trombone.txt", sceneData.getMaterial("default"));
+                        break;
+                    case 3:
                         mesh = SweptSurface::constructFromFile("resources/coke_bottle.txt", sceneData.getMaterial("default"));
                         break;
                 }
