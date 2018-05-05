@@ -102,12 +102,14 @@ SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons,
         bsplines.push_back(next);
     }
 
+    /*
     for (auto& bspline : bsplines) {
         std::cout << std::endl;
         for (auto& pos : bspline) {
             std::cout << pos.x << " " << pos.y << std::endl;
         }
     }
+     */
 
     //
     // Calculate the final B-spline positions
@@ -128,9 +130,9 @@ SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons,
         for (int j = 0; j < TRANSFORM_INTERP_SIZE; ++j) {
             Transform transform;
             float alpha = (float) (j) / TRANSFORM_INTERP_SIZE;
-            transform.position = alpha * tprev.position + (1 - alpha) * tnext.position;
+            transform.position = (1 - alpha) * tprev.position + alpha * tnext.position;
             transform.rotation = glm::slerp(tprev.rotation, tnext.rotation, alpha);
-            transform.scale = alpha * tprev.scale + (1 - alpha) * tnext.scale;
+            transform.scale = (1 - alpha) * tprev.scale + alpha * tnext.scale;
 
             for (auto& pos : bspline) {
                 Vertex vertex;
@@ -145,16 +147,18 @@ SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons,
     auto& lastTransform = polygonTransforms[numCrossSections - 1];
     for (auto& pos : lastBspline) {
         Vertex vertex;
-        vertex.position = lastTransform.toMat4() * glm::vec4(pos.x, pos.y, 0.0f, 0.0f);
+        vertex.position = lastTransform.toMat4() * glm::vec4(pos.x, pos.y, 0.0f, 1.0f);
         finalBsplines[finalBsplineCount - 1].push_back(vertex);
     }
 
+    /*
     for (auto& bspline : finalBsplines) {
         std::cout << std::endl;
         for (auto& vertex : bspline) {
             std::cout << vertex.position.x << " " << vertex.position.y << " " << vertex.position.z << " " << std::endl;
         }
     }
+     */
 
     //
     // Find all the normals of the bspline vertices

@@ -17,7 +17,7 @@ class Shader {
 public:
 
     Shader() {}
-    Shader(const std::string& vertexPath, const std::string& fragmentPath);
+    Shader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geomPath = "");
 
     void setProgram(GLuint program);
 
