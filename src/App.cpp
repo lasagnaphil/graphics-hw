@@ -172,9 +172,9 @@ void App::start() {
 void App::loadScene() {
     // Shaders
     Shader defaultShader("shaders/lighting.vert", "shaders/lighting.frag");
-    // Shader wireframeShader("shaders/wireframe.vert", "shaders/wireframe.frag");
+    Shader wireframeShader("shaders/wireframe.vert", "shaders/wireframe.frag", "shaders/wireframe.geom");
 
-    sceneData.setDefaultShader(defaultShader);
+    sceneData.setDefaultShader(wireframeShader);
     sceneData.loadResources("resources/scene.yml");
 
     // Load the swept surface

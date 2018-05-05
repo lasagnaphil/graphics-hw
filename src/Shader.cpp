@@ -28,7 +28,9 @@ GLuint compileShader(GLenum type, const GLchar *source) {
     return shader;
 }
 
-Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
+Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath, const std::string &geometryPath) {
+    bool hasGeom = !geometryPath.empty();
+
     program = glCreateProgram();
 
     std::string vertexCode;
@@ -39,6 +41,7 @@ Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
 
     vertexFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
     fragmentFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
+
 
     try {
         vertexFile.open(vertexPath);
@@ -53,8 +56,25 @@ Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
 
         vertexCode = vertexBuffer.str();
         fragmentCode = fragmentBuffer.str();
-    } catch (std::ifstream::failure e) {
-        std::cout << "Error: shader file not successfully read" << std::endl;
+
+    } catch (std::ifstream::failure& e) {
+        std::cerr << "Error: shader file not successfully read" << std::endl;
+    }
+
+    std::string geometryCode;
+    if (hasGeom) {
+        std::ifstream geometryFile;
+        geometryFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+        try {
+            geometryFile.open(geometryPath);
+            std::stringstream geometryBuffer;
+            geometryBuffer << geometryFile.rdbuf();
+            geometryFile.close();
+            geometryCode = geometryBuffer.str();
+        } catch (std::ifstream::failure& e) {
+            std::cerr << "Error: shader file not successfully read" << std::endl;
+        }
     }
 
     const GLchar* vertexCodePtr = vertexCode.data();
@@ -64,6 +84,14 @@ Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
     GLuint fragmentShaderPtr = compileShader(GL_FRAGMENT_SHADER, fragmentCodePtr);
     glAttachShader(program, vertexShaderPtr);
     glAttachShader(program, fragmentShaderPtr);
+
+    GLuint geometryShaderPtr;
+    if (hasGeom) {
+        const GLchar* geometryCodePtr = geometryCode.data();
+        geometryShaderPtr = compileShader(GL_GEOMETRY_SHADER, geometryCodePtr);
+        glAttachShader(program, geometryShaderPtr);
+    }
+
     glLinkProgram(program);
     GLint success;
     GLchar infoLog[512];
@@ -73,8 +101,9 @@ Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
         std::cout << "Error: shader program linking failed" << infoLog << std::endl;
     }
 
-    //glDeleteShader(vertexShaderPtr);
-    //glDeleteShader(fragmentShaderPtr);
+    glDeleteShader(vertexShaderPtr);
+    glDeleteShader(fragmentShaderPtr);
+    if (hasGeom) glDeleteShader(geometryShaderPtr);
 }
 
 void Shader::setProgram(GLuint program) {
