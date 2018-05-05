@@ -69,10 +69,10 @@ nodes:
     ambientColor: [0.2, 0.2, 0.2]
     diffuseColor: [0.8, 0.8, 0.8]
     specularColor: [1.0, 1.0, 1.0]
-    children:
-      - name: lightIndicator
-        mesh: cube
-        scale: [0.2, 0.2, 0.2]
+#   children:
+#     - name: lightIndicator
+#       mesh: cube
+#       scale: [0.2, 0.2, 0.2]
   - name: Swept Surface
     type: MeshNode
     mesh: swept_surface

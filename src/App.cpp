@@ -183,7 +183,7 @@ void App::loadScene() {
 
     scene = sceneData.loadSceneGraph("resources/scene.yml");
 
-    // MeshNode* sweptSurface = scene->getRootNode()->query("Swept Surface")->cast<MeshNode>();
+    MeshNode* sweptSurface = scene->getRootNode()->query("Swept Surface")->cast<MeshNode>();
     // sweptSurface->setShader(wireframeShader);
 }
 
