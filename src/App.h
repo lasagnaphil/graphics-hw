@@ -24,12 +24,9 @@
 
 class App {
 public:
-    enum class Mode {
-        Textured, Wireframe
-    };
     ~App();
     void start();
-    void loadScene(Mode mode);
+    void loadScene();
     void processInput();
     void update(float dt);
     void render();

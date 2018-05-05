@@ -4,17 +4,17 @@
 
 #include <glm/ext.hpp>
 #include "MeshNode.h"
-MeshNode::MeshNode(std::shared_ptr<Mesh> mesh, Shader shader) :
-        mesh(std::move(mesh)), shader(shader) {
+MeshNode::MeshNode(std::shared_ptr<Mesh> mesh, std::shared_ptr<Shader> shader) :
+        mesh(std::move(mesh)), shader(std::move(shader)) {
 }
 
 void MeshNode::update(float dt) {
 }
 
 void MeshNode::render() {
-    shader.use();
-    shader.setMat4("model", worldTransform);
-    shader.setFloat("material.shininess", 64.0f);
+    shader->use();
+    shader->setMat4("model", worldTransform);
+    shader->setFloat("material.shininess", 64.0f);
 
     //glActiveTexture(GL_TEXTURE0);
     //glBindTexture(GL_TEXTURE_2D, material->diffuse.getID());
@@ -24,7 +24,7 @@ void MeshNode::render() {
     mesh->draw(shader);
 }
 
-void MeshNode::setShader(Shader shader) {
+void MeshNode::setShader(std::shared_ptr<Shader> shader) {
     this->shader = shader;
 }
 

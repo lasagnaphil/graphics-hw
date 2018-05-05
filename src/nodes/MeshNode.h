@@ -9,16 +9,16 @@
 class MeshNode : public Spatial {
 public:
     MeshNode() = default;
-    MeshNode(std::shared_ptr<Mesh> mesh, Shader shader);
+    MeshNode(std::shared_ptr<Mesh> mesh, std::shared_ptr<Shader> shader);
 
     virtual void update(float dt) override;
     virtual void render() override;
 
     void setMesh(std::shared_ptr<Mesh> mesh);
-    void setShader(Shader shader);
+    void setShader(std::shared_ptr<Shader> shader);
 
     std::shared_ptr<Mesh> mesh;
-    Shader shader;
+    std::shared_ptr<Shader> shader;
 
     struct BoundingBox {
         glm::vec2 leftTop;

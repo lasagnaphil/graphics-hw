@@ -26,12 +26,30 @@ public:
         scene = std::make_unique<Scene>();
     }
 
+    void clear() {
+        scene = std::make_unique<Scene>();
+        defaultShader = nullptr;
+        camera = nullptr;
+        textures.clear();
+        meshes.clear();
+        materials.clear();
+        shaders.clear();
+    }
+
     void loadResources(const std::string& filename);
     Scene* loadSceneGraph(const std::string& filename);
 
-    void setDefaultShader(Shader shader) { this->defaultShader = shader; }
+    void setDefaultShader(std::shared_ptr<Shader> shader) { this->defaultShader = std::move(shader); }
 
     Camera* getCamera() { return camera; }
+
+    void addShader(const std::string& name, std::shared_ptr<Shader> shader) {
+        shaders[name] = std::move(shader);
+    }
+
+    std::shared_ptr<Shader> getShader(const std::string& name) {
+        return shaders[name];
+    }
 
     void addTexture(const std::string& name, Texture texture) {
         textures[name] = std::move(texture);
@@ -63,8 +81,9 @@ private:
     std::unordered_map<std::string, std::shared_ptr<Mesh>> meshes;
     std::unordered_map<std::string, std::shared_ptr<Material>> materials;
     std::unordered_map<std::string, Node*> nodes;
+    std::unordered_map<std::string, std::shared_ptr<Shader>> shaders;
 
-    Shader defaultShader;
+    std::shared_ptr<Shader> defaultShader;
     std::unique_ptr<Scene> scene;
 
     Camera* camera;

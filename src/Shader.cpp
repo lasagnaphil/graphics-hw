@@ -28,7 +28,7 @@ GLuint compileShader(GLenum type, const GLchar *source) {
     return shader;
 }
 
-Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath, const std::string &geometryPath) {
+void Shader::compile() {
     bool hasGeom = !geometryPath.empty();
 
     program = glCreateProgram();

@@ -32,10 +32,17 @@ std::shared_ptr<Mesh> SweptSurface::constructFromFile(const char* filename, std:
     std::ifstream istream(filename);
     std::string line;
 
+    Type type;
     // get title
     getline(istream, line);
 
-    if (line != "BSPLINE") {
+    if (line == "BSPLINE") {
+        type = Type::Bspline;
+    }
+    else if (line == "CATMULLROM") {
+        type = Type::CatmullRom;
+    }
+    else {
         std::cout << line << std::endl;
         std::cerr << "Sorry, we only allow BSPLINE" << std::endl;
         exit(0);
@@ -75,7 +82,7 @@ std::shared_ptr<Mesh> SweptSurface::constructFromFile(const char* filename, std:
         polygons.push_back(polygon);
         transforms.push_back(transform);
     }
-    return construct(polygons, transforms, std::move(material), numControlPoints, numCrossSections);
+    return construct(polygons, transforms, std::move(material), numControlPoints, numCrossSections, type);
 }
 
 glm::vec3 normalOfTriangle(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3) {
@@ -102,7 +109,9 @@ std::shared_ptr<Mesh>
 SweptSurface::construct(std::vector<Polygon2D> controlPolygons,
                         std::vector<Transform> polygonTransforms,
                         std::shared_ptr<Material> material,
-                        int numControlPoints, int numCrossSections) {
+                        int numControlPoints, int numCrossSections,
+                        Type type
+) {
 
     assert(controlPolygons.size() == numCrossSections);
     assert(polygonTransforms.size() == numCrossSections);
@@ -127,22 +136,30 @@ SweptSurface::construct(std::vector<Polygon2D> controlPolygons,
 
     int interpPolygonSize = numControlPoints * (1 << INTERP_FACTOR);
     std::vector<Polygon2D> bsplines;
-    for (auto& polygon : interpPolygons) {
-        Polygon2D prev;
-        Polygon2D next = polygon;
-        for (int iter = 0; iter < INTERP_FACTOR; iter++) {
-            prev = next;
-            int numVertices = numControlPoints * (1 << iter);
-            next.clear();
-            next.resize(numVertices * 2);
-            for (int i = 0; i < numVertices; ++i) {
-                int iprev = (i == 0)? numVertices - 1 : (i - 1);
-                int inext = (i == numVertices - 1)? 0 : (i + 1);
-                next[2*i] = (prev[iprev] + 6.f * prev[i] + prev[inext]) / 8.f;
-                next[2*i+1] = (prev[i] + prev[inext]) / 2.f;
+
+    if (type == Type::Bspline) {
+        for (auto& polygon : interpPolygons) {
+            Polygon2D prev;
+            Polygon2D next = polygon;
+            for (int iter = 0; iter < INTERP_FACTOR; iter++) {
+                prev = next;
+                int numVertices = numControlPoints * (1 << iter);
+                next.clear();
+                next.resize(numVertices * 2);
+                for (int i = 0; i < numVertices; ++i) {
+                    int iprev = (i == 0) ? numVertices - 1 : (i - 1);
+                    int inext = (i == numVertices - 1) ? 0 : (i + 1);
+                    next[2 * i] = (prev[iprev] + 6.f * prev[i] + prev[inext]) / 8.f;
+                    next[2 * i + 1] = (prev[i] + prev[inext]) / 2.f;
+                }
             }
+            bsplines.push_back(next);
         }
-        bsplines.push_back(next);
+    }
+    else if (type == Type::CatmullRom) {
+        for (auto& polygon : interpPolygons) {
+
+        }
     }
 
     //

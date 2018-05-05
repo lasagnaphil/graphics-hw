@@ -10,6 +10,40 @@ void SceneData::loadResources(const std::string& filename) {
     using std::string;
 
     YAML::Node data = YAML::LoadFile(filename);
+
+    auto shaderData = data["shaders"];
+    for (auto it = shaderData.begin(); it != shaderData.end(); ++it) {
+        auto name = it->first.as<string>();
+        std::string vertex;
+        std::string fragment;
+        std::string geometry;
+        if (auto vertexFile = loadField<std::string>(it->second, "vertex")) {
+            vertex = *vertexFile;
+        }
+        if (auto fragmentFile = loadField<std::string>(it->second, "fragment")) {
+            fragment = *fragmentFile;
+        }
+        if (auto geometryFile = loadFieldOpt<std::string>(it->second, "geometry")) {
+            geometry = *geometryFile;
+        }
+        if (geometry.empty()) {
+            auto shader = std::make_shared<Shader>(vertex, fragment);
+            shader->compile();
+            shaders[name] = shader;
+        }
+        else {
+            auto shader = std::make_shared<Shader>(vertex, fragment, geometry);
+            shader->compile();
+            shaders[name] = shader;
+        }
+    }
+    auto defaultShaderIt = shaders.find("default");
+    if (defaultShaderIt == shaders.end()) {
+        std::cerr << "Cannot find default shader!" << std::endl;
+        exit(1);
+    }
+    defaultShader = defaultShaderIt->second;
+
     auto textureData = data["textures"];
     for (auto it = textureData.begin(); it != textureData.end(); ++it) {
         auto name = it->first.as<string>();
@@ -76,7 +110,9 @@ Scene* SceneData::loadSceneGraph(const std::string& filename) {
         loadChildren(scene->getRootNode(), nodes);
     }
 
-    scene->addShader(defaultShader);
+    for (auto& entry : shaders) {
+        scene->addShader(entry.second);
+    }
 
     return scene.get();
 }

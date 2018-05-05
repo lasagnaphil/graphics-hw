@@ -143,7 +143,7 @@ void App::start() {
     // Load textures
     stbi_set_flip_vertically_on_load(true);
 
-    loadScene(Mode::Textured);
+    loadScene();
 
     // Program loop
     Uint32 frameTime;
@@ -169,27 +169,18 @@ void App::start() {
     }
 }
 
-void App::loadScene(Mode mode) {
+void App::loadScene() {
     // Shaders
-    Shader defaultShader("shaders/lighting.vert", "shaders/lighting.frag");
-    Shader wireframeShader("shaders/wireframe.vert", "shaders/wireframe.frag", "shaders/wireframe.geom");
-
-    if (mode == Mode::Textured) {
-        sceneData.setDefaultShader(defaultShader);
-    }
-    else if (mode == Mode::Wireframe) {
-        sceneData.setDefaultShader(wireframeShader);
-    }
     sceneData.loadResources("resources/scene.yml");
 
     // Load the swept surface
-    std::shared_ptr<Mesh> mesh = SweptSurface::constructFromFile("resources/coke_bottle.txt", sceneData.getMaterial("default"));
+    std::shared_ptr<Mesh> mesh = SweptSurface::constructFromFile("resources/trombone.txt", sceneData.getMaterial("default"));
     sceneData.addMesh("swept_surface", mesh);
 
     scene = sceneData.loadSceneGraph("resources/scene.yml");
 
     MeshNode* sweptSurface = scene->getRootNode()->query("Swept Surface")->cast<MeshNode>();
-    // sweptSurface->setShader(wireframeShader);
+    sweptSurface->setShader(sceneData.getShader("wireframe"));
 }
 
 void App::processInput() {
@@ -201,13 +192,19 @@ void App::processInput() {
             break;
         } else if (event.type == SDL_KEYDOWN) {
             switch (event.key.keysym.sym) {
-                case SDLK_t: {
-                    loadScene(Mode::Textured);
+                case SDLK_1: {
+                    MeshNode* sweptSurface = scene->getRootNode()->query("Swept Surface")->cast<MeshNode>();
+                    sweptSurface->setShader(sceneData.getShader("default"));
                     break;
                 }
-                case SDLK_w: {
-                    loadScene(Mode::Wireframe);
+                case SDLK_2: {
+                    MeshNode* sweptSurface = scene->getRootNode()->query("Swept Surface")->cast<MeshNode>();
+                    sweptSurface->setShader(sceneData.getShader("wireframe"));
                     break;
+                }
+                case SDLK_r: {
+                    sceneData.clear();
+                    loadScene();
                 }
                 case SDLK_SPACE: {
                     break;
