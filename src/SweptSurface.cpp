@@ -101,8 +101,8 @@ SweptSurface::construct(std::vector<SweptSurface::Polygon2D> controlPolygons,
             next.clear();
             next.resize(numVertices * 2);
             for (int i = 0; i < numVertices; ++i) {
-                int iprev = (i - 1) % numVertices;
-                int inext = (i + 1) % numVertices;
+                int iprev = (i == 0)? numVertices - 1 : (i - 1);
+                int inext = (i == numVertices - 1)? 0 : (i + 1);
                 next[2*i] = (prev[iprev] + 6.f * prev[i] + prev[inext]) / 8.f;
                 next[2*i+1] = (prev[i] + prev[inext]) / 2.f;
             }
