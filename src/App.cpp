@@ -174,7 +174,7 @@ void App::loadScene() {
     sceneData.loadResources("resources/scene.yml");
 
     // Load the swept surface
-    std::shared_ptr<Mesh> mesh = SweptSurface::constructFromFile("resources/test.txt", sceneData.getMaterial("default"));
+    std::shared_ptr<Mesh> mesh = SweptSurface::constructFromFile("resources/screwbar.txt", sceneData.getMaterial("default"));
     sceneData.addMesh("swept_surface", mesh);
 
     scene = sceneData.loadSceneGraph("resources/scene.yml");
@@ -236,6 +236,42 @@ void App::render() {
 
     // do stuff
     scene->render();
+
+    const char* items[] = {"Screwbar", "Trombone", "Coke Bottle"};
+    static const char* selected = items[0];
+    static ImGuiComboFlags flags = 0;
+
+    ImGui::Begin("Application Settings");
+    if (ImGui::BeginCombo("Mesh", selected, flags)) // The second parameter is the label previewed before opening the combo.
+    {
+        for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+        {
+            bool is_selected = (selected == items[n]);
+            if (ImGui::Selectable(items[n], is_selected)) {
+                selected = items[n];
+                std::shared_ptr<Mesh> mesh;
+                switch(n) {
+                    case 0:
+                        mesh = SweptSurface::constructFromFile("resources/screwbar.txt", sceneData.getMaterial("default"));
+                        break;
+                    case 1:
+                        mesh = SweptSurface::constructFromFile("resources/trombone.txt", sceneData.getMaterial("default"));
+                        break;
+                    case 2:
+                        mesh = SweptSurface::constructFromFile("resources/coke_bottle.txt", sceneData.getMaterial("default"));
+                        break;
+                }
+                sceneData.addMesh("swept_surface", mesh);
+                MeshNode* sweptSurface = scene->getRootNode()->query("Swept Surface")->cast<MeshNode>();
+                sweptSurface->setMesh(mesh);
+            }
+            if (is_selected) {
+                ImGui::SetItemDefaultFocus();   // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
+            }
+        }
+        ImGui::EndCombo();
+    }
+    ImGui::End();
 
     ImGui::Render();
     ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
