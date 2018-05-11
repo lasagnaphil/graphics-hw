@@ -149,7 +149,9 @@ Node* SceneData::loadNode(const YAML::Node& data) {
             camera = dynamic_cast<TrackballCamera*>(node);
         }
         else if (type == "MeshNode") { node = new MeshNode(); }
-        else if (type == "LightNode") { node = new LightNode(); }
+        else if (type == "LightNode") {
+            node = new LightNode(LightNode::Type::Directional, true);
+        }
         else {
             // set default as MeshNode
             loadError(data["type"].Mark(), "invalid node type");

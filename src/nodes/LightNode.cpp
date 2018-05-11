@@ -9,7 +9,7 @@ unsigned int LightNode::numDirectionalLights = 0;
 unsigned int LightNode::numPointLights = 0;
 unsigned int LightNode::numSpotLights = 0;
 
-LightNode::LightNode(Type type)
+LightNode::LightNode(Type type, bool suppressWarnings)
         : Spatial(),
           type(type),
           ambientColor(0.2f, 0.2f, 0.2f, 1.0f),
@@ -19,27 +19,29 @@ LightNode::LightNode(Type type)
           cutOff(glm::cos(glm::radians(12.5f))),
           outerCutOff(glm::cos(glm::radians(17.5f)))
 {
-    switch(type) {
-        case Type::Directional:
-            if (numDirectionalLights >= maxDirectionalLights) {
-                std::cerr << "Exceeded max number of directional lights!" << std::endl;
-            }
-            lightID = numDirectionalLights;
-            numDirectionalLights++;
-            break;
-        case Type::Point:
-            if (numPointLights >= maxPointLights) {
-                std::cerr << "Exceeded max number of point lights!" << std::endl;
-            }
-            lightID = numPointLights;
-            numPointLights++;
-            break;
-        case Type::Spotlight:
-            if (numSpotLights >= maxSpotLights) {
-                std::cerr << "Exceeded max number of spot lights!" << std::endl;
-            }
-            lightID = numSpotLights;
-            numSpotLights++;
+    if (!suppressWarnings) {
+        switch (type) {
+            case Type::Directional:
+                if (numDirectionalLights >= maxDirectionalLights) {
+                    std::cerr << "Exceeded max number of directional lights!" << std::endl;
+                }
+                lightID = numDirectionalLights;
+                numDirectionalLights++;
+                break;
+            case Type::Point:
+                if (numPointLights >= maxPointLights) {
+                    std::cerr << "Exceeded max number of point lights!" << std::endl;
+                }
+                lightID = numPointLights;
+                numPointLights++;
+                break;
+            case Type::Spotlight:
+                if (numSpotLights >= maxSpotLights) {
+                    std::cerr << "Exceeded max number of spot lights!" << std::endl;
+                }
+                lightID = numSpotLights;
+                numSpotLights++;
+        }
     }
 }
 

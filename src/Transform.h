@@ -15,13 +15,7 @@ struct Transform {
     glm::quat rotation;
     glm::vec3 scale;
 
-    glm::mat4 toMat4() {
-        glm::mat4 mat;
-        mat = glm::scale(glm::mat4(1.0f), scale);
-        mat = glm::mat4_cast(rotation) * mat;
-        mat = glm::translate(glm::mat4(1.0f), position) * mat;
-        return mat;
-    }
+    glm::mat4 toMat4();
 };
 
 
