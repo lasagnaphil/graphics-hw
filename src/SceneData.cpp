@@ -85,15 +85,15 @@ void SceneData::loadResources(const std::string& filename) {
                 meshes[name] = Mesh::createCylinder(poly, radius, height);
             }
             else {
-                loadError(it->second["type"].Mark(), "unknown mesh type");
+                loadError(it->second["type"].Mark(), (std::string("unknown mesh type ") + *type).c_str());
             }
         }
         if (auto matName = loadFieldOpt<string>(it->second, "mat")) {
-            if (meshes.count(*matName)) {
+            if (materials.count(*matName)) {
                 meshes[name]->setMaterial(materials[*matName]);
             }
             else {
-                loadError(it->second["mat"].Mark(), "unknown mat type");
+                loadError(it->second["mat"].Mark(), (std::string("unknown mat type ") + *matName).c_str());
             }
         }
         else {
@@ -207,13 +207,13 @@ Node* SceneData::loadNode(const YAML::Node& data) {
                 loadError(data["lightType"].Mark(), "invalid light type");
             }
         }
-        if (auto ambient = loadFieldOpt<glm::vec3>(data, "ambientColor")) {
+        if (auto ambient = loadFieldOpt<glm::vec4>(data, "ambientColor")) {
             lightNode->ambientColor = *ambient;
         }
-        if (auto diffuse = loadFieldOpt<glm::vec3>(data, "diffuseColor")) {
+        if (auto diffuse = loadFieldOpt<glm::vec4>(data, "diffuseColor")) {
             lightNode->diffuseColor = *diffuse;
         }
-        if (auto specular = loadFieldOpt<glm::vec3>(data, "specularColor")) {
+        if (auto specular = loadFieldOpt<glm::vec4>(data, "specularColor")) {
             lightNode->specularColor = *specular;
         }
     }

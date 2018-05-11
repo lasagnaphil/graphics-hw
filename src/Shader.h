@@ -34,6 +34,8 @@ public:
     void setMat4(GLint uniID, const glm::mat4& value) const;
     void setVec3(const char* name, const glm::vec3& value) const;
     void setVec3(GLint uniID, const glm::vec3& value) const;
+    void setVec4(const char* name, const glm::vec4& value) const;
+    void setVec4(GLint uniID, const glm::vec4& value) const;
 
     GLint getUniformLocation(const char* name);
 

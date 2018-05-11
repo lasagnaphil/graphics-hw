@@ -10,11 +10,13 @@ Mesh::Mesh(std::vector<Vertex> vertices,
            std::vector<unsigned int> indices,
            std::shared_ptr<Material> material,
            GLenum drawMode,
+           bool isDepthSorted,
            bool isIndexed)
         : vertices(std::move(vertices)),
           indices(std::move(indices)),
           material(std::move(material)),
           drawMode(drawMode),
+          isDepthSorted(isDepthSorted),
           isIndexed(isIndexed)
 {
     setupMesh();

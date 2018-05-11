@@ -44,14 +44,19 @@ struct convert<glm::vec4> {
     }
 
     static bool decode(const Node& node, glm::vec4& rhs) {
-        if (!node.IsSequence() || node.size() != 4) {
+        if (!node.IsSequence() || (node.size() != 3 && node.size() != 4)) {
             return false;
         }
 
         rhs.x = node[0].as<float>();
         rhs.y = node[1].as<float>();
         rhs.z = node[2].as<float>();
-        rhs.w = node[3].as<float>();
+        if (node.size() == 4) {
+            rhs.w = node[3].as<float>();
+        }
+        else {
+            rhs.w = 1.0f;
+        }
         return true;
     }
 };
