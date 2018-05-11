@@ -21,7 +21,7 @@ public:
         float quadratic;
     };
 
-    LightNode(Type type = Type::Directional);
+    LightNode(Type type = Type::Directional, bool suppressWarnings = false);
 
     virtual ~LightNode();
 
