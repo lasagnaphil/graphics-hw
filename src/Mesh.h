@@ -26,6 +26,7 @@ struct Vertex {
 class Mesh {
 public:
     std::vector<Vertex> vertices;
+    std::vector<std::vector<Vertex>> dividedVertices;
 
     std::vector<unsigned int> indices;
     std::shared_ptr<Material> material;
@@ -34,6 +35,7 @@ public:
          std::vector<unsigned int> indices,
          std::shared_ptr<Material> material,
          GLenum drawMode = GL_TRIANGLES,
+         bool isDepthSorted = false,
          bool isIndexed = true);
 
     void draw(std::shared_ptr<Shader> shader);
@@ -54,6 +56,7 @@ private:
 
     GLenum drawMode;
     bool isIndexed;
+    bool isDepthSorted;
 
     void setupMesh();
 };

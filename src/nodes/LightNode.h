@@ -37,9 +37,9 @@ public:
     float cutOff;
     float outerCutOff;
 
-    glm::vec3 ambientColor;
-    glm::vec3 diffuseColor;
-    glm::vec3 specularColor;
+    glm::vec4 ambientColor;
+    glm::vec4 diffuseColor;
+    glm::vec4 specularColor;
 
     unsigned int getLightID() { return lightID; }
 

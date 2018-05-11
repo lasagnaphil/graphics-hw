@@ -28,11 +28,11 @@ class Texture {
     public:
         Builder() : data(nullptr),
                     level(0),
-                    internalFormat(GL_RGB),
+                    internalFormat(GL_RGBA),
                     width(0),
                     height(0),
                     border(0),
-                    format(GL_RGB),
+                    format(GL_RGBA),
                     datatype(GL_UNSIGNED_BYTE) {}
 
         Builder& setImage(Image& image) {

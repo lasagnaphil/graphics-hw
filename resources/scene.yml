@@ -24,10 +24,20 @@ textures:
     colorInt: [0, 230, 0, 255]
   deco4:
     colorInt: [230, 230, 0, 255]
+  transparent_blue:
+    color: [0, 0, 1, 0.3]
+  transparent_red:
+    color: [1, 0, 0, 0.3]
 
 meshes:
   cube:
     type: Cube
+  transparent_cube_blue:
+    type: Cube
+    mat: transparent_blue
+  transparent_cube_red:
+    type: Cube
+    mat: transparent_red
   deco1:
     type: Cube
     mat: deco1
@@ -78,11 +88,29 @@ nodes:
     ambientColor: [0.2, 0.2, 0.2]
     diffuseColor: [0.8, 0.8, 0.8]
     specularColor: [1.0, 1.0, 1.0]
-#   children:
-#     - name: lightIndicator
-#       mesh: cube
-#       scale: [0.2, 0.2, 0.2]
+  - name: light
+    type: LightNode
+    lightType: Point
+    pos: [0, 0, 0]
+    rot: [0, 0, 0]
+    ambientColor: [0.2, 0.2, 0.2]
+    diffuseColor: [0.8, 0.8, 0.8]
+    specularColor: [1.0, 1.0, 1.0]
+    children:
+      - name: lightIndicator
+        mesh: cube
+        scale: [0.2, 0.2, 0.2]
   - name: Swept Surface
     type: MeshNode
     mesh: swept_surface
     pos: [0, 0, 0]
+  - name: Transparent Cube 1
+    type: MeshNode
+    mesh: transparent_cube_blue
+    pos: [2, 0, 0]
+    scale: [5, 5, 5]
+  - name: Transparent Cube 2
+    type: MeshNode
+    mesh: transparent_cube_red
+    pos: [4, 2, 2]
+    scale: [5, 5, 5]

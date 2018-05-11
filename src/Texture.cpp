@@ -21,6 +21,8 @@ Texture::Texture(unsigned char* data,
     glBindTexture(GL_TEXTURE_2D, textureID);
     glTexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, border, format, datatype, data);
     glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
 Texture::Texture(Builder& builder) :
@@ -29,7 +31,7 @@ Texture::Texture(Builder& builder) :
         builder.textureType) {}
 
 Texture::Texture() :
-        Texture(nullptr, 0, GL_RGB, 0, 0, 0, GL_RGB, GL_UNSIGNED_BYTE, TextureType::Diffuse) {}
+        Texture(nullptr, 0, GL_RGBA, 0, 0, 0, GL_RGBA, GL_UNSIGNED_BYTE, TextureType::Diffuse) {}
 
 void Texture::setParameterf(GLenum pname, GLfloat param) {
     glBindTexture(GL_TEXTURE_2D, textureID);
