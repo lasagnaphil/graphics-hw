@@ -26,7 +26,7 @@ private:
     float distance = 10.0f;
     float translationSpeed = 10.0f;
 
-    MeshNode::BoundingBox boundingBox;
+    MeshNode::BoundingBox2D boundingBox;
 
     // debug
     float theta = 0.0f;

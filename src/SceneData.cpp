@@ -99,6 +99,9 @@ void SceneData::loadResources(const std::string& filename) {
         else {
             meshes[name]->setMaterial(materials["default"]);
         }
+        if (auto isDepthSorted = loadFieldOpt<bool>(it->second, "isDepthSorted")) {
+            meshes[name]->isDepthSorted = *isDepthSorted;
+        }
     }
 }
 
@@ -139,14 +142,17 @@ Node* SceneData::loadNode(const YAML::Node& data) {
         else if (type == "Camera") {
             node = new Camera();
             camera = dynamic_cast<Camera*>(node);
+            scene->setMainCamera(camera);
         }
         else if (type == "FirstPersonCamera") {
             node = new FirstPersonCamera();
             camera = dynamic_cast<FirstPersonCamera*>(node);
+            scene->setMainCamera(camera);
         }
         else if (type == "TrackballCamera") {
             node = new TrackballCamera();
             camera = dynamic_cast<TrackballCamera*>(node);
+            scene->setMainCamera(camera);
         }
         else if (type == "MeshNode") { node = new MeshNode(); }
         else if (type == "LightNode") {

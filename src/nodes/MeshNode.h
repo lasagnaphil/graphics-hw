@@ -14,18 +14,20 @@ public:
     virtual void update(float dt) override;
     virtual void render() override;
 
+    void updateShaderUniforms();
+
     void setMesh(std::shared_ptr<Mesh> mesh);
     void setShader(std::shared_ptr<Shader> shader);
 
     std::shared_ptr<Mesh> mesh;
     std::shared_ptr<Shader> shader;
 
-    struct BoundingBox {
+    struct BoundingBox2D {
         glm::vec2 leftTop;
         glm::vec2 rightBottom;
     };
 
-    BoundingBox findBoundingBox(glm::mat4 projViewMatrix);
+    BoundingBox2D findBoundingBox(glm::mat4 projViewMatrix);
 
 private:
     template <typename InputIter, typename OutputIter, typename F>

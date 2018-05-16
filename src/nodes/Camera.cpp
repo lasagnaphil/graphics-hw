@@ -16,3 +16,4 @@ void Camera::update(float dt) {
         shader->setVec3("viewPos", getGlobalPosition());
     }
 }
+

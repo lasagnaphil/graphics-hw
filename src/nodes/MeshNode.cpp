@@ -12,16 +12,18 @@ void MeshNode::update(float dt) {
 }
 
 void MeshNode::render() {
-    shader->use();
-    shader->setMat4("model", worldTransform);
-    shader->setFloat("material.shininess", 64.0f);
+    // if the mesh is depth sorted, draw it later in Scene::render() using BSP Tree
+    if (mesh->isDepthSorted) { return; }
 
-    //glActiveTexture(GL_TEXTURE0);
-    //glBindTexture(GL_TEXTURE_2D, material->diffuse.getID());
-    //glActiveTexture(GL_TEXTURE1);
-    //glBindTexture(GL_TEXTURE_2D, material->specular.getID());
+    updateShaderUniforms();
 
     mesh->draw(shader);
+}
+
+void MeshNode::updateShaderUniforms() {
+    shader->use();
+    shader->setMat4("model", worldTransform);
+    shader->setFloat("material.shininess", mesh->material->shininess);
 }
 
 void MeshNode::setShader(std::shared_ptr<Shader> shader) {
@@ -32,7 +34,7 @@ void MeshNode::setMesh(std::shared_ptr<Mesh> mesh) {
     this->mesh = mesh;
 }
 
-MeshNode::BoundingBox MeshNode::findBoundingBox(glm::mat4 projViewMatrix) {
+MeshNode::BoundingBox2D MeshNode::findBoundingBox(glm::mat4 projViewMatrix) {
     std::vector<glm::vec3> vertices = getAllVertices();
     std::vector<glm::vec2> screenVertices;
 
@@ -41,7 +43,7 @@ MeshNode::BoundingBox MeshNode::findBoundingBox(glm::mat4 projViewMatrix) {
         return glm::vec2(result.x / result.w, result.y / result.w);
     });
 
-    BoundingBox box {
+    BoundingBox2D box {
             .leftTop = screenVertices[0],
             .rightBottom = screenVertices[0]
     };
@@ -85,3 +87,4 @@ std::vector<glm::vec3> MeshNode::meshToVertices() {
     });
     return vertices;
 }
+
