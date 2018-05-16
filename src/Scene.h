@@ -14,6 +14,8 @@
 #include "nodes/Spatial.h"
 #include "Shader.h"
 #include "nodes/LightNode.h"
+#include "BSPTree.h"
+#include "nodes/Camera.h"
 
 class Scene {
 public:
@@ -23,14 +25,11 @@ public:
 
     Node* getRootNode() { return rootNode.get(); }
 
-    void render() {
-        render(rootNode.get());
-        firstTime = false;
-    }
+    void render();
 
-    void update(float dt) {
-        update(rootNode.get(), dt, glm::mat4(1.0f));
-    }
+    void update(float dt);
+
+    void updateTransforms();
 
     void processInput(SDL_Event& event) {
         processInput(rootNode.get(), event);
@@ -44,8 +43,15 @@ public:
         shaders.push_back(shader);
     }
 
+    void constructBSPTree();
+
+    void setMainCamera(Camera* camera) {
+        this->mainCamera = camera;
+    }
+
 private:
     void update(Spatial* node, float dt, glm::mat4 curTransform);
+    void updateTransforms(Spatial* node, glm::mat4 curTransform);
     void render(Node* node);
     void processInput(Node* node, SDL_Event& event);
 
@@ -53,6 +59,10 @@ protected:
     std::unique_ptr<Spatial> rootNode;
 
     std::vector<std::shared_ptr<Shader>> shaders;
+
+    Camera* mainCamera;
+
+    BSPTree bspTree;
 
     bool firstTime = true;
 };

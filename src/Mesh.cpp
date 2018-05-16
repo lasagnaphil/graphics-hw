@@ -22,7 +22,7 @@ Mesh::Mesh(std::vector<Vertex> vertices,
     setupMesh();
 }
 
-void Mesh::draw(std::shared_ptr<Shader> shader) {
+void Mesh::bindTexture(std::shared_ptr<Shader> shader) {
     using std::string;
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
@@ -46,6 +46,11 @@ void Mesh::draw(std::shared_ptr<Shader> shader) {
         glBindTexture(GL_TEXTURE_2D, material->textures[i].getID());
     }
 
+}
+
+void Mesh::draw(std::shared_ptr<Shader> shader) {
+    bindTexture(shader);
+    
     glBindVertexArray(vao);
     if (isIndexed) {
         glDrawElements(drawMode, indices.size(), GL_UNSIGNED_INT, 0);
@@ -212,5 +217,6 @@ std::shared_ptr<Mesh> Mesh::createCylinder(unsigned int numQuads, float r, float
     }
     return std::shared_ptr<Mesh>(new Mesh(vertices, {}, {}, GL_TRIANGLES, false));
 }
+
 
 

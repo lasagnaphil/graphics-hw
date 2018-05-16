@@ -26,7 +26,6 @@ struct Vertex {
 class Mesh {
 public:
     std::vector<Vertex> vertices;
-    std::vector<std::vector<Vertex>> dividedVertices;
 
     std::vector<unsigned int> indices;
     std::shared_ptr<Material> material;
@@ -39,26 +38,29 @@ public:
          bool isIndexed = true);
 
     void draw(std::shared_ptr<Shader> shader);
+    void bindTexture(std::shared_ptr<Shader> shader);
 
     void setMaterial(std::shared_ptr<Material> material) {
         this->material = std::move(material);
     }
 
-    static std::shared_ptr<Mesh> createCube();
-    static std::shared_ptr<Mesh> createSphere();
-    static std::shared_ptr<Mesh> createPlane();
-    static std::shared_ptr<Mesh> createCone(unsigned int numTriangles, float radius, float height);
-    static std::shared_ptr<Mesh> createCircle(unsigned int numTriangles, float radius);
-    static std::shared_ptr<Mesh> createCylinder(unsigned int numQuads, float radius, float height);
+    bool isDepthSorted;
 
 private:
     unsigned int vao, vbo, ebo;
 
     GLenum drawMode;
     bool isIndexed;
-    bool isDepthSorted;
 
     void setupMesh();
+
+public:
+    static std::shared_ptr<Mesh> createCube();
+    static std::shared_ptr<Mesh> createSphere();
+    static std::shared_ptr<Mesh> createPlane();
+    static std::shared_ptr<Mesh> createCone(unsigned int numTriangles, float radius, float height);
+    static std::shared_ptr<Mesh> createCircle(unsigned int numTriangles, float radius);
+    static std::shared_ptr<Mesh> createCylinder(unsigned int numQuads, float radius, float height);
 };
 
 

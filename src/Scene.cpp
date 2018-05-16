@@ -1,7 +1,12 @@
 //
 // Created by lasagnaphil on 2017-03-25.
 //
+#include <chrono>
 #include "Scene.h"
+
+void Scene::update(float dt) {
+    update(rootNode.get(), dt, glm::mat4(1.0f));
+}
 
 void Scene::update(Spatial* node, float dt, glm::mat4 curTransform) {
     node->updateTransform();
@@ -12,16 +17,24 @@ void Scene::update(Spatial* node, float dt, glm::mat4 curTransform) {
     }
 }
 
-void Scene::render(Node* node) {
-    // render nodes recursively
-    node->render();
-    for (Node* child : node->children) {
-        render(child);
+void Scene::updateTransforms() {
+    updateTransforms(rootNode.get(), glm::mat4(1.0f));
+}
+
+void Scene::updateTransforms(Spatial* node, glm::mat4 curTransform) {
+    node->updateTransform();
+    node->worldTransform = curTransform * node->localTransform;
+    for (Spatial* child : node->spatialChildren) {
+        updateTransforms(child, node->worldTransform);
     }
+}
+
+void Scene::render() {
+    using std::string;
 
     // update remaining lights
     for (std::shared_ptr<Shader>& shader : shaders) {
-        if (LightNode::numDirectionalLights== 0) {
+        if (LightNode::numDirectionalLights == 0) {
             shader->setBool("dirLight.enabled", false);
         }
         for (unsigned int i = LightNode::numPointLights; i < LightNode::maxPointLights; ++i) {
@@ -32,6 +45,23 @@ void Scene::render(Node* node) {
             shader->setBool((pointLightStr + ".enabled").c_str(), false);
         }
     }
+
+    bspTree.sortVertices(mainCamera->getGlobalPosition());
+
+    render(rootNode.get());
+    firstTime = false;
+
+    // Now draw triangles from BSP Tree
+    bspTree.render();
+}
+
+void Scene::render(Node* node) {
+    // render nodes recursively
+    node->render();
+    for (Node* child : node->children) {
+        render(child);
+    }
+
 }
 
 void Scene::processInput(Node* node, SDL_Event& event) {
@@ -40,3 +70,12 @@ void Scene::processInput(Node* node, SDL_Event& event) {
         processInput(child, event);
     }
 }
+
+void Scene::constructBSPTree() {
+    updateTransforms();
+    bspTree.build(rootNode.get());
+}
+
+
+
+

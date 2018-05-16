@@ -16,18 +16,10 @@ textures:
     color: [1, 1, 1, 1]
   string:
     colorInt: [222, 197, 161, 255]
-  deco1:
-    colorInt: [0, 0, 230, 255]
-  deco2:
-    colorInt: [230, 0, 0, 255]
-  deco3:
-    colorInt: [0, 230, 0, 255]
-  deco4:
-    colorInt: [230, 230, 0, 255]
   transparent_blue:
-    color: [0, 0, 1, 0.3]
+    color: [0, 0, 1, 0.2]
   transparent_red:
-    color: [1, 0, 0, 0.3]
+    color: [1, 0, 0, 0.2]
 
 meshes:
   cube:
@@ -35,21 +27,11 @@ meshes:
   transparent_cube_blue:
     type: Cube
     mat: transparent_blue
+    isDepthSorted: true
   transparent_cube_red:
     type: Cube
     mat: transparent_red
-  deco1:
-    type: Cube
-    mat: deco1
-  deco2:
-    type: Cube
-    mat: deco2
-  deco3:
-    type: Cube
-    mat: deco3
-  deco4:
-    type: Cube
-    mat: deco4
+    isDepthSorted: true
   ceiling:
     type: Circle
     poly: 64
@@ -83,23 +65,23 @@ nodes:
   - name: light
     type: LightNode
     lightType: Directional
-    pos: [2.0, 2.0, 2.0]
+    pos: [0.0, 0.0, 0.0]
     rot: [60, 0, 0]
-    ambientColor: [0.2, 0.2, 0.2]
-    diffuseColor: [0.8, 0.8, 0.8]
-    specularColor: [1.0, 1.0, 1.0]
-  - name: light
-    type: LightNode
-    lightType: Point
-    pos: [0, 0, 0]
-    rot: [0, 0, 0]
-    ambientColor: [0.2, 0.2, 0.2]
-    diffuseColor: [0.8, 0.8, 0.8]
-    specularColor: [1.0, 1.0, 1.0]
-    children:
-      - name: lightIndicator
-        mesh: cube
-        scale: [0.2, 0.2, 0.2]
+    ambientColor: [0.4, 0.4, 0.4]
+    diffuseColor: [0.6, 0.6, 0.6]
+    specularColor: [0.3, 0.3, 0.3]
+# - name: light
+#   type: LightNode
+#   lightType: Point
+#   pos: [5, 5, 5]
+#   rot: [0, 0, 0]
+#   ambientColor: [0.2, 0.2, 0.2]
+#   diffuseColor: [0.8, 0.8, 0.8]
+#   specularColor: [1.0, 1.0, 1.0]
+#   children:
+#     - name: lightIndicator
+#       mesh: cube
+#       scale: [0.2, 0.2, 0.2]
   - name: Swept Surface
     type: MeshNode
     mesh: swept_surface
@@ -107,10 +89,10 @@ nodes:
   - name: Transparent Cube 1
     type: MeshNode
     mesh: transparent_cube_blue
-    pos: [2, 0, 0]
-    scale: [5, 5, 5]
+    pos: [0, 0, 0]
+    scale: [4, 4, 4]
   - name: Transparent Cube 2
     type: MeshNode
     mesh: transparent_cube_red
-    pos: [4, 2, 2]
-    scale: [5, 5, 5]
+    pos: [2, 2, 2]
+    scale: [4, 4, 4]
