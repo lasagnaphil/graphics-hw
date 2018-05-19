@@ -7,19 +7,52 @@ shaders:
     fragment: shaders/wireframe.frag
     geometry: shaders/wireframe.geom
 
-textures:
+materials:
   default:
-    color: [0.8, 0.8, 0.8, 1.0]
-  defaultSpecular:
-    color: [1, 1, 1, 1]
-  light:
-    color: [1, 1, 1, 1]
-  string:
-    colorInt: [222, 197, 161, 255]
+    ambient: [0.8, 0.8, 0.8, 1.0]
+    diffuse: [0.8, 0.8, 0.8, 1.0]
+    specular: [1, 1, 1, 1]
+    shininess: 32.0
   transparent_blue:
-    color: [0, 0, 1, 0.2]
+    ambient: [0, 0, 1, 0.2]
+    diffuse: [0, 0, 1, 0.2]
+    specular: [0.3, 0.3, 0.3, 1]
+    shininess: 10.0
   transparent_red:
-    color: [1, 0, 0, 0.2]
+    ambient: [1, 0, 0, 0.2]
+    diffuse: [1, 0, 0, 0.2]
+    specular: [0.3, 0.3, 0.3, 1]
+    shininess: 10.0
+  bronze:
+    ambient: [0.2125, 0.1275, 0.054, 1.0]
+    diffuse: [0.714, 0.4284, 0.18144, 1.0]
+    specular: [0.393548, 0.271906, 0.166721, 1.0]
+    shininess: 25.6
+  gold:
+    ambient: [0.24725, 0.1995, 0.0745, 1.0]
+    diffuse: [0.75164, 0.60648, 0.22648, 1.0]
+    specular: [0.628281, 0.555802, 0.366065, 1.0]
+    shininess: 51.2
+  jade:
+    ambient: [0.135, 0.2225, 0.1575, 0.95]
+    diffuse: [0.54, 0.89, 0.63, 0.95]
+    specular: [0.316228, 0.316228, 0.316228, 0.95]
+    shininess: 12.8
+  perl:
+    ambient: [0.25, 0.20725, 0.20725, 0.922]
+    diffuse: [1.0, 0.829, 0.829, 0.922]
+    specular: [0.296648, 0.296648, 0.296648, 0.922]
+    shininess: 11.264
+  green_plastic:
+    ambient: [0.0, 0.0, 0.0, 1.0]
+    diffuse: [0.1, 0.35, 0.1, 1.0]
+    specular: [0.45, 0.55, 0.45, 1.0]
+    shininess: 32.0
+  yellow_rubber:
+    ambient: [0.05, 0.05, 0.0, 1.0]
+    diffuse: [0.5, 0.5, 0.4, 1.0]
+    specular: [0.7, 0.7, 0.04, 1.0]
+    shininess: 10.0
 
 meshes:
   cube:
@@ -32,21 +65,6 @@ meshes:
     type: Cube
     mat: transparent_red
     isDepthSorted: true
-  ceiling:
-    type: Circle
-    poly: 64
-    radius: 1.0
-  string:
-    type: Cylinder
-    poly: 16
-    radius: 0.01
-    height: 1.0
-    mat: string
-  pole:
-    type: Cylinder
-    poly: 16
-    radius: 0.02
-    height: 1.0
 
 nodes:
 # - name: camera
@@ -96,3 +114,10 @@ nodes:
     mesh: transparent_cube_red
     pos: [2, 2, 2]
     scale: [4, 4, 4]
+# - name: Cube 1
+#   type: MeshNode
+#   mesh: cube_bronze
+#   pos: [6, 6, 6]
+# - name: Cube 2
+#   type: MeshNode
+#   mesh: cube_

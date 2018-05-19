@@ -60,11 +60,35 @@ void SceneData::loadResources(const std::string& filename) {
         }
     }
 
+    auto materialData = data["materials"];
+    for (auto it = materialData.begin(); it != materialData.end(); ++it) {
+        auto name = it->first.as<string>();
+        float shininess;
+        glm::vec4 ambient, diffuse, specular;
+        if (auto ambientOpt = loadField<glm::vec4>(it->second, "ambient")) {
+            ambient = *ambientOpt;
+        }
+        if (auto diffuseOpt = loadField<glm::vec4>(it->second, "diffuse")) {
+            diffuse = *diffuseOpt;
+        }
+        if (auto specularOpt = loadField<glm::vec4>(it->second, "specular")) {
+            specular = *specularOpt;
+        }
+        if (auto shine = loadField<float>(it->second, "shininess")) {
+            shininess = *shine;
+        }
+        materials[name] = Material::create(ambient, diffuse, specular, shininess);
+    }
+
     // Auto-load materials (using default specular texture)
+    /*
     auto defaultSpecularTex = textures["defaultSpecular"];
     for (const auto& entry : textures) {
-        materials[entry.first] = Material::create({entry.second, defaultSpecularTex}, 64.0f);
+        if (materials.count(entry.first) == 0) {
+            materials[entry.first] = Material::create({entry.second, defaultSpecularTex}, 64.0f);
+        }
     }
+    */
 
     auto meshData = data["meshes"];
     for (auto it = meshData.begin(); it != meshData.end(); ++it) {

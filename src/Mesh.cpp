@@ -50,7 +50,7 @@ void Mesh::bindTexture(std::shared_ptr<Shader> shader) {
 
 void Mesh::draw(std::shared_ptr<Shader> shader) {
     bindTexture(shader);
-    
+
     glBindVertexArray(vao);
     if (isIndexed) {
         glDrawElements(drawMode, indices.size(), GL_UNSIGNED_INT, 0);
