@@ -12,11 +12,14 @@ file(GLOB_RECURSE PROJECT_SHADERS
         src/shaders/*.frag
         src/shaders/*.geom
         src/shaders/*.vert)
+file(GLOB_RECURSE PROJECT_RESOURCES
+        src/resources/* src/imgui.ini)
 
 add_executable(${PROJECT_NAME}
         ${PROJECT_SOURCES}
         ${PROJECT_HEADERS}
-        ${PROJECT_SHADERS})
+        ${PROJECT_SHADERS}
+        ${PROJECT_RESOURCES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         ${SDL2_INCLUDE_DIR}
@@ -70,10 +73,3 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${STB_DIR})
 set(OPTIONAL_LITE_DIR "deps/optional-lite")
 target_include_directories(${PROJECT_NAME} PRIVATE ${OPTIONAL_LITE_DIR})
 
-# set build directory
-file(COPY ${CMAKE_SOURCE_DIR}/resources
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(COPY ${CMAKE_SOURCE_DIR}/shaders
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(COPY ${CMAKE_SOURCE_DIR}/imgui.ini
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

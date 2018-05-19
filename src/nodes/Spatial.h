@@ -150,9 +150,6 @@ public:
         return worldTransform;
     }
 
-    glm::vec3 getGlobalRotation() const {
-
-    }
     glm::vec3 getGlobalScale() const {
         if (spatialParent) {
             return spatialParent->getGlobalScale() * transform.scale;

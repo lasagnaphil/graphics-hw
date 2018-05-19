@@ -23,6 +23,9 @@ void MeshNode::render() {
 void MeshNode::updateShaderUniforms() {
     shader->use();
     shader->setMat4("model", worldTransform);
+    shader->setVec4("material.ambient", mesh->material->ambient);
+    shader->setVec4("material.diffuse", mesh->material->diffuse);
+    shader->setVec4("material.specular", mesh->material->ambient);
     shader->setFloat("material.shininess", mesh->material->shininess);
 }
 
