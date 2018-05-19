@@ -156,17 +156,14 @@ void BSPTree::sortVertices(glm::vec3 viewLoc) {
 void BSPTree::render() {
     int counter = 0;
 
+    glBindVertexArray(vao);
     for (auto& renderInfo : renderInfos) {
         renderInfo.node->updateShaderUniforms();
         renderInfo.node->mesh->bindTexture(renderInfo.node->shader);
-
-        glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, counter, renderInfo.size);
-        glBindVertexArray(0);
-        glActiveTexture(GL_TEXTURE0);
-
         counter += renderInfo.size;
     }
+    glBindVertexArray(0);
 }
 
 void BSPTree::addTriangles(std::vector<BSPTree::BSPTriangle>& triangles, Node* node) {

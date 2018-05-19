@@ -17,3 +17,16 @@ void Camera::update(float dt) {
     }
 }
 
+glm::mat4 Camera::getViewMatrix() const {
+    return glm::lookAt(getGlobalPosition(), getGlobalPosition() - getGlobalFrontVec(), getGlobalUpVec());
+}
+
+glm::mat4 Camera::getPerspectiveMatrix() const {
+    return glm::perspective(
+            glm::radians(zoom),
+            (float)AppSettings::ScreenWidth / (float)AppSettings::ScreenHeight,
+            0.1f,
+            100.f
+    );
+}
+
