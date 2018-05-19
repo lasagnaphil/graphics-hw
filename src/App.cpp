@@ -82,9 +82,6 @@ void App::start() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
     // Create the window
     window = SDL_CreateWindow(
@@ -194,12 +191,20 @@ void App::processInput() {
             switch (event.key.keysym.sym) {
                 case SDLK_1: {
                     MeshNode* sweptSurface = scene->getRootNode()->query("Swept Surface")->cast<MeshNode>();
-                    sweptSurface->setShader(sceneData.getShader("default"));
+                    MeshNode* cube1 = scene->getRootNode()->query("Transparent Cube 1")->cast<MeshNode>();
+                    MeshNode* cube2 = scene->getRootNode()->query("Transparent Cube 2")->cast<MeshNode>();
+                    for (auto node : {sweptSurface, cube1, cube2}) {
+                        node->setShader(sceneData.getShader("default"));
+                    }
                     break;
                 }
                 case SDLK_2: {
                     MeshNode* sweptSurface = scene->getRootNode()->query("Swept Surface")->cast<MeshNode>();
-                    sweptSurface->setShader(sceneData.getShader("wireframe"));
+                    MeshNode* cube1 = scene->getRootNode()->query("Transparent Cube 1")->cast<MeshNode>();
+                    MeshNode* cube2 = scene->getRootNode()->query("Transparent Cube 2")->cast<MeshNode>();
+                    for (auto node : {sweptSurface, cube1, cube2}) {
+                        node->setShader(sceneData.getShader("wireframe"));
+                    }
                     break;
                 }
                 case SDLK_r: {

@@ -11,18 +11,9 @@
 
 class Camera : public Spatial {
 public:
-    inline glm::mat4 getViewMatrix() const {
-        return glm::lookAt(getGlobalPosition(), getGlobalPosition() - getGlobalFrontVec(), getGlobalUpVec());
-    }
+    inline glm::mat4 getViewMatrix() const;
 
-    inline glm::mat4 getPerspectiveMatrix() const {
-        return glm::perspective(
-                glm::radians(zoom),
-                (float)AppSettings::ScreenWidth / (float)AppSettings::ScreenHeight,
-                0.1f,
-                1000.0f
-        );
-    }
+    inline glm::mat4 getPerspectiveMatrix() const;
 
     virtual void update(float dt) override;
 
