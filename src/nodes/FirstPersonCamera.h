@@ -47,7 +47,7 @@ public:
         Transform transform;
     };
 
-    FirstPersonCamera(float yaw = Settings::Yaw, float pitch = Settings::Pitch);
+    explicit FirstPersonCamera(float yaw = Settings::Yaw, float pitch = Settings::Pitch);
 
     virtual void update(float dt) override;
     virtual void processInput(SDL_Event& ev) override;

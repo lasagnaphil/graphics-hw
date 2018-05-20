@@ -36,8 +36,14 @@ public:
 private:
     SDL_Window* window;
     SDL_GLContext mainContext;
+
     bool quit = false;
+
     bool isMouseRelative = true;
+    bool enableDirectionalLight = true;
+    bool enablePointLights = true;
+    bool enableSpotLights = true;
+    bool enableGroundLights = true;
 
     Scene* scene;
 

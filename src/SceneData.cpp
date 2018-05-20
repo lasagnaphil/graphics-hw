@@ -188,12 +188,13 @@ Node* SceneData::loadNode(const YAML::Node& data) {
         }
     }
     else {
-        node = new MeshNode();
+        loadError(data.Mark(), "node type not specified");
     }
 
     if (auto name = loadField<string>(data, "name")) {
         node->name = *name;
     }
+
 
     auto spatial = dynamic_cast<Spatial*>(node);
     if (spatial) {
@@ -261,6 +262,15 @@ Node* SceneData::loadNode(const YAML::Node& data) {
                 attenuation.quadratic = *quadratic;
             }
             lightNode->attenuation = attenuation;
+        }
+        if (auto intensity = loadFieldOpt<float>(data, "intensity")) {
+            lightNode->intensity = *intensity;
+        }
+        if (auto cutOff = loadFieldOpt<float>(data, "cutOff")) {
+            lightNode->cutOff = *cutOff;
+        }
+        if (auto outerCutOff = loadFieldOpt<float>(data, "outerCutOff")) {
+            lightNode->outerCutOff = *outerCutOff;
         }
     }
 

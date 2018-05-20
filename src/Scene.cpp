@@ -9,6 +9,7 @@ void Scene::update(float dt) {
 }
 
 void Scene::update(Spatial* node, float dt, glm::mat4 curTransform) {
+    if (!node->getEnabled()) return;
     node->updateTransform();
     node->worldTransform = curTransform * node->localTransform;
     node->update(dt);
@@ -44,6 +45,13 @@ void Scene::render() {
 
             shader->setBool((pointLightStr + ".enabled").c_str(), false);
         }
+        for (unsigned int i = LightNode::numSpotLights; i < LightNode::maxSpotLights; ++i) {
+            std::string spotLightStr = "spotLights[";
+            spotLightStr.append(std::to_string(i));
+            spotLightStr.append("]");
+
+            shader->setBool((spotLightStr+ ".enabled").c_str(), false);
+        }
     }
 
     bspTree.sortVertices(mainCamera->getGlobalPosition());
@@ -51,11 +59,15 @@ void Scene::render() {
     render(rootNode.get());
     firstTime = false;
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // Now draw triangles from BSP Tree
     bspTree.render();
+    glDisable(GL_BLEND);
 }
 
 void Scene::render(Node* node) {
+    if (!node->getEnabled()) return;
     // render nodes recursively
     node->render();
     for (Node* child : node->children) {
@@ -65,6 +77,7 @@ void Scene::render(Node* node) {
 }
 
 void Scene::processInput(Node* node, SDL_Event& event) {
+    if (!node->getEnabled()) return;
     node->processInput(event);
     for (Node* child : node->children) {
         processInput(child, event);
@@ -75,7 +88,3 @@ void Scene::constructBSPTree() {
     updateTransforms();
     bspTree.build(rootNode.get());
 }
-
-
-
-

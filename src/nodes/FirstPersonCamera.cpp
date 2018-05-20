@@ -15,6 +15,8 @@ FirstPersonCamera::FirstPersonCamera(float yaw, float pitch) :
         mouseSensitivity(Settings::Sensitivity),
         constrainPitch(true)
 {
+    using std::fstream;
+    using std::endl;
     viewport = {.x = 0, .y = 0, .width = AppSettings::ScreenWidth, .height = AppSettings::ScreenHeight};
     updateCameraVectors();
 }
@@ -114,5 +116,3 @@ void FirstPersonCamera::importConfig(FirstPersonCamera::Config &data) {
     mouseMovementEnabled = data.mouseMovementEnabled;
     transform = data.transform;
 }
-
-

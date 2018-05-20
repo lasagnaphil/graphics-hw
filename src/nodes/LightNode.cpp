@@ -19,28 +19,44 @@ LightNode::LightNode(Type type, bool suppressWarnings)
           cutOff(glm::cos(glm::radians(12.5f))),
           outerCutOff(glm::cos(glm::radians(17.5f)))
 {
-    if (!suppressWarnings) {
-        switch (type) {
-            case Type::Directional:
-                if (numDirectionalLights >= maxDirectionalLights) {
-                    std::cerr << "Exceeded max number of directional lights!" << std::endl;
-                }
-                lightID = numDirectionalLights;
-                numDirectionalLights++;
+    switch (type) {
+        case Type::Directional:
+            lightID = numDirectionalLights;
+            numDirectionalLights++;
+            break;
+        case Type::Point:
+            lightID = numPointLights;
+            numPointLights++;
+            break;
+        case Type::Spotlight:
+            lightID = numSpotLights;
+            numSpotLights++;
+    }
+}
+
+void LightNode::setEnabled(bool enabled) {
+    this->isEnabled = enabled;
+    for (auto shader : scene->getShaders()) {
+        shader->use();
+        switch(type) {
+            case Type::Directional: {
+                shader->setBool("dirLight.enabled", enabled);
                 break;
-            case Type::Point:
-                if (numPointLights >= maxPointLights) {
-                    std::cerr << "Exceeded max number of point lights!" << std::endl;
-                }
-                lightID = numPointLights;
-                numPointLights++;
+            }
+            case Type::Point: {
+                std::string pointLightStr = "pointLights[";
+                pointLightStr.append(std::to_string(lightID));
+                pointLightStr.append("]");
+                shader->setBool((pointLightStr + ".enabled").c_str(), enabled);
                 break;
-            case Type::Spotlight:
-                if (numSpotLights >= maxSpotLights) {
-                    std::cerr << "Exceeded max number of spot lights!" << std::endl;
-                }
-                lightID = numSpotLights;
-                numSpotLights++;
+            }
+            case Type::Spotlight: {
+                std::string spotLightStr = "spotLights[";
+                spotLightStr.append(std::to_string(lightID));
+                spotLightStr.append("]");
+                shader->setBool((spotLightStr + ".enabled").c_str(), enabled);
+                break;
+            }
         }
     }
 }
@@ -56,23 +72,14 @@ void LightNode::changeType(Type type) {
     }
     switch(type) {
         case Type::Directional:
-            if (numDirectionalLights >= maxDirectionalLights) {
-                std::cerr << "Exceeded max number of directional lights!" << std::endl;
-            }
             lightID = numDirectionalLights;
             numDirectionalLights++;
             break;
         case Type::Point:
-            if (numPointLights >= maxPointLights) {
-                std::cerr << "Exceeded max number of point lights!" << std::endl;
-            }
             lightID = numPointLights;
             numPointLights++;
             break;
         case Type::Spotlight:
-            if (numSpotLights >= maxSpotLights) {
-                std::cerr << "Exceeded max number of spot lights!" << std::endl;
-            }
             lightID = numSpotLights;
             numSpotLights++;
     }
@@ -91,6 +98,7 @@ void LightNode::update(float dt) {
                 shader->setVec4("dirLight.ambient", ambientColor);
                 shader->setVec4("dirLight.diffuse", diffuseColor);
                 shader->setVec4("dirLight.specular", specularColor);
+                shader->setFloat("dirLight.intensity", intensity);
                 break;
             }
             case Type::Point: {
@@ -104,6 +112,7 @@ void LightNode::update(float dt) {
                 shader->setVec4((pointLightStr + ".ambient").c_str(), ambientColor);
                 shader->setVec4((pointLightStr + ".diffuse").c_str(), diffuseColor);
                 shader->setVec4((pointLightStr + ".specular").c_str(), specularColor);
+                shader->setFloat((pointLightStr + ".intensity").c_str(), intensity);
                 break;
             }
             case Type::Spotlight: {
@@ -122,6 +131,7 @@ void LightNode::update(float dt) {
                 shader->setVec4((spotLightStr + ".ambient").c_str(), ambientColor);
                 shader->setVec4((spotLightStr + ".diffuse").c_str(), diffuseColor);
                 shader->setVec4((spotLightStr + ".specular").c_str(), specularColor);
+                shader->setFloat((spotLightStr + ".intensity").c_str(), intensity);
                 break;
             }
         }
@@ -135,5 +145,9 @@ LightNode::~LightNode() {
     else if (type == Type::Point) {
         numPointLights--;
     }
+    else if (type == Type::Spotlight) {
+        numSpotLights--;
+    }
 }
+
 
