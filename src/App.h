@@ -37,6 +37,7 @@ private:
     SDL_Window* window;
     SDL_GLContext mainContext;
     bool quit = false;
+    bool isMouseRelative = true;
 
     Scene* scene;
 

@@ -36,6 +36,14 @@ public:
         spatialParent = spatial;
     }
 
+    Transform getTransform() const {
+        return transform;
+    }
+
+    void setTransform(const Transform& transform) {
+        this->transform = transform;
+    }
+
     glm::vec3 getPosition() const {
         return transform.position;
     }

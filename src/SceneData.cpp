@@ -248,6 +248,20 @@ Node* SceneData::loadNode(const YAML::Node& data) {
         if (auto specular = loadFieldOpt<glm::vec4>(data, "specularColor")) {
             lightNode->specularColor = *specular;
         }
+        auto attenuationNode = data["attenuation"];
+        if (attenuationNode) {
+            LightNode::Attenuation attenuation;
+            if (auto constant = loadField<float>(attenuationNode, "constant")) {
+                attenuation.constant = *constant;
+            }
+            if (auto linear = loadField<float>(attenuationNode, "linear")) {
+                attenuation.linear = *linear;
+            }
+            if (auto quadratic = loadField<float>(attenuationNode, "quadratic")) {
+                attenuation.quadratic = *quadratic;
+            }
+            lightNode->attenuation = attenuation;
+        }
     }
 
     node->scene = scene.get();

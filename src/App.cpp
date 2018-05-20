@@ -93,7 +93,7 @@ void App::start() {
     if (window == NULL) sdl_die("Couldn't set video mode");
 
     // SDL Settings
-    // SDL_SetRelativeMouseMode(SDL_TRUE);
+    SDL_SetRelativeMouseMode(isMouseRelative? SDL_TRUE : SDL_FALSE);
 
     // Create OpenGL Context
     mainContext = SDL_GL_CreateContext(window);
@@ -172,7 +172,8 @@ void App::loadScene() {
     sceneData.loadResources("resources/scene.yml");
 
     // Load the swept surface
-    std::shared_ptr<Mesh> mesh = SweptSurface::constructFromFile("resources/screwbar.txt", sceneData.getMaterial("default"));
+    std::shared_ptr<Mesh> mesh = SweptSurface::constructFromFile("resources/screwbar.txt", sceneData.getMaterial("screwbar"));
+    // mesh->isDepthSorted = true;
     sceneData.addMesh("swept_surface", mesh);
 
     scene = sceneData.loadSceneGraph("resources/scene.yml");
@@ -208,10 +209,22 @@ void App::processInput() {
                     break;
                 }
                 case SDLK_r: {
+                    FirstPersonCamera* camera = scene->getRootNode()->query("camera")->cast<FirstPersonCamera>();
+                    FirstPersonCamera::Config data;
+                    if (camera) {
+                        data = camera->exportConfig();
+                    }
                     sceneData.clear();
                     loadScene();
+                    FirstPersonCamera* newCamera = scene->getRootNode()->query("camera")->cast<FirstPersonCamera>();
+                    if (camera && newCamera) {
+                        newCamera->importConfig(data);
+                    }
+                    break;
                 }
-                case SDLK_SPACE: {
+                case SDLK_m: {
+                    isMouseRelative = !isMouseRelative;
+                    SDL_SetRelativeMouseMode(isMouseRelative? SDL_TRUE : SDL_FALSE);
                     break;
                 }
                 case SDLK_ESCAPE:
