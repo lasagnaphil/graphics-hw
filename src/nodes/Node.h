@@ -21,18 +21,23 @@ class Node {
     friend class Scene;
     friend class SceneData;
 public:
-    Node(const std::vector<Node*> children = std::vector<Node*>(0));
+    Node(const std::vector<Node*>& children = std::vector<Node*>(0));
 
     virtual ~Node();
 
-    void addChild(Node* child);
+    bool getEnabled() {
+        return isEnabled;
+    }
+    virtual void setEnabled(bool enabled) {
+        this->isEnabled = enabled;
+    }
 
+    void addChild(Node* child);
     void removeChild(Node* child);
 
     Node* getParent() { return parent; }
     std::vector<Node*> getChildren() { return children; }
     void setChildren(const std::vector<Node*>& children) { this->children = children; }
-
     Node* getChild(const std::string& name);
     Node* query(std::string path);
 
@@ -47,6 +52,7 @@ public:
 
 protected:
 
+    bool isEnabled = true;
     Scene* scene;
 
     std::vector<Node*> children;

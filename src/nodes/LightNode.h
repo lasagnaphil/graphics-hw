@@ -25,10 +25,13 @@ public:
 
     virtual ~LightNode();
 
+    virtual void setEnabled(bool enabled) override;
+
     void changeType(Type type);
 
     void update(float dt) override;
 
+    float intensity = 1.0f;
 
     // When type == Type::Point
     Attenuation attenuation;
@@ -49,8 +52,8 @@ private:
     unsigned int lightID;
 
     static constexpr unsigned int maxDirectionalLights = 1;
-    static constexpr unsigned int maxPointLights = 4;
-    static constexpr unsigned int maxSpotLights = 4;
+    static constexpr unsigned int maxPointLights = 8;
+    static constexpr unsigned int maxSpotLights = 8;
     static unsigned int numDirectionalLights;
     static unsigned int numPointLights;
     static unsigned int numSpotLights;

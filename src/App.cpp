@@ -129,8 +129,6 @@ void App::start() {
 
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Setup ImGui binding
     ImGui::CreateContext();
@@ -260,6 +258,36 @@ void App::render() {
     static ImGuiComboFlags flags = 0;
 
     ImGui::Begin("Application Settings");
+    ImGui::Checkbox("Directional Light", &enableDirectionalLight);
+    ImGui::Checkbox("Point Lights", &enablePointLights);
+    ImGui::Checkbox("Spot Lights", &enableSpotLights);
+    ImGui::Checkbox("Ground Lights", &enableGroundLights);
+
+    auto dirLight = scene->getRootNode()->query("Directional Light");
+    dirLight->setEnabled(enableDirectionalLight);
+    auto pointLights = scene->getRootNode()->query("Pointlights");
+    for (auto node : pointLights->getChildren()) {
+        auto pointLight = node->cast<LightNode>();
+        if (pointLight) {
+            pointLight->setEnabled(enablePointLights);
+        }
+    }
+    auto spotLights = scene->getRootNode()->query("Spotlights");
+    for (auto node : spotLights->getChildren()) {
+        auto spotLight = node->cast<LightNode>();
+        if (spotLight) {
+            spotLight->setEnabled(enableSpotLights);
+        }
+    }
+    auto groundLights = scene->getRootNode()->query("Pointlights 2");
+    for (auto node : groundLights->getChildren()) {
+        auto pointLight = node->cast<LightNode>();
+        if (pointLight) {
+            pointLight->setEnabled(enableGroundLights);
+        }
+    }
+
+    /*
     if (ImGui::BeginCombo("Mesh", selected, flags)) // The second parameter is the label previewed before opening the combo.
     {
         for (int n = 0; n < IM_ARRAYSIZE(items); n++)
@@ -292,6 +320,8 @@ void App::render() {
         }
         ImGui::EndCombo();
     }
+     */
+
     ImGui::End();
 
     ImGui::Render();

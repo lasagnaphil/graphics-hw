@@ -12,8 +12,8 @@
 
 class SweptSurface {
 public:
-    static constexpr int INTERP_FACTOR = 2;
-    static constexpr int TRANSFORM_INTERP_SIZE = 4;
+    static constexpr int INTERP_FACTOR = 4;
+    static constexpr int TRANSFORM_INTERP_SIZE = 16;
 
     using Polygon2D = std::vector<glm::vec2>;
     using Polygon3D = std::vector<glm::vec3>;

@@ -128,90 +128,128 @@ nodes:
     ambientColor: [0.0, 0.0, 0.0, 1.0]
     diffuseColor: [0.2, 0.2, 0.15, 1.0]
     specularColor: [0.2, 0.2, 0.15, 1.0]
-  - name: Spotlights
+  - name: Pointlights
     type: Spatial
     pos: [10, 6, 0]
     children: 
-      - name: Spotlight 1
+      - name: Pointlight 1
         type: LightNode
         lightType: Point
         pos: [0, 0, -9]
         ambientColor: [0.0, 0.0, 0.0, 1.0]
         diffuseColor: [0.8, 0.8, 0.8, 1.0]
         specularColor: [1.0, 1.0, 1.0, 1.0]
-        attenuation: 
-          constant: 1.0
-          linear: 0.09
-          quadratic: 0.032
         children:
           - name: lightIndicator
+            type: MeshNode
             mesh: cube
             scale: [0.2, 0.2, 0.2]
-      - name: Spotlight 2
+      - name: Pointlight 2
         type: LightNode
         lightType: Point
         pos: [-14, 0, -9]
         ambientColor: [0.0, 0.0, 0.0, 1.0]
         diffuseColor: [0.8, 0.8, 0.8, 1.0]
         specularColor: [1.0, 1.0, 1.0, 1.0]
-        attenuation: 
-          constant: 1.0
-          linear: 0.09
-          quadratic: 0.032
         children:
           - name: lightIndicator
+            type: MeshNode
             mesh: cube
             scale: [0.2, 0.2, 0.2]
-      - name: Spotlight 3
+      - name: Pointlight 3
         type: LightNode
         lightType: Point
         pos: [14, 0, -9]
         ambientColor: [0.0, 0.0, 0.0, 1.0]
         diffuseColor: [0.8, 0.8, 0.8, 1.0]
         specularColor: [1.0, 1.0, 1.0, 1.0]
-        attenuation: 
-          constant: 1.0
-          linear: 0.09
-          quadratic: 0.032
         children:
           - name: lightIndicator
+            type: MeshNode
             mesh: cube
             scale: [0.2, 0.2, 0.2]
-      - name: Spotlight 4
+      - name: Pointlight 4
         type: LightNode
         lightType: Point
         pos: [-7, 0, -9]
         ambientColor: [0.0, 0.0, 0.0, 1.0]
         diffuseColor: [0.8, 0.8, 0.8, 1.0]
         specularColor: [1.0, 1.0, 1.0, 1.0]
-        attenuation: 
-          constant: 1.0
-          linear: 0.09
-          quadratic: 0.032
         children:
           - name: lightIndicator
+            type: MeshNode
             mesh: cube
             scale: [0.2, 0.2, 0.2]
-      - name: Spotlight 5
+      - name: Pointlight 5
         type: LightNode
         lightType: Point
         pos: [7, 0, -9]
         ambientColor: [0.0, 0.0, 0.0, 1.0]
         diffuseColor: [0.8, 0.8, 0.8, 1.0]
         specularColor: [1.0, 1.0, 1.0, 1.0]
-        attenuation: 
-          constant: 1.0
-          linear: 0.09
-          quadratic: 0.032
         children:
           - name: lightIndicator
+            type: MeshNode
+            mesh: cube
+            scale: [0.2, 0.2, 0.2]
+  - name: Pointlights 2
+    type: Spatial
+    pos: [10, 0, 0]
+    children:
+      - name: Ground Light 1
+        type: LightNode
+        lightType: Point
+        pos: [0, 0, 2]
+        intensity: 1
+        ambientColor: [0.0, 0.0, 0.0, 1.0]
+        diffuseColor: [0.8, 0.8, 0.8, 1.0]
+        specularColor: [1.0, 1.0, 1.0, 1.0]
+        children:
+          - name: lightIndicator
+            type: MeshNode
+            mesh: cube
+            scale: [0.2, 0.2, 0.2]
+  - name: Spotlights
+    type: Spatial
+    pos: [10, 6, 1]
+    children:
+      - name: Spotlight 1
+        type: LightNode
+        lightType: Spotlight
+        pos: [-9, 0, 3]
+        rot: [90, 35, 0]
+        ambientColor: [0.0, 0.0, 0.0, 1.0]
+        diffuseColor: [0.8, 0.8, 0.8, 1.0]
+        specularColor: [1.0, 1.0, 1.0, 1.0]
+        intensity: 5.0
+        cutOff: 0.9978
+        outerCutOff: 0.953
+        children:
+          - name: lightIndicator
+            type: MeshNode
+            mesh: cube
+            scale: [0.2, 0.2, 0.2]
+      - name: Spotlight 2
+        type: LightNode
+        lightType: Spotlight
+        pos: [9, 0, 3]
+        rot: [90, -35, 0]
+        ambientColor: [0.0, 0.0, 0.0, 1.0]
+        diffuseColor: [0.8, 0.8, 0.8, 1.0]
+        specularColor: [1.0, 1.0, 1.0, 1.0]
+        intensity: 5.0
+        cutOff: 0.9978
+        outerCutOff: 0.953
+        children:
+          - name: lightIndicator
+            type: MeshNode
             mesh: cube
             scale: [0.2, 0.2, 0.2]
   - name: Swept Surface
     type: MeshNode
     mesh: swept_surface
     pos: [0, 0, -2]
-    rot: [0, 0, 270]
+    rot: [0, 0, -90]
     children: 
       - name: Transparent Cube 1
         type: MeshNode
@@ -221,11 +259,11 @@ nodes:
       - name: Transparent Cube 2
         type: MeshNode
         mesh: transparent_cube_red
-        pos: [2, 2, 2]
+        pos: [0, 18, 0]
         scale: [4, 4, 4]
   - name: Cubes
     type: Spatial
-    pos: [11, 0, 4]
+    pos: [10, -2, 4]
     children:
       - name: Cube 1
         type: MeshNode

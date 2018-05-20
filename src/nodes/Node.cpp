@@ -5,7 +5,7 @@
 #include "Node.h"
 #include "Spatial.h"
 
-Node::Node(const std::vector<Node*> children)
+Node::Node(const std::vector<Node*>& children)
         : children(children) {
 }
 
