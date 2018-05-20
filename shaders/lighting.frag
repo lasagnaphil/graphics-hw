@@ -55,10 +55,10 @@ uniform Material material;
 
 uniform DirLight dirLight;
 
-#define NR_POINT_LIGHTS 4
+#define NR_POINT_LIGHTS 8
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 
-#define NR_SPOT_LIGHTS 4
+#define NR_SPOT_LIGHTS 8
 uniform SpotLight spotLights[NR_SPOT_LIGHTS];
 
 uniform int numPointLights;

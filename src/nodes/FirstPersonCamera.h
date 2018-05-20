@@ -35,10 +35,26 @@ public:
         static constexpr float Zoom = 45.0f;
     };
 
+    struct Config {
+        float pitch;
+        float yaw;
+        float movementSpeed;
+        float mouseSensitivity;
+        float zoom;
+        IntRect viewport;
+        bool constrainPitch;
+        bool mouseMovementEnabled;
+        Transform transform;
+    };
+
     FirstPersonCamera(float yaw = Settings::Yaw, float pitch = Settings::Pitch);
 
     virtual void update(float dt) override;
     virtual void processInput(SDL_Event& ev) override;
+
+    Config exportConfig();
+
+    void importConfig(Config &data);
 
     float pitch;
     float yaw;

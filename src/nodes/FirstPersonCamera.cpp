@@ -91,10 +91,28 @@ void FirstPersonCamera::processInput(SDL_Event& ev) {
 }
 
 void FirstPersonCamera::updateCameraVectors() {
-    glm::quat quatX = glm::angleAxis(glm::radians(yaw), glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::quat quatY = glm::angleAxis(glm::radians(pitch), glm::vec3(1.0f, 0.0f, 0.0f));
+    glm::quat quatX = glm::angleAxis(-glm::radians(yaw), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::quat quatY = glm::angleAxis(-glm::radians(pitch), glm::vec3(1.0f, 0.0f, 0.0f));
     setRotation(glm::normalize(quatX * quatY));
     // rotation = glm::toQuat(glm::orientate3(glm::vec3(0.0f, glm::radians(pitch), -glm::radians(yaw))));
+}
+
+FirstPersonCamera::Config FirstPersonCamera::exportConfig() {
+    return Config {
+            pitch, yaw, movementSpeed, mouseSensitivity, zoom, viewport, constrainPitch, mouseMovementEnabled, transform
+    };
+}
+
+void FirstPersonCamera::importConfig(FirstPersonCamera::Config &data) {
+    pitch = data.pitch;
+    yaw = data.yaw;
+    movementSpeed = data.movementSpeed;
+    mouseSensitivity = data.mouseSensitivity;
+    zoom = data.zoom;
+    viewport = data.viewport;
+    constrainPitch = data.constrainPitch;
+    mouseMovementEnabled = data.mouseMovementEnabled;
+    transform = data.transform;
 }
 
 
