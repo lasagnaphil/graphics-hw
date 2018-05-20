@@ -85,21 +85,21 @@ nodes:
     lightType: Directional
     pos: [0.0, 0.0, 0.0]
     rot: [60, 0, 0]
-    ambientColor: [0.4, 0.4, 0.4]
-    diffuseColor: [0.6, 0.6, 0.6]
-    specularColor: [0.3, 0.3, 0.3]
-# - name: light
-#   type: LightNode
-#   lightType: Point
-#   pos: [5, 5, 5]
-#   rot: [0, 0, 0]
-#   ambientColor: [0.2, 0.2, 0.2]
-#   diffuseColor: [0.8, 0.8, 0.8]
-#   specularColor: [1.0, 1.0, 1.0]
-#   children:
-#     - name: lightIndicator
-#       mesh: cube
-#       scale: [0.2, 0.2, 0.2]
+    ambientColor: [0.2, 0.2, 0.2, 1.0]
+    diffuseColor: [0.8, 0.8, 0.8, 1.0]
+    specularColor: [1.0, 1.0, 1.0, 1.0]
+  - name: light
+    type: LightNode
+    lightType: Point
+    pos: [5, 5, 5]
+    rot: [0, 0, 0]
+    ambientColor: [0.2, 0.2, 0.2, 1.0]
+    diffuseColor: [0.8, 0.8, 0.8, 1.0]
+    specularColor: [1.0, 1.0, 1.0, 1.0]
+    children:
+      - name: lightIndicator
+        mesh: cube
+        scale: [0.2, 0.2, 0.2]
   - name: Swept Surface
     type: MeshNode
     mesh: swept_surface
