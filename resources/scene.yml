@@ -199,7 +199,72 @@ nodes:
       - name: Ground Light 1
         type: LightNode
         lightType: Point
-        pos: [0, 0, 2]
+        pos: [-5, -2, 5]
+        intensity: 1
+        ambientColor: [0.0, 0.0, 0.0, 1.0]
+        diffuseColor: [0.8, 0.8, 0.8, 1.0]
+        specularColor: [1.0, 1.0, 1.0, 1.0]
+        children:
+          - name: lightIndicator
+            type: MeshNode
+            mesh: cube
+            scale: [0.2, 0.2, 0.2]
+      - name: Ground Light 2
+        type: LightNode
+        lightType: Point
+        pos: [-3, -2, 5]
+        intensity: 1
+        ambientColor: [0.0, 0.0, 0.0, 1.0]
+        diffuseColor: [0.8, 0.8, 0.8, 1.0]
+        specularColor: [1.0, 1.0, 1.0, 1.0]
+        children:
+          - name: lightIndicator
+            type: MeshNode
+            mesh: cube
+            scale: [0.2, 0.2, 0.2]
+      - name: Ground Light 3
+        type: LightNode
+        lightType: Point
+        pos: [-1, -2, 5]
+        intensity: 1
+        ambientColor: [0.0, 0.0, 0.0, 1.0]
+        diffuseColor: [0.8, 0.8, 0.8, 1.0]
+        specularColor: [1.0, 1.0, 1.0, 1.0]
+        children:
+          - name: lightIndicator
+            type: MeshNode
+            mesh: cube
+            scale: [0.2, 0.2, 0.2]
+      - name: Ground Light 4
+        type: LightNode
+        lightType: Point
+        pos: [1, -2, 5]
+        intensity: 1
+        ambientColor: [0.0, 0.0, 0.0, 1.0]
+        diffuseColor: [0.8, 0.8, 0.8, 1.0]
+        specularColor: [1.0, 1.0, 1.0, 1.0]
+        children:
+          - name: lightIndicator
+            type: MeshNode
+            mesh: cube
+            scale: [0.2, 0.2, 0.2]
+      - name: Ground Light 5
+        type: LightNode
+        lightType: Point
+        pos: [3, -2, 5]
+        intensity: 1
+        ambientColor: [0.0, 0.0, 0.0, 1.0]
+        diffuseColor: [0.8, 0.8, 0.8, 1.0]
+        specularColor: [1.0, 1.0, 1.0, 1.0]
+        children:
+          - name: lightIndicator
+            type: MeshNode
+            mesh: cube
+            scale: [0.2, 0.2, 0.2]
+      - name: Ground Light 6
+        type: LightNode
+        lightType: Point
+        pos: [5, -2, 5]
         intensity: 1
         ambientColor: [0.0, 0.0, 0.0, 1.0]
         diffuseColor: [0.8, 0.8, 0.8, 1.0]
@@ -254,13 +319,13 @@ nodes:
       - name: Transparent Cube 1
         type: MeshNode
         mesh: transparent_cube_blue
-        pos: [0, 0, 0]
-        scale: [4, 4, 4]
+        pos: [-1, -1, -1]
+        scale: [3, 3, 3]
       - name: Transparent Cube 2
         type: MeshNode
         mesh: transparent_cube_red
-        pos: [0, 18, 0]
-        scale: [4, 4, 4]
+        pos: [0.4, 0.4, 0.4]
+        scale: [3, 3, 3]
   - name: Cubes
     type: Spatial
     pos: [10, -2, 4]
@@ -289,7 +354,7 @@ nodes:
         type: MeshNode
         mesh: cube_yellow_rubber
         pos: [5, 0, 0]
-  - name: Building
+  - name: Display Box
     type: Spatial
     pos: [10, -3, 0]
     children:

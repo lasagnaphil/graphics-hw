@@ -82,6 +82,7 @@ void LightNode::changeType(Type type) {
         case Type::Spotlight:
             lightID = numSpotLights;
             numSpotLights++;
+            break;
     }
     this->type = type;
 }

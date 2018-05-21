@@ -67,7 +67,7 @@ uniform Material material;
 
 uniform DirLight dirLight;
 
-#define NR_POINT_LIGHTS 8
+#define NR_POINT_LIGHTS 16
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 
 #define NR_SPOT_LIGHTS 8
@@ -135,7 +135,7 @@ void main() {
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
 
-    vec4 result;
+    vec4 result = vec4(0.0);
     if (dirLight.enabled) result = calcDirLight(dirLight, norm, viewDir);
 
     for (int i = 0; i < numPointLights; ++i) {
