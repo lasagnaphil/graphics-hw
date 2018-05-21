@@ -43,7 +43,7 @@ private:
     bool enableDirectionalLight = true;
     bool enablePointLights = true;
     bool enableSpotLights = true;
-    bool enableGroundLights = true;
+    bool enableGroundLights = false;
 
     Scene* scene;
 
