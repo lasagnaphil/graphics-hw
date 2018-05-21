@@ -279,7 +279,7 @@ void App::render() {
             spotLight->setEnabled(enableSpotLights);
         }
     }
-    auto groundLights = scene->getRootNode()->query("Pointlights 2");
+    auto groundLights = scene->getRootNode()->query("Ground Lights");
     for (auto node : groundLights->getChildren()) {
         auto pointLight = node->cast<LightNode>();
         if (pointLight) {

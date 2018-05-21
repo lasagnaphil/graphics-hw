@@ -109,7 +109,7 @@ meshes:
 nodes:
   - name: camera
     type: FirstPersonCamera
-    pos: [0, 0, 10]
+    pos: [0, 10, 15]
 # - name: trackball focus
 #   type: Spatial
 #   children:
@@ -192,7 +192,7 @@ nodes:
             type: MeshNode
             mesh: cube
             scale: [0.2, 0.2, 0.2]
-  - name: Pointlights 2
+  - name: Ground Lights
     type: Spatial
     pos: [10, 0, 0]
     children:
